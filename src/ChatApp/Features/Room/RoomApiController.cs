@@ -10,6 +10,6 @@ namespace ChatApp.Features.Room
     [Produces("application/json")]
     [Route("api/Room")]
     public class RoomApiController : Controller
-    {  
+    {
     }
 }

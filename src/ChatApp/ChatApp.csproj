@@ -65,9 +65,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Room\Models\" />
     <Folder Include="Features\UserAvatar\" />
     <Folder Include="Features\ChatRoomAvatar\" />
+    <Folder Include="Attributes\" />
   </ItemGroup>
 
 </Project>
