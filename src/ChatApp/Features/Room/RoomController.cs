@@ -27,6 +27,7 @@ namespace ChatApp.Features.Room
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind(include: "Name,Description")]ChatRoom room)
         {
             if (ModelState.IsValid)
@@ -61,6 +62,7 @@ namespace ChatApp.Features.Room
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind(include: "Id,Name,Description")]ChatRoom room)
         {
             if (ModelState.IsValid)
