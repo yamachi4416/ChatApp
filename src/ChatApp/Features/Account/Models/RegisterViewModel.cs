@@ -19,6 +19,14 @@ namespace ChatApp.Features.Account.Models
         [Display(Name = "Password")]
         public string Password { get; set; }
 
+        [Required]
+        [MaxLength(30)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(30)]
+        public string LastName { get; set; }
+
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
