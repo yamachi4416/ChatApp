@@ -9,17 +9,17 @@ namespace ChatApp.Helpers
 {
     public static class UrlHelperExt
     {
-        public static string UserAvatar(this UrlHelper helper, string userId)
+        public static string UserAvatar(this IUrlHelper helper, string userId)
         {
             return helper.Action("Index", "UserAvatar", new { id = userId });
         }
 
-        public static string ChatRoomAvatar(this UrlHelper helper, string roomId)
+        public static string ChatRoomAvatar(this IUrlHelper helper, string roomId)
         {
             return helper.Action("Index", "ChatRoomAvatar", new { id = roomId });
         }
 
-        public static string ChatRoomAvatar(this UrlHelper helper, Guid? roomId)
+        public static string ChatRoomAvatar(this IUrlHelper helper, Guid? roomId)
         {
             return ChatRoomAvatar(helper, roomId?.ToString());
         }
