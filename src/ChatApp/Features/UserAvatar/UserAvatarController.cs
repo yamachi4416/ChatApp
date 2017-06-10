@@ -21,7 +21,7 @@ namespace ChatApp.Features.UserAvatar
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Get(string id)
         {
             if (String.IsNullOrEmpty(id))
             {

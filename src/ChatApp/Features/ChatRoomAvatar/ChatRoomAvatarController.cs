@@ -21,7 +21,7 @@ namespace ChatApp.Features.ChatRoomAvatar
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Get(string id)
         {
             Guid chatRoomId;
             if (!Guid.TryParse(id, out chatRoomId))
