@@ -1,4 +1,93 @@
-﻿@{
+﻿<div ng-app="ChatApp" ng-controller="RoomController as RoomCtrl">
+    <div class="col-sm-2 hidden-xs">
+        <div class="media-list affix col-sm-2" style="padding-top:5px;">
+            <a class="media" ng-repeat="r in RoomCtrl.c.rooms" ng-click="RoomCtrl.SelectRoom(r)">
+                <div class="media-left media-middle">
+                    <img ng-src="/ChatRoomAvatar/Get/{{r.id}}"
+                         class="img-rounded"
+                         width="50"
+                         height="50" />
+                </div>
+                <div class="media-body">
+                    <div class="media-heading">
+                        <p>{{ r.name }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="row affix col-sm-10 col-xs-12" style="border-bottom:1px solid #ccc; background: #fff;">
+            <ul class="list-inline" style="padding-top:5px;">
+                <li ng-repeat="m in RoomCtrl.c.room.members">
+                    <img ng-src="/UserAvatar/Get/{{ m.id }}"
+                         title="{{ m.email }}"
+                         class="img-circle"
+                         width="20" height="20" />
+                </li>
+            </ul>
+        </div>
+        <div class="row" id="chat-messages">
+            <div class="media-list" infinite-scroll="RoomCtrl.GetOldmessage()"
+                 infinite-scroll-container="'#chat-messages'"
+                 infinite-scroll-disabled="!RoomCtrl.readyLoadOldMessages">
+                <div class="media" ng-repeat="m in RoomCtrl.c.room.messages"
+                     ng-scroll="auto">
+                    <div class="media-left media-middle">
+                        <img ng-src="/UserAvatar/Get/{{ m.userId }}"
+                             width="20" height="20"
+                             class="img-circle" />
+                    </div>
+                    <div class="media-body">
+                        <div class="media-heading small">
+                            <span>
+                                <span>{{ m.userFirstName }}</span>
+                                <span>{{ m.userLastName }}</span>
+                            </span>
+                            <span>
+                                <time>{{ m.createdDate | date: 'yyyy/MM/dd HH:mm:ss'}}</time>
+                            </span>
+                        </div>
+                        <div>{{ m.message }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="chat-form">
+            <form>
+                <textarea class="form-control"></textarea>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            function justMessageSize() {
+                var cm = $('#chat-messages');
+                var cf = $('#chat-form');
+                cm.css({ 'overflow-y': 'scroll' });
+                cm.height($(window).height() - cf.height() - cm.offset().top - 20);
+            }
+
+            justMessageSize();
+            $(window).on('resize', justMessageSize);
+        });
+    </script>
+    <environment names="Development">
+        <script src="~/lib/angular/angular.js"></script>
+        <script src="~/lib/angular-route/angular-route.js"></script>
+        <script src="~/lib/angular-resource/angular-resource.js"></script>
+        <script src="~/lib/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/lib/angular/angular.min.js"></script>
+        <script src="~/lib/angular-route/angular-route.min.js"></script>
+        <script src="~/lib/angular-resource/angular-resource.min.js"></script>
+        <script src="~/lib/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+    </environment>
+
+    <script src="~/js/room/services.js"></script>
+    <script src="~/js/room/controllers.js"></script>
 }
-
-

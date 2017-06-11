@@ -12,8 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\templates\Room\**" />
+    <Content Remove="wwwroot\templates\Room\**" />
+    <EmbeddedResource Remove="wwwroot\templates\Room\**" />
+    <None Remove="wwwroot\templates\Room\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\images\avatar.png" />
     <Content Include="wwwroot\images\group.png" />
+    <Content Include="wwwroot\js\room\controller.js" />
+    <Content Include="wwwroot\js\room\controllers.js" />
+    <Content Include="wwwroot\js\room\services.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +78,7 @@
     <Folder Include="Features\UserAvatar\" />
     <Folder Include="Features\ChatRoomAvatar\" />
     <Folder Include="Attributes\" />
+    <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 
 </Project>

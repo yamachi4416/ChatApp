@@ -8,10 +8,11 @@
     "jquery-validation-unobtrusive": "3.2.6",
     "angular": "1.5.5",
     "angular-route": "v1.6.4",
-    "angular-resource": "v1.6.4-build.5315+sha.c80fa1c"
+    "angular-resource": "v1.6.4-build.5315+sha.c80fa1c",
+    "ngInfiniteScroll": "1.3.4"
   },
   "resolutions": {
-    "angular": "1.6.5-build.5390+sha.a86a319",
+    "angular": "1.6.4",
     "angular-route": "v1.6.5-build.5390+sha.a86a319"
   }
 }
