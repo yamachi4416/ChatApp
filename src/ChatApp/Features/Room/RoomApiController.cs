@@ -92,7 +92,10 @@ namespace ChatApp.Features.Room
                 query = query.Where(m => m.Id > offset);
             }
 
-            return await query.Take(30).ToListAsync();
+            var messages = await query.Take(20).ToListAsync();
+            messages.Reverse();
+
+            return messages;
         }
 
         [Route("messages/{id}/old/{offset}")]
@@ -100,7 +103,7 @@ namespace ChatApp.Features.Room
         {
             var query = QueryRoomMessages(id).Where(m => m.Id < offset);
 
-            return await query.Take(30).ToListAsync();
+            return await query.Take(20).ToListAsync();
         }
     }
 }

@@ -1,42 +1,28 @@
 ﻿angular.module('ChatApp')
-    .controller('RoomController', ['RoomService', 'RoomContainer', '$location',
-        function (RoomService, RoomContainer, $location) {
-            var c = this.c = RoomContainer;
+    .controller('RoomController', ['RoomService', 'RoomContainer', '$location', '$rootScope',
+        function (RoomService, RoomContainer, $location, $rootScope) {
+            var c = RoomContainer;
 
             this.InitRooms = function () {
-                RoomService.getJoinRooms()
+                return c.fetchJoinRooms()
                     .then(function (rooms) {
-                        c.rooms = rooms;
-                        this.SelectRoom(rooms[0]);
+                        this.SelectRoom(c.getRoomOrFirst($location.hash()));
+                        $rootScope.$broadcast('$locationChangeSuccess');
                     }.bind(this));
             };
 
             this.SelectRoom = function (room) {
-                if (c.room === room) return;
-                c.room = room;
-                RoomService.getMembers(room)
-                    .then(function (members) {
-                        room.members = members;
-                    });
-
-                RoomService.getNewMessages(room)
-                    .then(function (messages) {
-                        room.messages = messages;
-                        this.readyLoadOldMessages = true;
-                    }.bind(this));
+                if (room == null || c.room == room) return;
+                $location.hash(room.id);
             };
 
-            this.GetOldmessage = function () {
-                this.readyLoadOldMessages = false;
-                var room = c.room;
-                RoomService.getOldMessages(room)
-                    .then(function (messages) {
-                        if (!messages || !messages.length) return;
-                        angular.forEach(messages, function (message) {
-                            room.messages.push(message);
-                        });
-                        this.readyLoadOldMessages = true;
-                    }.bind(this));
+            this.ChangeRoom = function() {
+                c.selectRoom($location.hash());
+                return c.room && RoomService.getRoomContents(c.room);
+            };
+
+            this.GetOldmessages = function () {
+                return c.room && c.room.fetchOldMessages();
             };
 
             this.InitRooms();

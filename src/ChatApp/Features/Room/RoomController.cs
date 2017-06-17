@@ -6,9 +6,11 @@ using ChatApp.Data;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Controllers;
 using ChatApp.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.Features.Room
 {
+    [Authorize]
     public class RoomController : AppControllerBase
     {
         public RoomController(IControllerService service) : base(service)

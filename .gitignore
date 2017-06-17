@@ -290,3 +290,5 @@ __pycache__/
 Contact GitHub 
 
 !.gitignore
+
+.vscode

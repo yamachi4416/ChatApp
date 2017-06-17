@@ -21,8 +21,9 @@
   <ItemGroup>
     <Content Include="wwwroot\images\avatar.png" />
     <Content Include="wwwroot\images\group.png" />
-    <Content Include="wwwroot\js\room\controller.js" />
+    <Content Include="wwwroot\js\room\app.js" />
     <Content Include="wwwroot\js\room\controllers.js" />
+    <Content Include="wwwroot\js\room\directives.js" />
     <Content Include="wwwroot\js\room\services.js" />
   </ItemGroup>
 
