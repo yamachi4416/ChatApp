@@ -289,6 +289,10 @@ __pycache__/
 *.xsd.cs
 Contact GitHub 
 
-!.gitignore
-
+# VS Code
 .vscode
+typings.json
+typings/
+jsconfig.json
+
+!.gitignore
