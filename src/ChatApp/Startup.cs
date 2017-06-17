@@ -12,11 +12,15 @@ using Microsoft.Extensions.Logging;
 using ChatApp.Data;
 using ChatApp.Services;
 using ChatApp.Config;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 
 namespace ChatApp
 {
     public class Startup
     {
+        private readonly string XSRF_TOKEN_NAME = "XSRF-TOKEN";
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -40,6 +44,10 @@ namespace ChatApp
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddAntiforgery(options => {
+                options.HeaderName = "X-" + XSRF_TOKEN_NAME;
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -76,7 +84,7 @@ namespace ChatApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -85,7 +93,6 @@ namespace ChatApp
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                app.UseBrowserLink();
             }
             else
             {
@@ -95,6 +102,13 @@ namespace ChatApp
             app.UseStaticFiles();
 
             app.UseIdentity();
+
+            app.Use(next => context => {
+                var token = antiforgery.GetAndStoreTokens(context);
+                context.Response.Cookies.Append(XSRF_TOKEN_NAME, token.RequestToken, 
+                    new CookieOptions(){ HttpOnly = false });
+                return next(context);
+            });
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
