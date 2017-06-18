@@ -1,7 +1,7 @@
 ﻿angular.module('ChatApp')
-    .controller('RoomController', ['RoomService', 'RoomContainer', '$location', '$rootScope',
-        function (RoomService, RoomContainer, $location, $rootScope) {
-            var c = RoomContainer;
+    .controller('RoomController', ['RoomContext', '$location', '$rootScope',
+        function (RoomContext, $location, $rootScope) {
+            var c = RoomContext;
 
             this.InitRooms = function () {
                 return c.fetchJoinRooms()
@@ -17,12 +17,23 @@
             };
 
             this.ChangeRoom = function() {
-                c.selectRoom($location.hash());
-                return c.room && RoomService.getRoomContents(c.room);
+                return c.selectRoom($location.hash()).fetchRoomContents();
             };
 
             this.GetOldmessages = function () {
                 return c.room && c.room.fetchOldMessages();
+            };
+
+            this.PostMessage = function() {
+                if (c.room) {
+                    return c.room.postMessage().then(function() {
+                        return c.room.fetchNewMessages().then(function() {
+                            $rootScope.$broadcast('chatRoomMessageScrollBottom', {
+                                ifShowBottom: true
+                            });
+                        });
+                    });
+                } 
             };
 
             this.InitRooms();

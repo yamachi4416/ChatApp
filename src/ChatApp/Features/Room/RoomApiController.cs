@@ -9,11 +9,15 @@ using ChatApp.Controllers;
 using ChatApp.Services;
 using ChatApp.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Net.Http;
+using System.Net;
 
 namespace ChatApp.Features.Room
 {
     [Produces("application/json")]
     [Route("api/rooms")]
+    [Authorize]
     public class RoomApiController : AppControllerBase
     {
         public RoomApiController(IControllerService service) : base(service)
@@ -57,6 +61,7 @@ namespace ChatApp.Features.Room
             return query;
         }
 
+        [Route("joins")]
         public async Task<IEnumerable<RoomViewModel>> GetJoinRooms()
         {
             var userId = GetCurrentUserId();
@@ -104,6 +109,32 @@ namespace ChatApp.Features.Room
             var query = QueryRoomMessages(id).Where(m => m.Id < offset);
 
             return await query.Take(20).ToListAsync();
+        }
+
+        [HttpPost]
+        [Route("messages/{id}/create")]
+        public async Task<object> MessageCreate([FromRoute]Guid id, [FromBody]PostMessageModel model) {
+            if (ModelState.IsValid) {
+                var user = await GetCurrentUserAsync();
+
+                var message = CreateModel(new ChatMessage() {
+                    ChatRoomId = id,
+                    UserId = user.Id,
+                    Message = model.Message
+                });
+
+                await _db.SaveChangesAsync();
+
+                var viewMessage = new RoomMessageViewModel() {
+                    UserFirstName = user.FirstName,
+                    UserLastName = user.LastName,
+                }.SetChatMessage(message);
+
+                return viewMessage;
+            } else {
+                Response.StatusCode = 400;
+                return ModelState;
+            }
         }
     }
 }

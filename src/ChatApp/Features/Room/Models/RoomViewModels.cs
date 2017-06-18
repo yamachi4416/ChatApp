@@ -55,7 +55,18 @@ namespace ChatApp.Features.Room.Models
         public DateTimeOffset? CreatedDate { get; set; }
 
         public DateTimeOffset? UpdatedDate { get; set; }
-    }
+
+        public RoomMessageViewModel SetChatMessage(ChatMessage message)
+        {
+            Id = message.Id;
+            Message = message.Message;
+            UserId = message.UserId;
+            CreatedDate = message.CreatedDate;
+            UpdatedDate = message.UpdatedDate;
+
+            return this;
+        }
+     }
 
     public class PostMessageModel
     {

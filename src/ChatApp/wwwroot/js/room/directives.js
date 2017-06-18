@@ -66,6 +66,20 @@
                     $rootScope.$on('$locationChangeSuccess', function(e) {
                         return restoreScroll($location.hash(), _chatRoomChange());
                     });
+
+                    $rootScope.$on('chatRoomMessageScrollBottom', function(e, opts) {
+                        var opt = angular.extend({}, opts);
+                        var oldTop = _containar.scrollTop();
+                        var oldHeight = _content.height();
+                        console.log(arguments)
+                        if (opt.ifShowBottom) {
+                            if (oldHeight - oldTop > _containar.height()) return;
+                        }
+                        $timeout(function() {
+                            var height = _content.height();
+                            _containar.scrollTop(height - _containar.height());
+                        });
+                    });
                 }
             };
         }]);
