@@ -1,30 +1,97 @@
+* {
+    box-sizing: border-box;
+}
+
+#chat-sidebar {
+    min-height: 100vh;
+    padding: 0 10px 0 0;
+    background: #fff;
+    left: 0;
+    border-right: 1px solid #eee;
+    z-index: 999;
+
+    .chat-sidebar-content {
+        background: #fff;
+        padding-left: 10px;
+    }
+
+    .chat-sidebar-item-rooms {
+        .media {
+            margin: 0;
+            opacity: 0.7;
+            cursor: pointer;
+
+            &.active {
+                opacity: 1;
+
+                .toggle-tooltip {
+                    visibility: visible;
+                }    
+            }
+
+            .toggle-tooltip {
+                border-radius: 50%;
+                padding: 5px;
+                opacity: 0.6;
+                visibility: hidden;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    chat-sidebar-item-members {
+
+    }
+}
+
 #chat-messages {
+
     &::-webkit-scrollbar {
         width: 10px;
         background: transparent;
     }
 
-    &::-webkit-scrollbar-track {
-    }
-
-    &::-webkit-scrollbar-track-piece {
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #ccc;
+    &::-webkit-scrollbar-thumb, thumb {
+        background: rgba(200, 200, 200, 0.5);
         border-radius: 10px;
+    }
+
+    .message-list {
+        .message-item {
+            margin: 0;
+            padding: 10px;
+            
+            .message-body {
+                img {
+                    width: 90%;
+                }
+            }
+        }    
     }
 }
 
-.message-list {
-    .message-item {
-        margin: 0;
-        padding: 10px;
-        
-        .message-body {
-            img {
-                width: 90%
-            }
-        }
-    }    
+#chat-form {
+    position: relative;
+    padding: 10px 10px 0 10px;
+    box-sizing: border-box;
+
+    textarea {
+        width: 100%;
+        max-width: 100%;
+        height: 2.5em;
+        resize: none;
+    }
+
+    button {
+        position: absolute;
+        bottom: -5px;
+        opacity: 1;
+        right: 0;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+    }
 }

@@ -1,30 +1,43 @@
 ﻿<div>
-    <div class="col-sm-2 hidden-xs" class="sidebar">
-        <div class="affix col-sm-2" style="padding-top:5px;">
-            <div class="row">
-                <h4>Room</h4>
-                <div class="media-list">
-                    <a class="media" ng-repeat="r in c.rooms" ng-click="RoomCtrl.SelectRoom(r)">
-                        <div class="media-left media-middle">
-                            <span class="img-thumbnail">
-                                <img class="img-rounded" ng-src="/ChatRoomAvatar/Get/{{r.id}}" width="30" height="30" />
-                            </span>
-                        </div>
-                        <div class="media-body">
-                            <div class="media-heading">
+    <div class="col-sm-2 hidden-xs">
+        <div class="affix col-sm-2 col-xs-5" id="chat-sidebar">
+            <div class="chat-sidebar-content">
+                <div class="chat-sidebar-item chat-sidebar-item-rooms">
+                    <h4 class="title">
+                        <span>Room</span>
+                    </h4>
+                    <div class="media-list">
+                        <div class="media" ng-repeat="r in c.rooms"
+                            ng-class="{active: c.room == r}"
+                            ng-click="RoomCtrl.SelectRoom(r)">
+                            <div class="media-left media-middle">
+                                <span class="img-thumbnail">
+                                    <img class="img-rounded" ng-src="/ChatRoomAvatar/Get/{{r.id}}" width="30" height="30" />
+                                </span>
+                            </div>
+                            <div class="media-body">
+                                <div class="media-footer">
+                                    <span class="pull-right">
+                                        <i class="glyphicon glyphicon-option-horizontal toggle-tooltip"></i>
+                                    </span>
+                                </div>
                                 <p ng-bind="r.name"></p>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <h4>Member</h4>
-                <div class="media-list">
-                    <div class="media" ng-repeat="m in c.room.members">
-                        <div class="media-left">
-                            <img class="img-circle" width="20" height="20"
-                                    ng-src="/UserAvatar/Get/{{ m.id }}" />
+                <div class="chat-sidebar-item chat-sidebar-item-members">
+                    <h4 class="title">Member</h4>
+                    <div class="media-list">
+                        <div class="media" ng-repeat="m in c.room.members">
+                            <div class="media-left">
+                                <img class="img-circle" width="20" height="20"
+                                        ng-src="/UserAvatar/Get/{{ m.id }}" />
+                            </div>
+                            <div class="media-body">
+                                <span ng-bind="m.firstName"></span>
+                                <span ng-bind="m.lastName"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,9 +75,12 @@
         </div>
         <div class="row" id="chat-form" ng-show="c.room.message != null">
             <form name="chatForm" novalidate ng-submit="RoomCtrl.PostMessage()">
-                <textarea class="form-control" rows="1" ng-model="c.room.message.message" required></textarea>
-                <button class="btn btn-default"
-                    ng-disabled="chatForm.$invalid || c.room.message.isPosting">GO</button>
+                <textarea class="form-control" rows="1" tabindex="1"
+                    ng-maxlength="300"
+                    ng-model="c.room.message.message" required></textarea>
+                <button class="btn btn-default" tabindex="2"
+                    ng-disabled="chatForm.$invalid || c.room.message.isPosting"
+                    ng-show="chatForm.$valid && !c.room.message.isPosting">GO</button>
             </form>
         </div>
     </div>
@@ -76,7 +92,7 @@
                 var cm = $('#chat-messages');
                 var cf = $('#chat-form');
                 cm.css({ 'overflow-y': 'scroll' });
-                cm.height($(window).height() - cf.height() - cm.offset().top - 20);
+                cm.height($(window).height() - cf.height() - cm.offset().top - 30);
             }
 
             justMessageSize();
