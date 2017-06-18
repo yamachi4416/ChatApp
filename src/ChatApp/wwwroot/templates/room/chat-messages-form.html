@@ -1,0 +1,8 @@
+<form name="chatForm" novalidate ng-submit="RoomCtrl.PostMessage()">
+    <textarea class="form-control" rows="1" tabindex="1"
+        ng-maxlength="300"
+        ng-model="c.room.message.message" required></textarea>
+    <button class="btn btn-default" tabindex="2"
+        ng-disabled="chatForm.$invalid || c.room.message.isPosting"
+        ng-show="chatForm.$valid && !c.room.message.isPosting">GO</button>
+</form>

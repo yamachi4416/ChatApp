@@ -1,15 +1,4 @@
 ﻿angular.module('ChatApp')
-    .controller('SidebarController', ['$timeout', function($timeout) {
-        this.isShowSidebar = false;
-
-        this.toggleSidebar = function(selector) {
-            var ele = angular.element(selector);
-            this.isShowSidebar = ele.is('.hidden-xs');
-            ele.toggleClass('hidden-xs');
-            console.log(ele);
-        };
-
-    }])
     .controller('RoomController', ['RoomContext', '$location', '$rootScope',
         function (RoomContext, $location, $rootScope) {
             var c = RoomContext;
@@ -18,6 +7,7 @@
                 return c.fetchJoinRooms()
                     .then(function (rooms) {
                         this.SelectRoom(c.getRoomOrFirst($location.hash()));
+                        $rootScope.$broadcast('chatRoomMessageReady');
                         $rootScope.$broadcast('$locationChangeSuccess');
                     }.bind(this));
             };

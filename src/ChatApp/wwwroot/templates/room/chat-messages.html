@@ -1,0 +1,23 @@
+<div class="media-list message-list">
+    <div class="media message-item" ng-repeat="m in c.room.messages">
+        <div class="media-left">
+            <span>
+                <img class="img-circle" width="30" height="30"
+                    ng-src="/UserAvatar/Get/{{ m.userId }}" />
+            </span>
+        </div>
+        <div class="media-body message-body">
+            <div class="media-heading small">
+                <span>
+                    <span ng-bind="m.id"></span>
+                    <span ng-bind="m.userFirstName"></span>
+                    <span ng-bind="m.userLastName"></span>
+                </span>
+                <span>
+                    <time ng-bind="m.createdDate | date: 'yyyy/MM/dd HH:mm:ss'"></time>
+                </span>
+            </div>
+            <div marked="m.message"></div>
+        </div>
+    </div>
+</div>

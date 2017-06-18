@@ -1,0 +1,24 @@
+<div class="chat-sidebar-item chat-sidebar-item-rooms">
+    <h4 class="title">
+        <span>ルーム</span>
+    </h4>
+    <div class="media-list">
+        <div class="media" ng-repeat="r in c.rooms"
+            ng-class="{active: c.room == r}"
+            ng-click="RoomCtrl.SelectRoom(r)">
+            <div class="media-left media-middle">
+                <span class="img-thumbnail">
+                    <img class="img-rounded" ng-src="/ChatRoomAvatar/Get/{{r.id}}" width="30" height="30" />
+                </span>
+            </div>
+            <div class="media-body">
+                <div class="media-footer">
+                    <span class="pull-right">
+                        <i class="glyphicon glyphicon-option-horizontal toggle-tooltip"></i>
+                    </span>
+                </div>
+                <p ng-bind="r.name"></p>
+            </div>
+        </div>
+    </div>
+</div>

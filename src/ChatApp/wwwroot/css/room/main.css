@@ -77,18 +77,18 @@ body {
 #chat-messages .message-list .message-item .message-body img {
   width: 90%;
 }
-#chat-form {
+#chat-messages-form {
   position: relative;
   padding: 10px 10px 0 10px;
   box-sizing: border-box;
 }
-#chat-form textarea {
+#chat-messages-form textarea {
   width: 100%;
   max-width: 100%;
   height: 2.5em;
   resize: none;
 }
-#chat-form button {
+#chat-messages-form button {
   position: absolute;
   bottom: -5px;
   opacity: 1;

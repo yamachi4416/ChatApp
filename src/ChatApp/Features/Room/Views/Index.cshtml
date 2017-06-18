@@ -1,130 +1,21 @@
 ﻿<div>
-    <div id="chat-sidebar-wrapper" class="col-sm-2 affix"
-        ng-controller="SidebarController as SidebarCtrl">
-        <div class="affix col-sm-2 col-xs-7 hidden-xs" id="chat-sidebar">
-            <div class="chat-sidebar-content">
-                <div class="chat-sidebar-item chat-sidebar-item-rooms">
-                    <h4 class="title">
-                        <span>ルーム</span>
-                    </h4>
-                    <div class="media-list">
-                        <div class="media" ng-repeat="r in c.rooms"
-                            ng-class="{active: c.room == r}"
-                            ng-click="RoomCtrl.SelectRoom(r)">
-                            <div class="media-left media-middle">
-                                <span class="img-thumbnail">
-                                    <img class="img-rounded" ng-src="/ChatRoomAvatar/Get/{{r.id}}" width="30" height="30" />
-                                </span>
-                            </div>
-                            <div class="media-body">
-                                <div class="media-footer">
-                                    <span class="pull-right">
-                                        <i class="glyphicon glyphicon-option-horizontal toggle-tooltip"></i>
-                                    </span>
-                                </div>
-                                <p ng-bind="r.name"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-sidebar-item chat-sidebar-item-members">
-                    <h4 class="title">メンバ</h4>
-                    <div class="media-list">
-                        <div class="media" ng-repeat="m in c.room.members">
-                            <div class="media-left">
-                                <img class="img-circle" width="20" height="20"
-                                        ng-src="/UserAvatar/Get/{{ m.id }}" />
-                            </div>
-                            <div class="media-body">
-                                <span ng-bind="m.firstName"></span>
-                                <span ng-bind="m.lastName"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-close"
-                ng-hide="!SidebarCtrl.isShowSidebar"
-                ng-click="SidebarCtrl.toggleSidebar('#chat-sidebar')">
-                <i class="glyphicon glyphicon-menu-left"></i>
-            </a>
-        </div>
-        <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-open"
-            ng-hide="SidebarCtrl.isShowSidebar"
-            ng-click="SidebarCtrl.toggleSidebar('#chat-sidebar')">
-            <i class="glyphicon glyphicon-menu-right"></i>
-        </a>
+    <div chat-sidebar chat-prefix="chat-sidebar">
+        <div ng-include="'templates/room/sidebar-item-room.html'"></div>
+        <div ng-include="'templates/room/sidebar-item-member.html'"></div>
     </div>
-    <div class="col-sm-10 col-sm-offset-2">
-        <div class="row" id="chat-messages"
-            chat-room="c.room"
-            chat-room-change="RoomCtrl.ChangeRoom()"
-            old-messages="RoomCtrl.GetOldmessages()">
-            <div class="media-list message-list">
-                <div class="media message-item" ng-repeat="m in c.room.messages">
-                    <div class="media-left">
-                        <span>
-                            <img class="img-circle" width="30" height="30"
-                                ng-src="/UserAvatar/Get/{{ m.userId }}" />
-                        </span>
-                    </div>
-                    <div class="media-body message-body">
-                        <div class="media-heading small">
-                            <span>
-                                <span ng-bind="m.id"></span>
-                                <span ng-bind="m.userFirstName"></span>
-                                <span ng-bind="m.userLastName"></span>
-                            </span>
-                            <span>
-                                <time ng-bind="m.createdDate | date: 'yyyy/MM/dd HH:mm:ss'"></time>
-                            </span>
-                        </div>
-                        <div marked="m.message"></div>
-                    </div>
-                </div>
-            </div>
+    <div class="col-sm-10 col-sm-offset-2" id="chat-room-main"
+        chat-prefix="chat-messages"
+        chat-room="c.room"
+        chat-room-change="RoomCtrl.ChangeRoom()"
+        old-messages="RoomCtrl.GetOldmessages()">
+        <div class="row" id="chat-messages">
+            <div ng-include="'templates/room/chat-messages.html'"></div>
         </div>
-        <div class="row" id="chat-form" ng-show="c.room.message != null">
-            <form name="chatForm" novalidate ng-submit="RoomCtrl.PostMessage()">
-                <textarea class="form-control" rows="1" tabindex="1"
-                    ng-maxlength="300"
-                    ng-model="c.room.message.message" required></textarea>
-                <button class="btn btn-default" tabindex="2"
-                    ng-disabled="chatForm.$invalid || c.room.message.isPosting"
-                    ng-show="chatForm.$valid && !c.room.message.isPosting">GO</button>
-            </form>
+        <div class="row" id="chat-messages-form" style="display:none;" ng-show="c.room.message != null">
+            <div ng-include="'templates/room/chat-messages-form.html'"></div>
         </div>
     </div>
 </div>
 @section Scripts {
-    <script>
-        $(function () {
-            function justMessageSize() {
-                var cm = $('#chat-messages');
-                var cf = $('#chat-form');
-                cm.css({ 'overflow-y': 'scroll' });
-                cm.height($(window).height() - cf.height() - cm.offset().top - 30);
-            }
-
-            justMessageSize();
-            $(window).on('resize', justMessageSize);
-        });
-    </script>
-    <environment names="Development">
-        <script src="~/lib/angular/angular.js"></script>
-        <script src="~/lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-        <script src="~/lib/marked/lib/marked.js"></script>
-        <script src="~/lib/angular-marked/dist/angular-marked.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="~/lib/angular/angular.min.js"></script>
-        <script src="~/lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-        <script src="~/lib/marked/marked.min.js"></script>
-        <script src="~/lib/angular-marked/dist/angular-marked.min.js"></script>
-    </environment>
-
-    <script src="~/js/room/app.js"></script>
-    <script src="~/js/room/directives.js"></script>
-    <script src="~/js/room/services.js"></script>
-    <script src="~/js/room/controllers.js"></script>
+    @await Html.PartialAsync("_RoomScriptsPartial")
 }
