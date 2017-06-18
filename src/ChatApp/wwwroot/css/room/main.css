@@ -1,46 +1,74 @@
 * {
   box-sizing: border-box;
 }
-#chat-sidebar {
-  min-height: 100vh;
-  padding: 0 10px 0 0;
+*::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb,
+* thumb {
+  background: rgba(200, 200, 200, 0.5);
+  border-radius: 10px;
+}
+body {
+  overflow: hidden;
+}
+#chat-sidebar-wrapper {
+  height: calc(100vh - 50px);
+  z-index: 1000;
+}
+#chat-sidebar-wrapper .chat-sidebar-toggle {
+  top: 50%;
+  display: block;
+  position: absolute;
+  margin-top: -42.5px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  color: #ccc;
+  font-size: 1.5em;
+}
+#chat-sidebar-wrapper .chat-sidebar-toggle.chat-sidebar-open {
+  left: 0;
+  margin-left: -17.5px;
+}
+#chat-sidebar-wrapper .chat-sidebar-toggle.chat-sidebar-close {
+  right: 0;
+}
+#chat-sidebar-wrapper #chat-sidebar {
+  padding: 0 10px 0 10px;
   background: #fff;
   left: 0;
   border-right: 1px solid #eee;
-  z-index: 999;
 }
-#chat-sidebar .chat-sidebar-content {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content {
+  padding-bottom: 10px;
   background: #fff;
   padding-left: 10px;
+  overflow-y: auto;
+  height: calc(100vh - 50px);
 }
-#chat-sidebar .chat-sidebar-item-rooms .media {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media {
   margin: 0;
   opacity: 0.7;
   cursor: pointer;
 }
-#chat-sidebar .chat-sidebar-item-rooms .media.active {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active {
   opacity: 1;
+  cursor: default;
 }
-#chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip {
   visibility: visible;
 }
-#chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip {
+  cursor: pointer;
   border-radius: 50%;
   padding: 5px;
   opacity: 0.6;
   visibility: hidden;
 }
-#chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip:hover {
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip:hover {
   opacity: 1;
-}
-#chat-messages::-webkit-scrollbar {
-  width: 10px;
-  background: transparent;
-}
-#chat-messages::-webkit-scrollbar-thumb,
-#chat-messages thumb {
-  background: rgba(200, 200, 200, 0.5);
-  border-radius: 10px;
 }
 #chat-messages .message-list .message-item {
   margin: 0;

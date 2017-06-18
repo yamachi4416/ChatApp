@@ -1,10 +1,11 @@
 ﻿<div>
-    <div class="col-sm-2 hidden-xs">
-        <div class="affix col-sm-2 col-xs-5" id="chat-sidebar">
+    <div id="chat-sidebar-wrapper" class="col-sm-2 affix"
+        ng-controller="SidebarController as SidebarCtrl">
+        <div class="affix col-sm-2 col-xs-7 hidden-xs" id="chat-sidebar">
             <div class="chat-sidebar-content">
                 <div class="chat-sidebar-item chat-sidebar-item-rooms">
                     <h4 class="title">
-                        <span>Room</span>
+                        <span>ルーム</span>
                     </h4>
                     <div class="media-list">
                         <div class="media" ng-repeat="r in c.rooms"
@@ -27,7 +28,7 @@
                     </div>
                 </div>
                 <div class="chat-sidebar-item chat-sidebar-item-members">
-                    <h4 class="title">Member</h4>
+                    <h4 class="title">メンバ</h4>
                     <div class="media-list">
                         <div class="media" ng-repeat="m in c.room.members">
                             <div class="media-left">
@@ -42,9 +43,19 @@
                     </div>
                 </div>
             </div>
+            <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-close"
+                ng-hide="!SidebarCtrl.isShowSidebar"
+                ng-click="SidebarCtrl.toggleSidebar('#chat-sidebar')">
+                <i class="glyphicon glyphicon-menu-left"></i>
+            </a>
         </div>
+        <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-open"
+            ng-hide="SidebarCtrl.isShowSidebar"
+            ng-click="SidebarCtrl.toggleSidebar('#chat-sidebar')">
+            <i class="glyphicon glyphicon-menu-right"></i>
+        </a>
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-10 col-sm-offset-2">
         <div class="row" id="chat-messages"
             chat-room="c.room"
             chat-room-change="RoomCtrl.ChangeRoom()"
