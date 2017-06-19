@@ -20,6 +20,8 @@ namespace ChatApp.Features.Room
     [Authorize]
     public class RoomApiController : AppControllerBase
     {
+        private readonly int _takeCount = 30;
+
         public RoomApiController(IControllerService service) : base(service)
         {
         }
@@ -97,7 +99,7 @@ namespace ChatApp.Features.Room
                 query = query.Where(m => m.Id > offset);
             }
 
-            var messages = await query.Take(20).ToListAsync();
+            var messages = await query.Take(_takeCount).ToListAsync();
             messages.Reverse();
 
             return messages;
@@ -108,7 +110,7 @@ namespace ChatApp.Features.Room
         {
             var query = QueryRoomMessages(id).Where(m => m.Id < offset);
 
-            return await query.Take(20).ToListAsync();
+            return await query.Take(_takeCount).ToListAsync();
         }
 
         [HttpPost]

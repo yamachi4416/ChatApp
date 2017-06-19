@@ -1,9 +1,9 @@
 ﻿<div>
-    <div chat-sidebar chat-prefix="chat-sidebar">
+    <div chat-sidebar="{sm:3, xs:7}" chat-prefix="chat-sidebar">
         <div ng-include="'templates/room/sidebar-item-room.html'"></div>
         <div ng-include="'templates/room/sidebar-item-member.html'"></div>
     </div>
-    <div class="col-sm-10 col-sm-offset-2" id="chat-room-main"
+    <div class="col-sm-9 col-sm-offset-3" id="chat-room-main"
         chat-prefix="chat-messages"
         chat-room="c.room"
         chat-room-change="RoomCtrl.ChangeRoom()"

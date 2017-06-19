@@ -1,5 +1,5 @@
-<div id="{{ctrl.selector}}-wrapper" class="col-sm-2 affix">
-    <div class="affix col-sm-2 col-xs-7 hidden-xs" id="{{ctrl.selector}}">
+<div id="{{ctrl.selector}}-wrapper" class="affix {{ctrl.sidebarColClass()}}">
+    <div class="affix hidden-xs {{ctrl.sidebarColClass()}}" id="{{ctrl.selector}}">
         <div class="{{ctrl.selector}}-content">
             <ng-transclude></ng-transclude>
             <a class="hidden-sm hidden-lg hidden-md btn {{ctrl.selector}}-toggle {{ctrl.selector}}-close"

@@ -1,3 +1,11 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -22,8 +30,8 @@ body {
   display: block;
   position: absolute;
   margin-top: -42.5px;
-  width: 35px;
-  height: 35px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   color: #ccc;
   font-size: 1.5em;
@@ -48,6 +56,19 @@ body {
   overflow-y: auto;
   height: calc(100vh - 50px);
 }
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .toggle-tooltip {
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+  opacity: 0.6;
+  visibility: hidden;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .toggle-tooltip:hover {
+  opacity: 1;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media {
+  padding: 3px;
+}
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media {
   margin: 0;
   opacity: 0.7;
@@ -60,22 +81,20 @@ body {
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip {
   visibility: visible;
 }
-#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip {
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 5px;
-  opacity: 0.6;
-  visibility: hidden;
-}
-#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .toggle-tooltip:hover {
-  opacity: 1;
-}
 #chat-messages .message-list .message-item {
   margin: 0;
+  padding: 10px 20px;
+}
+#chat-messages .message-list .message-item .message-body {
+  word-break: break-word;
   padding: 10px;
 }
 #chat-messages .message-list .message-item .message-body img {
-  width: 90%;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 3px;
+  animation: fadeIn 1s ease 0s 1 normal;
 }
 #chat-messages-form {
   position: relative;
