@@ -180,7 +180,7 @@
             },
             addMessage: function(message, push) {
                 if (!this._messageMap[message.id]) {
-                    this._membersMap[message.id] = message;
+                    this._messageMap[message.id] = message;
                     push ?
                         this.messages.push(message) :
                         this.messages.unshift(message);
