@@ -3,6 +3,10 @@
     padding-bottom: 20px;
 }
 
+#chatapp-navbar {
+    background: rgba(255, 255, 255, 0.95); 
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
