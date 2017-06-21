@@ -6,6 +6,7 @@
     <div class="col-sm-9 col-sm-offset-3" id="chat-room-main"
         chat-prefix="chat-messages"
         chat-room="c.room"
+        chat-content=".media-list"
         chat-room-change="RoomCtrl.ChangeRoom()"
         old-messages="RoomCtrl.GetOldmessages()">
         <div class="row" id="chat-messages">
@@ -16,6 +17,3 @@
         </div>
     </div>
 </div>
-@section Scripts {
-    @await Html.PartialAsync("_RoomScriptsPartial")
-}

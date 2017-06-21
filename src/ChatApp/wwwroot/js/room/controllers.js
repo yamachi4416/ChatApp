@@ -8,13 +8,12 @@
                     .then(function (rooms) {
                         this.SelectRoom(c.getRoomOrFirst($location.hash()));
                         $rootScope.$broadcast('chatRoomMessageReady');
-                        $rootScope.$broadcast('$locationChangeSuccess');
                     }.bind(this));
             };
 
             this.SelectRoom = function (room) {
                 if (room == null || c.room == room) return;
-                $location.hash(room.id);
+                return $location.hash(room.id);
             };
 
             this.ChangeRoom = function() {

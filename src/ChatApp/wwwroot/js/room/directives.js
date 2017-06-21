@@ -1,6 +1,6 @@
 ﻿(function angular_directives(chatapp) {
     angular.module('ChatApp')
-        .directive('chatRoom', ['$timeout', '$location', '$rootScope', chatapp.directives.ChatRoom])
+        .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', [chatapp.directives.chatMessageImage]);
 }
@@ -9,9 +9,9 @@
 
     var directives = chatapp.directives = {};
     
-    directives.ChatRoom = function ($timeout, $location, $rootScope) {
+    directives.ChatRoom = function ($timeout, $location, $rootScope, $q) {
         var containar, 
-            content = function() { return containar().find('.media-list'); },
+            content, 
             postform,
             saveScrollMap = {},
             isForceScrollBottom = true,
@@ -23,9 +23,10 @@
             containar().css({ 'opacity': '0' });
             return defered.finally(function() {
                 $timeout(function () {
-                    containar().scrollTop(saveScrollMap[roomid] || content().height());
-                    containar().animate({ 'opacity': '1' });
-                }, 200);
+                    containar()
+                        .scrollTop(saveScrollMap[roomid] || content().height())
+                        .animate({ 'opacity': '1' });
+                });
             });
         }
 
@@ -75,6 +76,7 @@
             $rootScope.$on('chatRoomMessageReady', function() {
                 angular.element(window).bind('resize', justMessageSize);
                 justMessageSize();
+                restoreScroll($location.hash(), _chatRoomChange());
                 $timeout(function() {
                     postform().show();
                 });
@@ -108,6 +110,10 @@
                 return _containar;
             };
 
+            content = function() {
+                return containar().find(scope.chatContent);
+            };
+
             postform = function() {
                 return angular.element('#' + scope.chatPrefix + '-form');
             };
@@ -115,6 +121,8 @@
             postform().on('click', 'button', function() {
                 isForceScrollBottom = true;
             });
+
+            containar().css({ 'opacity': '0' });
 
             registerHandles(scope);
         }
@@ -124,7 +132,8 @@
                 chatPrefix: '@',
                 chatRoom: '=',
                 chatRoomChange: '&',
-                oldMessages: '&'
+                oldMessages: '&',
+                chatContent: '@'
             },
             restrict: 'A',
             link: link
@@ -169,15 +178,13 @@
 
     directives.chatMessageImage = function() {
         return {
-            scope: {
-                noImageSrc: '@'
-            },
             restrict: 'A',
             link: function(scope, elem, attrs, ctrl) {
-                var noImageSrc = scope.noImageSrc || '/images/noimage.jpg';
-                elem.on('error', function() {
-                        elem.attr('src', noImageSrc);
-                    });
+                elem.on('load', function() {
+                    elem.unwrap();
+                }).on('error', function() {
+                    elem.unwrap().remove();
+                }).wrap(angular.element('<div>').addClass('chat-img-loading'));
             }
         };
     };

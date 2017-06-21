@@ -15,11 +15,11 @@
         markedProvider.setRenderer({
             link: function() {
                 var link = renderer.link.apply(reciever, arguments);
-                return '<a target="_blank"' + link.substring('<a'.length);
+                return '<a tabindex="-1" target="_blank"' + link.substring('<a'.length);
             },
             image: function() {
                 var img = renderer.image.apply(reciever, arguments);
-                return '<img chat-message-image'
+                return '<img chat-message-image '
                     + img.substring('<img'.length);
             }
         });

@@ -89,12 +89,16 @@ body {
   word-break: break-word;
   padding: 10px;
 }
+#chat-messages .message-list .message-item .message-body .chat-img-loading {
+  height: 300px;
+  opacity: 0;
+}
 #chat-messages .message-list .message-item .message-body img {
   max-width: 100%;
+  max-height: 300px;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 3px;
-  animation: fadeIn 1s ease 0s 1 normal;
 }
 #chat-messages-form {
   position: relative;
