@@ -39,7 +39,9 @@
             function openAdminModalUi(options, resolve, reject) {
                 if (!c.room.isAdmin) return;
 
-                var modalInstance = $uibModal.open(options);
+                var modalInstance = $uibModal.open(
+                    angular.extend({
+                    }, options));
 
                 modalInstance.result.then(
                     resolve || angular.noop,

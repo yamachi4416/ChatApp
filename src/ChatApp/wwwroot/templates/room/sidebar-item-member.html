@@ -3,8 +3,8 @@
         <span>メンバ</span>
         <span class="pull-right small" uib-dropdown dropdown-append-to-body
             ng-show="c.room.isAdmin">
-            <i class="glyphicon glyphicon-align-justify"
-                uib-dropdown-toggle></i>
+            <a class="glyphicon glyphicon-align-justify toggle-tooltip"
+                uib-dropdown-toggle></a>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                 <li role="menuitem">
                     <a ng-click="RoomCtrl.OpenAddMember()">

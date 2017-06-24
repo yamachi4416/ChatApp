@@ -22,8 +22,15 @@ body {
     overflow: hidden;
 }
 
+li {
+    &[role="menuitem"] {
+        cursor: pointer;
+    }
+}
+
 #chat-sidebar-wrapper {
     height: calc(~'100vh - 50px');
+    padding-right: 0;
     z-index: 1000;
 
     .chat-sidebar-toggle {
@@ -48,13 +55,14 @@ body {
     }
 
     #chat-sidebar {
-        padding: 0 10px 0 10px;
+        padding: 0 0 0 10px;
         background: #fff;
         left: 0;
         border-right: 1px solid #eee;
 
         .chat-sidebar-content {
-            padding-bottom: 10px; 
+            padding-bottom: 10px;
+            padding-right: 8px;
             background: #fff;
             padding-left: 10px;
             overflow-y: auto;
@@ -65,15 +73,22 @@ body {
                 border-radius: 50%;
                 padding: 5px;
                 opacity: 0.6;
-                visibility: hidden;
+                color: #666;
+                text-decoration: none;
 
                 &:hover {
                     opacity: 1;
                 }
             }
 
-            .media {
-                padding: 3px;
+            .media-list {
+                .toggle-tooltip {
+                    visibility: hidden;
+                }
+
+                .media {
+                    padding: 3px;
+                }
             }
         }
 

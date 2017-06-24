@@ -2,10 +2,15 @@
     <h4 class="title">
         <span>ルーム</span>
         <span class="pull-right small" uib-dropdown dropdown-append-to-body>
-            <i class="glyphicon glyphicon-align-justify"
-                uib-dropdown-toggle></i>
+            <a class="glyphicon glyphicon-align-justify toggle-tooltip"
+                uib-dropdown-toggle></a>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-                <li role="menuitem"><a href="#">Action</a></li>
+                <li role="menuitem">
+                    <a href="javascript:void(0)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <span>ルームの作成</span>
+                    </a>
+                </li>
             </ul>
         </span>
     </h4>
@@ -21,10 +26,21 @@
             <div class="media-body">
                 <div class="media-footer">
                     <span class="pull-right" uib-dropdown dropdown-append-to-body>
-                        <i class="glyphicon glyphicon-option-horizontal toggle-tooltip"
-                            uib-dropdown-toggle></i>
+                        <a class="glyphicon glyphicon-option-horizontal toggle-tooltip"
+                            uib-dropdown-toggle></a>
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-                            <li role="menuitem"><a href="#">Action</a></li>
+                            <li role="menuitem">
+                                <a href="javascript:void(0)">
+                                    <span class="glyphicon glyphicon-list-alt"></span>
+                                    <span>ルームの詳細</span>
+                                </a>
+                            </li>
+                            <li role="menuitem" ng-show="r.isAdmin">
+                                <a href="javascript:void(0)">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                    <span>ルームの編集</span>
+                                </a>
+                            </li>
                         </ul>
                     </span>
                 </div>
