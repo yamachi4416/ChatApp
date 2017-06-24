@@ -116,11 +116,21 @@
             },
             addMember: function(room, member) {
                 if (!room.isAdmin) return this._reject();
-                
+
                 var url = room.id + '/members/add';
                 return this._httpPost(url, member)
                     .then(function(member) {
                         room.addMember(member);
+                    });
+            },
+            removeMember: function(room, member) {
+                if (!room.isAdmin || member.isAdmin)
+                    return this._reject();
+                
+                var url = room.id + '/members/remove';
+                return this._httpPost(url, member)
+                    .then(function(member) {
+                        room.removeMember(member);
                     });
             }
         })
@@ -209,6 +219,8 @@
                     }.bind(this));
             },
             addMessage: function(message, push) {
+                if (!message) return this;
+
                 if (!this._messageMap[message.id]) {
                     this._messageMap[message.id] = message;
                     push ?
@@ -244,9 +256,23 @@
                 return this;
             },
             addMember: function(member) {
+                if (!member) return this;
                 if (this._membersMap[member.id]) return;
                 this.members.push(member);
                 this._membersMap[member.id] = member;
+                return this;
+            },
+            removeMember: function(member) {
+                if (!member) return this;
+                var members = this.members;
+                for (var i = 0, l = members.length; i < l; i++) {
+                    var m = members[i];
+                    if (m.id == member.id) {
+                        delete this._membersMap[m.id];
+                        members.splice(i, 1);
+                        break;
+                    }
+                }
                 return this;
             },
             postMessage: function() {

@@ -36,25 +36,59 @@
                 } 
             };
 
-            this.OpenAddMember = function() {
+            function openAdminModalUi(options, resolve, reject) {
                 if (!c.room.isAdmin) return;
-                
-                var modalInstance = $uibModal.open({
+
+                var modalInstance = $uibModal.open(options);
+
+                modalInstance.result.then(
+                    resolve || angular.noop,
+                    reject = reject || angular.noop
+                );
+
+                return modalInstance;
+            } 
+
+            this.OpenAddMember = function() {
+                openAdminModalUi({
                     templateUrl: '/templates/room/modal-members-add.html',
-                    controller: 'RoomMemberController',
+                    controller: 'RoomMemberAddController',
                     controllerAs: 'ctrl'
                 });
+            };
 
-                modalInstance.result.then(function() {
-                    console.log(arguments);
-                }, function() {
-                    console.log(arguments);
+            this.OpenRemoveMember = function() {
+                openAdminModalUi({
+                    templateUrl: '/templates/room/modal-members-remove.html',
+                    controller: 'RoomMemberRemoveController',
+                    controllerAs: 'ctrl'
                 });
             };
 
             this.InitRooms();
         }])
-    .controller('RoomMemberController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
+    .controller('RoomMemberRemoveController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
+        function(RoomContext, service, $uibModalInstance) {
+            var c = RoomContext;
+
+            this.icon = 'trash';
+            this.members = (c.room.members || [])
+                .filter(function(member) {
+                    return !member.isAdmin;
+                });
+
+            this.close = function() {
+                $uibModalInstance.dismiss();
+            };
+
+            this.doMember = function(idx) {
+                var room = c.room;
+                var member = this.members[idx];
+                this.members.splice(idx, 1);
+                return service.removeMember(room, member);
+            };
+        }])
+    .controller('RoomMemberAddController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
         function(RoomContext, service, $uibModalInstance) {
             var c = RoomContext;
 
@@ -81,9 +115,8 @@
 
             this.doMember = function(idx) {
                 var room = c.room;
-                var members = this.members;
-                var member = members[idx];
-                members.splice(idx, 1);
+                var member = this.members[idx];
+                this.members.splice(idx, 1);
                 return service.addMember(room, member);
             };
 

@@ -23,7 +23,8 @@ namespace ChatApp.Features.Room
                              RoomId = m.ChatRoomId,
                              Email = u.Email,
                              FirstName = u.FirstName,
-                             LastName = u.LastName
+                             LastName = u.LastName,
+                             IsAdmin = m.IsAdmin
                          });
             return query;
         }
@@ -61,7 +62,8 @@ namespace ChatApp.Features.Room
                             RoomId = roomId,
                             Email = u.Email,
                             FirstName = u.FirstName,
-                            LastName = u.LastName
+                            LastName = u.LastName,
+                            IsAdmin = false
                         };
 
             return query;

@@ -11,7 +11,7 @@ using ChatApp.Data;
 
 namespace ChatApp.Features.Room {
 
-    [Route("api/rooms/admin")]
+    [Route("api/rooms/admin/{id}")]
     [Produces("application/json")]
     [Authorize]
     public class RoomApiAdminController : RoomApiControllerBase
@@ -21,7 +21,7 @@ namespace ChatApp.Features.Room {
         }
 
         [HttpGet]
-        [Route("{id}/members/search/{search}")]
+        [Route("members/search/{search}")]
         public async Task<IEnumerable<RoomMemberViewModel>> SearchMembers(
             [FromRoute]Guid id, [FromRoute]string search)
         {
@@ -34,7 +34,34 @@ namespace ChatApp.Features.Room {
         }
 
         [HttpPost]
-        [Route("{id}/members/add")]
+        [Route("members/remove")]
+        public async Task<object> RemoveMember(
+            [FromRoute]Guid id,
+            [FromBody, Bind("Id")]RoomMemberViewModel member)
+        {
+            if (ModelState.IsValid)
+            {
+                var existsQuery =
+                    from m in _db.ChatRoomMembers
+                    where m.ChatRoomId == id && m.UserId == member.Id
+                    select m;
+                
+                var exists = await existsQuery.SingleOrDefaultAsync();
+
+                if (exists != null && !exists.IsAdmin)
+                {
+                    _db.ChatRoomMembers.Remove(exists);
+                    await _db.SaveChangesAsync();
+
+                    return member;
+                }
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        [Route("members/add")]
         public async Task<object> AddMember(
             [FromRoute]Guid id,
             [FromBody, Bind("Id")]RoomMemberViewModel member)
