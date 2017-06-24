@@ -15,6 +15,8 @@ namespace ChatApp.Features.Room.Models
 
         public string Description { get; set; }
 
+        public bool? IsAdmin { get;set; }
+
         public IEnumerable<RoomMemberViewModel> Members { get; set; }
 
         public IEnumerable<RoomMessageViewModel> Messages { get; set; }

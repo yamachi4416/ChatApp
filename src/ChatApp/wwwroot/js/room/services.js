@@ -2,6 +2,7 @@
     angular.module('ChatApp')
         .value('RoomClass', chatapp.objects.Room)
         .service('RoomService', ['$http', '$q', chatapp.services.RoomService])
+        .service('RoomAdminService', ['$http', '$q', chatapp.services.RoomAdminService])
         .service('RoomContext', ['$rootScope', 'RoomService', 'RoomClass',
             function ($scope, RoomService, RoomClass) {
                 return $scope.c = new chatapp.services.RoomContext(RoomService, RoomClass);
@@ -9,6 +10,44 @@
 }
 (function chatapp_services(chatapp) {
     var services = chatapp.services = {};
+
+    function httpServiceExtend(baseUrl, klass, prototype) {
+        var $http, $q;
+
+        function Klass(http, q) {
+            $http = http;
+            $q = q;
+            klass && klass.apply(this, arguments);
+        }
+
+        angular.extend(Klass.prototype, {
+            _reject: function() {
+                var d = $q.defer();
+                d.reject();
+                return d.promise.then(angular.noop, angular.noop);
+            },
+            _all: function() {
+                return $q.all(arguments);
+            },
+            _httpGet: function(path, config) {
+                var config = angular.extend({}, config);
+                return $http.get(baseUrl + path, config)
+                    .then(function (res) {
+                        return res.data;
+                    });
+            },
+            _httpPost: function(path, data, config) {
+                var config = angular.extend({}, config);
+                console.log(data);
+                return $http.post(baseUrl + path, data, config)
+                    .then(function(res) {
+                        return res.data;
+                    });
+            }
+        }, prototype);
+
+        return Klass;
+    }
 
     services.RoomContext = (function() {
 
@@ -29,7 +68,7 @@
                     }.bind(this));    
             },
             fetchRoomContents: function() {
-                if (!this.room) return this._service.reject();
+                if (!this.room) return this._service._reject();
                 return this._service.getRoomContents(this.room);
             },
             addRoom: function(room) {
@@ -65,31 +104,46 @@
         return RoomContext;
     })();
 
+    services.RoomAdminService = (function() {
+        return httpServiceExtend('/api/rooms/admin/', function() {
+
+        }, {
+            searchAddMembers: function(room, search) {
+                if (!room.isAdmin) return this._reject();
+
+                var url = room.id + '/members/search/' + search;
+                return this._httpGet(url);
+            },
+            addMember: function(room, member) {
+                if (!room.isAdmin) return this._reject();
+                
+                var url = room.id + '/members/add';
+                return this._httpPost(url, member)
+                    .then(function(member) {
+                        room.addMember(member);
+                    });
+            }
+        })
+    }());
+
     services.RoomService = (function() {
-        var baseUrl = '/api/rooms/';
-        var $http, $q;
-
-        function RoomService(http, q) {
-            $http = $http || http;
-            $q = $q || q;
-        }
-
-        angular.extend(RoomService.prototype, {
+        return httpServiceExtend('/api/rooms/', function() {
+        }, {
             getJoinRooms: function () {
-                return httpGet('joins');
+                return this._httpGet('joins');
             },
             getMembers: function (room) {
-                return httpGet('members/' + room.id);
+                return this._httpGet('members/' + room.id);
             },
             getNewMessages: function (room) {
                 var url = 'messages/' + room.id + '/new';
                 if (room.messages && room.messages.length) {
                     url += '/' + room.messages[room.messages.length - 1].id;
                 }
-                return httpGet(url);
+                return this._httpGet(url);
             },
             getRoomContents: function (room) {
-                return $q.all([this.getMembers(room), this.getNewMessages(room)])
+                return this._all(this.getMembers(room), this.getNewMessages(room))
                     .then(function (d) {
                         return room.setMembers(d[0]).addNewMessages(d[1]);
                     });
@@ -98,44 +152,20 @@
                 if (room.messages && room.messages[0]) {
                     var url = 'messages/' + room.id + '/old/';
                     url += room.messages[0].id;
-                    return httpGet(url)
+                    return this._httpGet(url)
                         .then(function (messages) {
                             if (!messages || !messages.length) {
-                                return this.reject();
+                                return this._reject();
                             }
                             return messages;
                         }.bind(this));
                 }
-                return this.reject();
+                return this._reject();
             },
             postMessage: function(room, message) {
-                return httpPost('messages/' + room.id + '/create', message);
-            },
-            reject: function() {
-                var d = $q.defer();
-                d.reject();
-                return d.promise.then(angular.noop, angular.noop);
+                return this._httpPost('messages/' + room.id + '/create', message);
             }
         });
-
-        return RoomService;
-
-        function httpGet(path, config) {
-            var config = angular.extend({}, config);
-            return $http.get(baseUrl + path, config)
-                .then(function (res) {
-                    return res.data;
-                });
-        };
-
-        function httpPost(path, data, config) {
-            var config = angular.extend({}, config);
-            console.log(data);
-            return $http.post(baseUrl + path, data, config)
-                .then(function(res) {
-                    return res.data;
-                });
-        }
     })();
 
     return chatapp;
@@ -157,7 +187,7 @@
         angular.forEach({
             fetchOldMessages: function() {
                 if (!this.hasOldMessages)
-                    return this._service.reject();
+                    return this._service._reject();
                 this.hasOldMessages = false;
                 return this._service.getOldMessages(this)
                         .then(function (messages) {
@@ -169,7 +199,7 @@
             },
             fetchNewMessages: function() {
                 if (this.nowfetchNewMessage)
-                    return this._service.reject();
+                    return this._service._reject();
                 this.nowfetchNewMessage = true;
                 return this._service.getNewMessages(this)
                     .then(function(messages) {
@@ -206,7 +236,17 @@
                 return this.addMessages(messages, true);
             },
             setMembers: function(members) {
-                this.members = members;
+                this._membersMap = {};
+                this.members = [];
+                angular.forEach(members, function(member) {
+                    this.addMember(member);
+                }.bind(this));
+                return this;
+            },
+            addMember: function(member) {
+                if (this._membersMap[member.id]) return;
+                this.members.push(member);
+                this._membersMap[member.id] = member;
                 return this;
             },
             postMessage: function() {

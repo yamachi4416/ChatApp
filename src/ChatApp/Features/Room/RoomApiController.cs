@@ -18,49 +18,12 @@ namespace ChatApp.Features.Room
     [Produces("application/json")]
     [Route("api/rooms")]
     [Authorize]
-    public class RoomApiController : AppControllerBase
+    public class RoomApiController : RoomApiControllerBase
     {
         private readonly int _takeCount = 30;
 
         public RoomApiController(IControllerService service) : base(service)
         {
-        }
-
-        protected IQueryable<RoomMemberViewModel> QueryChatMembers()
-        {
-            var query = (from m in _db.ChatRoomMembers
-                         join u in _db.Users on m.UserId equals u.Id
-                         orderby m.IsAdmin descending, m.Id
-                         select new RoomMemberViewModel
-                         {
-                             Id = u.Id,
-                             RoomId = m.ChatRoomId,
-                             Email = u.Email,
-                             FirstName = u.FirstName,
-                             LastName = u.LastName
-                         });
-            return query;
-        }
-
-        private IQueryable<RoomMessageViewModel> QueryRoomMessages(Guid id)
-        {
-            var query = (from m in _db.ChatMessages
-                         where m.ChatRoomId == id
-                         join ux in _db.Users on m.CreatedById equals ux.Id into users
-                         from u in users.DefaultIfEmpty()
-                         orderby m.Id descending
-                         select new RoomMessageViewModel
-                         {
-                             Id = m.Id,
-                             Message = m.Message,
-                             UserId = u == null ? "" : u.Id,
-                             UserFirstName = u == null ? "" : u.FirstName,
-                             UserLastName = u == null ? "" : u.LastName,
-                             CreatedDate = m.CreatedDate,
-                             UpdatedDate = m.UpdatedDate
-                         });
-
-            return query;
         }
 
         [Route("joins")]
@@ -76,6 +39,7 @@ namespace ChatApp.Features.Room
                              Id = r.Id,
                              Name = r.Name,
                              Description = r.Description,
+                             IsAdmin = m.IsAdmin
                          });
 
             return await query.ToListAsync();

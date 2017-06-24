@@ -1,0 +1,25 @@
+<div class="list-group">
+    <div class="list-group-item" ng-repeat="m in ctrl.members">
+        <div class="media">
+            <div class="media-left media-middle">
+                <span>
+                    <img class="img-circle" width="30" height="30"
+                        ng-src="/UserAvatar/Get/{{ m.id }}" />
+                </span>
+            </div>
+            <div class="media-body">
+                <div class="media-heading">{{m.email}}</div>
+                <div>
+                    <span ng-bind="m.firstName"></span>
+                    <span ng-bind="m.lastName"></span>
+                </div>
+            </div>
+            <div class="media-right media-middle">
+                <a class="btn btn-default" href="javascript:void(0)" ng-click="ctrl.doMember($index)"
+                    tabindex="0">
+                    <i class="glyphicon glyphicon-{{ctrl.icon}}"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

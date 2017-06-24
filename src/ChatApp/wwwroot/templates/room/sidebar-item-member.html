@@ -1,5 +1,20 @@
 <div class="chat-sidebar-item chat-sidebar-item-members">
-    <h4 class="title">メンバ</h4>
+    <h4 class="title">
+        <span>メンバ</span>
+        <span class="pull-right small" uib-dropdown dropdown-append-to-body
+            ng-show="c.room.isAdmin">
+            <i class="glyphicon glyphicon-align-justify"
+                uib-dropdown-toggle></i>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                <li role="menuitem">
+                    <a ng-click="RoomCtrl.OpenAddMember()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span>メンバー追加</span>
+                    </a>
+                </li>
+            </ul>
+        </span>    
+    </h4>
     <div class="media-list">
         <div class="media" ng-repeat="m in c.room.members">
             <div class="media-left">

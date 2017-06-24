@@ -130,7 +130,7 @@
         return {
             scope: {
                 chatPrefix: '@',
-                chatRoom: '=',
+                chatRoom: '<',
                 chatRoomChange: '&',
                 oldMessages: '&',
                 chatContent: '@'
@@ -144,7 +144,7 @@
         return {
             scope: {
                 chatPrefix: '@',
-                chatSidebar: '='
+                chatSidebar: '<'
             },
             restrict: 'A',
             transclude: true,
@@ -183,7 +183,11 @@
                 elem.on('load', function() {
                     elem.unwrap();
                 }).on('error', function() {
-                    elem.unwrap().remove();
+                    var a = angular.element('<a>').attr({
+                        target: '_blank',
+                        href: elem.attr('src')
+                    }).text(elem.attr('src'));
+                    elem.unwrap().replaceWith(a);
                 }).wrap(angular.element('<div>').addClass('chat-img-loading'));
             }
         };
