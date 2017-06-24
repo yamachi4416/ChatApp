@@ -1,5 +1,10 @@
-﻿<ul class="nav navbar-nav">
-    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+﻿@inject SignInManager<ApplicationUser> SignInManager
+
+<ul class="nav navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li><a asp-area="" asp-controller="Room" asp-action="Index">ROOM</a></li>
+    }
+    <li><a asp-area="" asp-controller="Home" asp-action="About">ABOUT</a></li>
+    <li><a asp-area="" asp-controller="Home" asp-action="Contact">CONTACT</a></li>
 </ul>
