@@ -239,6 +239,7 @@ node_modules/
 
 # Typescript v1 declaration files
 typings/
+typings.json
 
 # Visual Studio 6 build log
 *.plg
@@ -289,10 +290,6 @@ __pycache__/
 *.xsd.cs
 Contact GitHub 
 
-# VS Code
+# Visual Studio Code
 .vscode
-typings.json
-typings/
 jsconfig.json
-
-!.gitignore
