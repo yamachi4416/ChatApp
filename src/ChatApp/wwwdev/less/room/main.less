@@ -8,7 +8,7 @@
     box-sizing: border-box;
 
     &::-webkit-scrollbar {
-        width: 10px;
+        width: 7px;
         background: transparent;
     }
 
@@ -83,7 +83,7 @@ li {
 
             .media-list {
                 .toggle-tooltip {
-                    visibility: hidden;
+                    opacity: 0.4;
                 }
 
                 .media {
@@ -95,14 +95,14 @@ li {
         .chat-sidebar-item-rooms {
             .media {
                 margin: 0;
-                opacity: 0.7;
                 cursor: pointer;
 
                 &.active {
-                    opacity: 1;
+                    background: rgba(200, 200, 200, 0.2);
                     cursor: default;
 
                     .toggle-tooltip {
+                        opacity: 1;
                         visibility: visible;
                     }    
                 }
@@ -159,5 +159,16 @@ li {
         height: 50px;
         width: 50px;
         border-radius: 50%;
+    }
+}
+
+.room-detail {
+    div {
+        padding: 10px; 
+    }
+
+    .description {
+        min-height: 5em;
+        white-space: pre-wrap;
     }
 }

@@ -115,7 +115,8 @@ namespace ChatApp.Features.Room {
 
                 await _db.SaveChangesAsync();
 
-                return room;
+                return MergeModel(to: new RoomViewModel(),
+                    from: exists, keys: "Id,Name,Description,UpdatedDate");
             }
 
             return ApiValidateErrorResult();

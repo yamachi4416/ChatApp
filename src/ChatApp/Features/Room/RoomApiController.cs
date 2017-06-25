@@ -39,7 +39,9 @@ namespace ChatApp.Features.Room
                              Id = r.Id,
                              Name = r.Name,
                              Description = r.Description,
-                             IsAdmin = m.IsAdmin
+                             IsAdmin = m.IsAdmin,
+                             CreatedDate = r.CreatedDate,
+                             UpdatedDate = r.UpdatedDate
                          });
 
             return await query.ToListAsync();

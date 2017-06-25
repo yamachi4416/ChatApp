@@ -20,6 +20,10 @@ namespace ChatApp.Features.Room.Models
 
         public bool? IsAdmin { get;set; }
 
+        public DateTimeOffset? CreatedDate { get; set; }
+
+        public DateTimeOffset? UpdatedDate { get; set; }
+
         public IEnumerable<RoomMemberViewModel> Members { get; set; }
 
         public IEnumerable<RoomMessageViewModel> Messages { get; set; }

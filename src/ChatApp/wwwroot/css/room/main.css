@@ -10,7 +10,7 @@
   box-sizing: border-box;
 }
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 7px;
   background: transparent;
 }
 *::-webkit-scrollbar-thumb,
@@ -73,21 +73,21 @@ li[role="menuitem"] {
   opacity: 1;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media-list .toggle-tooltip {
-  visibility: hidden;
+  opacity: 0.4;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media-list .media {
   padding: 3px;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media {
   margin: 0;
-  opacity: 0.7;
   cursor: pointer;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active {
-  opacity: 1;
+  background: rgba(200, 200, 200, 0.2);
   cursor: default;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip {
+  opacity: 1;
   visibility: visible;
 }
 #chat-messages .message-list .message-item {
@@ -128,4 +128,11 @@ li[role="menuitem"] {
   height: 50px;
   width: 50px;
   border-radius: 50%;
+}
+.room-detail div {
+  padding: 10px;
+}
+.room-detail .description {
+  min-height: 5em;
+  white-space: pre-wrap;
 }

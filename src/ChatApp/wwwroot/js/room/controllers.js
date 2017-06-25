@@ -82,28 +82,50 @@
                 }.bind(this));
             };
 
-            this.OpenEditRoom = function() {
+            this.OpenEditRoom = function(room) {
                 openAdminModalUi({
                     templateUrl: '/templates/room/modal-room-edit.html',
                     controller: 'RoomEditController',
-                    controllerAs: 'ctrl'
+                    controllerAs: 'ctrl',
+                    resolve: {
+                        room: room
+                    }
                 }, function(room) {
+                    console.log(room);
                     if (room && room.id) {
                         angular.extend(c.getRoom(room.id), {
                             name: room.name,
-                            description: room.description
+                            description: room.description,
+                            updatedDate: room.updatedDate
                         });
                     }
                 }.bind(this));
-            }
+            };
+
+            this.OpenDetailRoom = function(room) {
+                openModalUi({
+                    templateUrl: '/templates/room/modal-room-detail.html',
+                    controller: 'RoomDetailController',
+                    controllerAs: 'ctrl',
+                    resolve: {
+                        room: room
+                    }
+                });
+            };
 
             this.InitRooms();
         }])
-    .controller('RoomEditController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
-        function(RoomContext, service, $uibModalInstance) {
-            var c = RoomContext;
+    .controller('RoomDetailController', ['$uibModalInstance', 'room',
+        function($uibModalInstance, room) {
+            this.room = room;
 
-            var _room = c.room;
+            this.close = function() {
+                $uibModalInstance.dismiss();
+            };
+        }])
+    .controller('RoomEditController', ['RoomAdminService', '$uibModalInstance', 'room',
+        function(service, $uibModalInstance, room) {
+            var _room = room;
             this.room = {
                 id: _room.id,
                 name: _room.name,
