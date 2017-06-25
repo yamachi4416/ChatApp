@@ -26,5 +26,6 @@ grunt watch
 ### リファレンス
 - [bootstrap](http://bootstrap3.cyberlab.info/)
 - [bootstrap icons](https://www.w3schools.com/icons/bootstrap_icons_glyphicons.asp)
+- [angular](http://js.studio-kingdom.com/angularjs/)
 - [angular-bootstrap](https://angular-ui.github.io/bootstrap/)
 - [Less](http://www.tohoho-web.com/ex/less.html)
