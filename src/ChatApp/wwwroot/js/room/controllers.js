@@ -36,9 +36,7 @@
                 } 
             };
 
-            function openAdminModalUi(options, resolve, reject) {
-                if (!c.room.isAdmin) return;
-
+            function openModalUi(options, resolve, reject) {
                 var modalInstance = $uibModal.open(
                     angular.extend({
                     }, options));
@@ -49,7 +47,13 @@
                 );
 
                 return modalInstance;
-            } 
+            }
+
+            function openAdminModalUi() {
+                if (!c.room.isAdmin) return;
+
+                return openModalUi.apply(null, arguments);
+            }
 
             this.OpenAddMember = function() {
                 openAdminModalUi({
@@ -67,7 +71,80 @@
                 });
             };
 
+            this.OpenCreateRoom = function() {
+                openModalUi({
+                    templateUrl: '/templates/room/modal-room-create.html',
+                    controller: 'RoomCreateController',
+                    controllerAs: 'ctrl'
+                }, function(room) {
+                    c.addRoom(room);
+                    this.SelectRoom(room);
+                }.bind(this));
+            };
+
+            this.OpenEditRoom = function() {
+                openAdminModalUi({
+                    templateUrl: '/templates/room/modal-room-edit.html',
+                    controller: 'RoomEditController',
+                    controllerAs: 'ctrl'
+                }, function(room) {
+                    if (room && room.id) {
+                        angular.extend(c.getRoom(room.id), {
+                            name: room.name,
+                            description: room.description
+                        });
+                    }
+                }.bind(this));
+            }
+
             this.InitRooms();
+        }])
+    .controller('RoomEditController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
+        function(RoomContext, service, $uibModalInstance) {
+            var c = RoomContext;
+
+            var _room = c.room;
+            this.room = {
+                id: _room.id,
+                name: _room.name,
+                description: _room.description
+            };
+
+            this.doRoomLabel = '変更';
+
+            this.close = function() {
+                $uibModalInstance.dismiss();
+            };
+
+            this.doRoom = function(room) {
+                return service.editRoom(_room, this.room)
+                    .then(function(room) {
+                        $uibModalInstance.close(room);
+                    }, function(res) {
+                        console.log(res.data);
+                    });
+            };
+        }
+    ])
+    .controller('RoomCreateController', ['RoomContext', 'RoomService', '$uibModalInstance',
+        function(RoomContext, service, $uibModalInstance) {
+            var c = RoomContext;
+
+            this.room = {};
+            this.doRoomLabel = '作成';
+
+            this.close = function() {
+                $uibModalInstance.dismiss();
+            };
+
+            this.doRoom = function() {
+                return service.createRoom(this.room)
+                    .then(function(room) {
+                        $uibModalInstance.close(room);
+                    }, function(res) {
+                        console.log(res.data);
+                    });
+            };
         }])
     .controller('RoomMemberRemoveController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
         function(RoomContext, service, $uibModalInstance) {

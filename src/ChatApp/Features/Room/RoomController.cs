@@ -73,7 +73,7 @@ namespace ChatApp.Features.Room
                     .Where(r => r.Id == room.Id)
                     .SingleOrDefaultAsync();
 
-                UpdateModel(from: room, to: chatRoom);
+                UpdateModel(from: room, to: chatRoom, keys: "Id,Name,Description");
 
                 await _db.SaveChangesAsync();
 

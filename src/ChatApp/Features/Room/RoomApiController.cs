@@ -45,6 +45,35 @@ namespace ChatApp.Features.Room
             return await query.ToListAsync();
         }
 
+        [HttpPost]
+        [Route("rooms/create")]
+        public async Task<object> CreateRoom(
+            [FromBody, Bind(include: "Name,Description")]RoomViewModel room)
+        {
+            if (ModelState.IsValid)
+            {
+                var newRoom = CreateModel(new ChatRoom(), room, "Name,Description");
+                CreateModel(new ChatRoomMember
+                {
+                    UserId = GetCurrentUserId(),
+                    ChatRoom = newRoom,
+                    IsAdmin = true
+                });
+
+                await _db.SaveChangesAsync();
+
+                return new RoomViewModel
+                {
+                    Id = newRoom.Id,
+                    Name = newRoom.Name,
+                    Description = newRoom.Description,
+                    IsAdmin = true
+                };
+            }
+
+            return ApiValidateErrorResult();
+        }
+
         [Route("members/{id}")]
         public async Task<IEnumerable<RoomMemberViewModel>> GetRoomMembers(Guid id)
         {
@@ -97,10 +126,9 @@ namespace ChatApp.Features.Room
                 }.SetChatMessage(message);
 
                 return viewMessage;
-            } else {
-                Response.StatusCode = 400;
-                return ModelState;
             }
+
+            return ApiValidateErrorResult();
         }
     }
 }

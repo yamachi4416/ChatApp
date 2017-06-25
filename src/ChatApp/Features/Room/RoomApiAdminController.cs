@@ -14,6 +14,7 @@ namespace ChatApp.Features.Room {
     [Route("api/rooms/admin/{id}")]
     [Produces("application/json")]
     [Authorize]
+    [ValidateAntiForgeryToken]
     public class RoomApiAdminController : RoomApiControllerBase
     {
         public RoomApiAdminController(IControllerService service) : base(service)
@@ -88,6 +89,36 @@ namespace ChatApp.Features.Room {
             }
 
             return null;
+        }
+
+        [HttpPost]
+        [Route("rooms/edit")]
+        public async Task<object> EditRoom(
+            [FromRoute]Guid id,
+            [FromBody, Bind("Id,Name,Description")]RoomViewModel room)
+        {
+            if (ModelState.IsValid)
+            {
+                var existsQuery =
+                    from r in _db.ChatRooms
+                    where r.Id == id
+                    select r;
+                
+                var exists = await existsQuery.SingleOrDefaultAsync();
+
+                if (exists == null) 
+                {
+                    return null;
+                }
+
+                UpdateModel(to: exists, from: room, keys: "Name,Description");
+
+                await _db.SaveChangesAsync();
+
+                return room;
+            }
+
+            return ApiValidateErrorResult();
         }
     }
 }

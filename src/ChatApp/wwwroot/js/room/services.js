@@ -21,8 +21,14 @@
         }
 
         angular.extend(Klass.prototype, {
+            _defer: function() {
+                return $q.defer();
+            },
+            _promise: function() {
+                return this._defer().promise;
+            },
             _reject: function() {
-                var d = $q.defer();
+                var d = this._defer();
                 d.reject();
                 return d.promise.then(angular.noop, angular.noop);
             },
@@ -38,7 +44,6 @@
             },
             _httpPost: function(path, data, config) {
                 var config = angular.extend({}, config);
-                console.log(data);
                 return $http.post(baseUrl + path, data, config)
                     .then(function(res) {
                         return res.data;
@@ -86,6 +91,16 @@
 
                 return this;
             },
+            removeRoom: function(roomid) {
+                var r = this.getRoom(roomid);
+                if (r) {
+                    var rooms = this.rooms;
+                    delete this.roomIdMap[roomid];
+                    room.splice(room.indexOf(r), 1);
+                }
+                
+                return this;
+            },
             getRoom: function(roomid) {
                 return this.roomIdMap[roomid];
             },
@@ -108,30 +123,32 @@
         return httpServiceExtend('/api/rooms/admin/', function() {
 
         }, {
-            searchAddMembers: function(room, search) {
-                if (!room.isAdmin) return this._reject();
-
-                var url = room.id + '/members/search/' + search;
-                return this._httpGet(url);
-            },
-            addMember: function(room, member) {
-                if (!room.isAdmin) return this._reject();
-
-                var url = room.id + '/members/add';
-                return this._httpPost(url, member)
-                    .then(function(member) {
-                        room.addMember(member);
-                    });
-            },
-            removeMember: function(room, member) {
-                if (!room.isAdmin || member.isAdmin)
+            _request: function() {
+                var args = [].slice.call(arguments),
+                    method = args.shift(),
+                    room = args.shift();
+                
+                if (!room || !room.isAdmin)
                     return this._reject();
                 
-                var url = room.id + '/members/remove';
-                return this._httpPost(url, member)
-                    .then(function(member) {
-                        room.removeMember(member);
-                    });
+                args.unshift(room.id + '/' + args.shift());
+                return this['_http' + method].apply(this, args);
+            },
+            searchAddMembers: function(room, search) {
+                return this._request('Get', room, 'members/search/' + search);
+            },
+            addMember: function(room, member) {
+                return this._request('Post', room, 'members/add', member)
+                    .then(room.addMember.bind(room));
+            },
+            removeMember: function(room, member) {
+                return (!member || member.isAdmin)
+                    ? this._reject()
+                    : this._request('Post', room, 'members/remove', member)
+                        .then(room.removeMember.bind(room));
+            },
+            editRoom: function(room, editroom) {
+                return this._request('Post', room, 'rooms/edit', editroom);
             }
         })
     }());
@@ -171,6 +188,9 @@
                         }.bind(this));
                 }
                 return this._reject();
+            },
+            createRoom: function(room) {
+                return this._httpPost('rooms/create', room);
             },
             postMessage: function(room, message) {
                 return this._httpPost('messages/' + room.id + '/create', message);

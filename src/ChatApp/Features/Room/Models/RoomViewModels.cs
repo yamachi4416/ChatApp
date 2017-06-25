@@ -11,8 +11,11 @@ namespace ChatApp.Features.Room.Models
     {
         public Guid? Id { get; set; }
 
+        [Required]
+        [MaxLength(30)]
         public string Name { get; set; }
 
+        [MaxLength(255)]
         public string Description { get; set; }
 
         public bool? IsAdmin { get;set; }

@@ -22,6 +22,11 @@ namespace ChatApp.Controllers
             return entity;
         }
 
+        protected T CreateModel<T, F>(T entity, F from, string keys) where T : class
+        {
+            return CreateModel(MergeModel(from: from, to: entity, keys: keys));
+        }
+
         protected T SetCreatedProperties<T>(T entity) where T : EntityBase
         {
             SetUpdatedProperties(entity);
@@ -40,17 +45,17 @@ namespace ChatApp.Controllers
             return entity;
         }
 
-        protected T UpdateModel<F, T>(F from, T to, IEnumerable<string> keys = null) where T : EntityBase
+        protected T UpdateModel<F, T>(F from, T to, string keys) where T : EntityBase
         {
             MergeModel(from: from, to: to, keys: keys);
             return SetUpdatedProperties(to);
         }
 
-        protected T MergeModel<F, T>(F from, T to, IEnumerable<string> keys = null)
+        protected T MergeModel<F, T>(F from, T to, string keys)
         {
             var typeT = typeof(T);
             var typeF = typeof(F);
-            foreach (var propertyName in (keys ?? ModelState.Keys))
+            foreach (var propertyName in keys.Split(new char[]{','}))
             {
                 typeT.GetProperty(propertyName)
                     .SetValue(to, typeF.GetProperty(propertyName).GetValue(from));
