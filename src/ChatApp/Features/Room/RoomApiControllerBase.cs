@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using ChatApp.Controllers;
+using ChatApp.Data;
 using ChatApp.Features.Room.Models;
 using ChatApp.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Features.Room
 {
@@ -67,6 +70,15 @@ namespace ChatApp.Features.Room
                         };
 
             return query;
+        }
+
+        protected async Task<ChatRoom> SelectChatRoomById(Guid id)
+        {
+            var query = from r in _db.ChatRooms
+                        where r.Id == id
+                        select r;
+
+            return await query.SingleOrDefaultAsync();
         }
     }
 }

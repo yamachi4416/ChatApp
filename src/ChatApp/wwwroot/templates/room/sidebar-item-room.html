@@ -43,6 +43,12 @@
                                 <span>ルームの編集</span>
                             </a>
                         </li>
+                        <li role="menuitem" ng-show="r.isAdmin">
+                            <a ng-click="RoomCtrl.OpenRemoveRoom(r)">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>ルームの削除</span>
+                            </a>
+                        </li>
                     </ul>
                 </span>
             </div>

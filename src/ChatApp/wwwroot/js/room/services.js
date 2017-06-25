@@ -96,7 +96,10 @@
                 if (r) {
                     var rooms = this.rooms;
                     delete this.roomIdMap[roomid];
-                    room.splice(room.indexOf(r), 1);
+                    rooms.splice(rooms.indexOf(r), 1);
+                    angular.forEach(r, function(v, k) {
+                        delete r[k];
+                    });
                 }
                 
                 return this;
@@ -149,6 +152,9 @@
             },
             editRoom: function(room, editroom) {
                 return this._request('Post', room, 'rooms/edit', editroom);
+            },
+            removeRoom: function(room) {
+                return this._request('Post', room, 'rooms/remove');
             }
         })
     }());

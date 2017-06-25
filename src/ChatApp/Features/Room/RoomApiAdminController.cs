@@ -99,12 +99,7 @@ namespace ChatApp.Features.Room {
         {
             if (ModelState.IsValid)
             {
-                var existsQuery =
-                    from r in _db.ChatRooms
-                    where r.Id == id
-                    select r;
-                
-                var exists = await existsQuery.SingleOrDefaultAsync();
+                var exists = await SelectChatRoomById(id);
 
                 if (exists == null) 
                 {
@@ -120,6 +115,24 @@ namespace ChatApp.Features.Room {
             }
 
             return ApiValidateErrorResult();
+        }
+
+        [HttpPost]
+        [Route("rooms/remove")]
+        public async Task<object> RemoveRoom(Guid id)
+        {
+            var exists = await SelectChatRoomById(id);
+
+            if (exists != null) 
+            {
+                _db.ChatRooms.Remove(exists);
+
+                await _db.SaveChangesAsync();
+
+                return new RoomViewModel{ Id = id };
+            }
+
+            return null;
         }
     }
 }

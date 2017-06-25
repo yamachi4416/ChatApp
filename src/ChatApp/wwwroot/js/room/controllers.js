@@ -97,7 +97,6 @@
                         room: room
                     }
                 }, function(room) {
-                    console.log(room);
                     if (room && room.id) {
                         angular.extend(c.getRoom(room.id), {
                             name: room.name,
@@ -117,6 +116,30 @@
                         room: room
                     }
                 });
+            };
+
+            this.OpenRemoveRoom = function(room) {
+                openAdminModalUi({
+                    templateUrl: '/templates/room/modal-confirm.html',
+                    controller: ['RoomAdminService', '$uibModalInstance', 
+                        function(service, $uibModalInstance) {
+                            this.title = '本当に"' + room.name + '"を削除しますか？';
+                            this.close = function() {
+                                $uibModalInstance.dismiss();
+                            };
+                            this.ok = function() {
+                                service.removeRoom(room)
+                                    .then(function(room) {
+                                        $uibModalInstance.close(room && room.id);
+                                    });
+                            };
+                        }],
+                    size: 'sm',
+                    controllerAs: 'ctrl'
+                }, function(roomid) {
+                    c.removeRoom(roomid);
+                    $location.hash('');
+                }.bind(this));
             };
 
             this.InitRooms();
