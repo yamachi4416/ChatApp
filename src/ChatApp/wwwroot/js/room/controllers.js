@@ -59,7 +59,10 @@
                 openAdminModalUi({
                     templateUrl: '/templates/room/modal-members-add.html',
                     controller: 'RoomMemberAddController',
-                    controllerAs: 'ctrl'
+                    controllerAs: 'ctrl',
+                    resolve: {
+                        room: c.room
+                    }
                 });
             };
 
@@ -67,7 +70,10 @@
                 openAdminModalUi({
                     templateUrl: '/templates/room/modal-members-remove.html',
                     controller: 'RoomMemberRemoveController',
-                    controllerAs: 'ctrl'
+                    controllerAs: 'ctrl',
+                    resolve: {
+                        room: c.room
+                    }
                 });
             };
 
@@ -168,12 +174,10 @@
                     });
             };
         }])
-    .controller('RoomMemberRemoveController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
-        function(RoomContext, service, $uibModalInstance) {
-            var c = RoomContext;
-
+    .controller('RoomMemberRemoveController', ['RoomAdminService', '$uibModalInstance', 'room',
+        function(service, $uibModalInstance, room) {
             this.icon = 'trash';
-            this.members = (c.room.members || [])
+            this.members = (room.members || [])
                 .filter(function(member) {
                     return !member.isAdmin;
                 });
@@ -183,16 +187,13 @@
             };
 
             this.doMember = function(idx) {
-                var room = c.room;
                 var member = this.members[idx];
                 this.members.splice(idx, 1);
                 return service.removeMember(room, member);
             };
         }])
-    .controller('RoomMemberAddController', ['RoomContext', 'RoomAdminService', '$uibModalInstance',
-        function(RoomContext, service, $uibModalInstance) {
-            var c = RoomContext;
-
+    .controller('RoomMemberAddController', ['RoomAdminService', '$uibModalInstance', 'room',
+        function(service, $uibModalInstance, room) {
             this.icon = 'plus';
             this.members = [];
             this.search = '';
@@ -202,20 +203,13 @@
             };
 
             this.searchAddMembers = function() {
-                var room = c.room;
-                var search = this.search;
-
-                if (room == null) return;
-                if (!search || search.length < 2) return;
-                
-                return service.searchAddMembers(room, search)
+                return service.searchAddMembers(room, this.search)
                     .then(function(members) {
                         this.members = members;
                     }.bind(this));
             };
 
             this.doMember = function(idx) {
-                var room = c.room;
                 var member = this.members[idx];
                 this.members.splice(idx, 1);
                 return service.addMember(room, member);

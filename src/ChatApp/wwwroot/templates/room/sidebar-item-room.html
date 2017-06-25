@@ -23,28 +23,28 @@
                     <img class="img-rounded" ng-src="/ChatRoomAvatar/Get/{{r.id}}" width="30" height="30" />
                 </span>
             </div>
-            <div class="media-body">
-                <div class="media-footer">
-                    <span class="pull-right" uib-dropdown dropdown-append-to-body>
-                        <a class="glyphicon glyphicon-option-horizontal toggle-tooltip"
-                            uib-dropdown-toggle href="javascript:void(0)"></a>
-                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-                            <li role="menuitem">
-                                <a ng-click="RoomCtrl.OpenDetailRoom(r)">
-                                    <span class="glyphicon glyphicon-list-alt"></span>
-                                    <span>ルームの詳細</span>
-                                </a>
-                            </li>
-                            <li role="menuitem" ng-show="r.isAdmin">
-                                <a ng-click="RoomCtrl.OpenEditRoom(r)">
-                                    <span class="glyphicon glyphicon-edit"></span>
-                                    <span>ルームの編集</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </span>
-                </div>
-                <p ng-bind="r.name" ng-click="RoomCtrl.SelectRoom(r)"></p>
+            <div class="media-body" ng-click="RoomCtrl.SelectRoom(r)">
+                <p ng-bind="r.name"></p>
+            </div>
+            <div class="media-right">
+                <span class="pull-right" uib-dropdown dropdown-append-to-body>
+                    <a class="glyphicon glyphicon-option-horizontal toggle-tooltip"
+                        uib-dropdown-toggle href="javascript:void(0)"></a>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                        <li role="menuitem">
+                            <a ng-click="RoomCtrl.OpenDetailRoom(r)">
+                                <span class="glyphicon glyphicon-list-alt"></span>
+                                <span>ルームの詳細</span>
+                            </a>
+                        </li>
+                        <li role="menuitem" ng-show="r.isAdmin">
+                            <a ng-click="RoomCtrl.OpenEditRoom(r)">
+                                <span class="glyphicon glyphicon-edit"></span>
+                                <span>ルームの編集</span>
+                            </a>
+                        </li>
+                    </ul>
+                </span>
             </div>
         </div>
     </div>

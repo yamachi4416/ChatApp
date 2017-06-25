@@ -52,6 +52,7 @@ li[role="menuitem"] {
   background: #fff;
   left: 0;
   border-right: 1px solid #eee;
+  font-size: 0.8em;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content {
   padding-bottom: 10px;
@@ -74,21 +75,39 @@ li[role="menuitem"] {
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media-list .toggle-tooltip {
   opacity: 0.4;
+  visibility: hidden;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media-list .toggle-tooltip:hover {
+  opacity: 0.8;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-content .media-list .media {
-  padding: 3px;
+  padding: 3px 2px;
+  margin-top: 2px;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media {
   margin: 0;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .media-left,
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .media-body {
   cursor: pointer;
 }
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media p {
+  min-height: 30px;
+  margin-bottom: 0;
+}
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active {
-  background: rgba(200, 200, 200, 0.2);
+  background: rgba(220, 220, 220, 0.2);
   cursor: default;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip {
   opacity: 1;
   visibility: visible;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip:hover {
+  opacity: 0.8;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media p {
+  word-break: break-all;
 }
 #chat-messages .message-list .message-item {
   margin: 0;

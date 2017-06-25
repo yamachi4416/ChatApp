@@ -7,9 +7,19 @@
     </h3>
 </div>
 <div class="modal-body">
-    <div class="form">
-        <input type="text" ng-model="ctrl.search" class="form-control" 
-            ng-change="ctrl.searchAddMembers()">
+    <form class="form" name="AddmemberSearchForm" ng-submit="ctrl.searchAddMembers()">
+        <div class="input-group">
+            <input type="text" class="form-control"
+                ng-model="ctrl.search"
+                required
+                minlength="3">
+            <span class="input-group-btn">
+                <button class="btn btn-default"
+                    ng-disabled="AddmemberSearchForm.$invalid">検索</button>
+            </span>
+        </div>
     </div>
-    <div ng-include="'/templates/room/modal-members-list.html'"></div>
+    <div style="padding:0 15px;">
+        <div ng-include="'/templates/room/modal-members-list.html'"></div>
+    </div>
 </div>
