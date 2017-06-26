@@ -1,0 +1,4 @@
+./Migrations/ merge=ours
+./Migrations/*.cs merge=ours
+./appsettings.json merge=ours
+./Startup.cs merge=ours
