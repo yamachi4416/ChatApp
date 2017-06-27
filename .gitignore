@@ -293,3 +293,7 @@ Contact GitHub
 # Visual Studio Code
 .vscode
 jsconfig.json
+
+# Migrations
+Migrations/
+Migrations/*.cs
