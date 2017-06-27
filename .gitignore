@@ -288,7 +288,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-Contact GitHub 
 
 # Visual Studio Code
 .vscode
@@ -296,4 +295,6 @@ jsconfig.json
 
 # Migrations
 Migrations/
-Migrations/*.cs
+
+appsettings.Development.json
+appsettings.Production.json

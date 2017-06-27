@@ -48,8 +48,17 @@ namespace ChatApp
                 options.HeaderName = "X-" + XSRF_TOKEN_NAME;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            if (Configuration.GetValue<string>("DataProvider") == "Postgres")
+            {
+                services.AddEntityFrameworkNpgsql()
+                    .AddDbContext<ApplicationDbContext>(options =>
+                        options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection")));
+            }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
