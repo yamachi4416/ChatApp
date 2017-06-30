@@ -1,4 +1,4 @@
-﻿using ChatApp.Data;
+using ChatApp.Data;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

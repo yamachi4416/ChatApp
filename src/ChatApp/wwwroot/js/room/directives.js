@@ -1,4 +1,4 @@
-﻿(function angular_directives(chatapp) {
+(function angular_directives(chatapp) {
     angular.module('ChatApp')
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])

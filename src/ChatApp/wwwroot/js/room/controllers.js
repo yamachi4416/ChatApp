@@ -1,4 +1,4 @@
-﻿angular.module('ChatApp')
+angular.module('ChatApp')
     .controller('RoomController', ['RoomContext', '$location', '$rootScope', '$uibModal',
         function (RoomContext, $location, $rootScope, $uibModal) {
             var c = RoomContext;
@@ -33,7 +33,7 @@
                             });
                         });
                     });
-                } 
+                }
             };
 
             function openModalUi(options, resolve, reject) {
@@ -121,7 +121,7 @@
             this.OpenRemoveRoom = function(room) {
                 openAdminModalUi({
                     templateUrl: '/templates/room/modal-confirm.html',
-                    controller: ['RoomAdminService', '$uibModalInstance', 
+                    controller: ['RoomAdminService', '$uibModalInstance',
                         function(service, $uibModalInstance) {
                             this.title = '本当に"' + room.name + '"を削除しますか？';
                             this.close = function() {

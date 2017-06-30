@@ -1,4 +1,4 @@
-﻿using ChatApp.Data;
+using ChatApp.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
