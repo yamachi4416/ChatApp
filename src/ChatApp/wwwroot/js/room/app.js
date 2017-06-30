@@ -1,4 +1,4 @@
-﻿angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
+angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
     .config(['$locationProvider', function($locationProvider) {
      }])
     .config(['markedProvider', function (markedProvider) {

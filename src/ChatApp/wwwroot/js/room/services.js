@@ -1,4 +1,4 @@
-﻿(function angular_services(chatapp) {
+(function angular_services(chatapp) {
     angular.module('ChatApp')
         .value('RoomClass', chatapp.objects.Room)
         .service('RoomService', ['$http', '$q', chatapp.services.RoomService])
