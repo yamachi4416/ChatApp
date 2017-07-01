@@ -64,13 +64,11 @@ namespace ChatApp.Features.Room
 
                 await _db.SaveChangesAsync();
 
-                return new RoomViewModel
-                {
-                    Id = newRoom.Id,
-                    Name = newRoom.Name,
-                    Description = newRoom.Description,
-                    IsAdmin = true
-                };
+                return MergeModel(to: new RoomViewModel
+                    {
+                        IsAdmin = true
+                    }, from: newRoom,
+                    keys:"Id,Name,Description,CreatedDate,UpdatedDate");
             }
 
             return ApiValidateErrorResult();
