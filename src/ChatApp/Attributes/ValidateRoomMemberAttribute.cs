@@ -57,11 +57,12 @@ namespace ChatApp.Attributes
             
             var userId = _userManager.GetUserId(filterContext.HttpContext.User);
 
-            var query = (from m in _context.ChatRoomMembers
-                            where m.UserId == userId
-                            join r in _context.ChatRooms on m.ChatRoomId equals r.Id
-                            where r.Id == roomId
-                            select m);
+            var query = (
+                from m in _context.ChatRoomMembers
+                where m.UserId == userId
+                join r in _context.ChatRooms on m.ChatRoomId equals r.Id
+                where r.Id == roomId
+                select m);
 
             if (IsAdmin)
             {
