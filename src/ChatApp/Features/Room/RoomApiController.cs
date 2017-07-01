@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http;
 using System.Net;
+using ChatApp.Attributes;
 
 namespace ChatApp.Features.Room
 {
@@ -74,6 +75,7 @@ namespace ChatApp.Features.Room
             return ApiValidateErrorResult();
         }
 
+        [ValidateRoomMember]
         [Route("members/{id}")]
         public async Task<IEnumerable<RoomMemberViewModel>> GetRoomMembers(Guid id)
         {
@@ -82,6 +84,7 @@ namespace ChatApp.Features.Room
             return await query.ToListAsync();
         }
 
+        [ValidateRoomMember]
         [Route("messages/{id}/new/{offset?}")]
         public async Task<IEnumerable<RoomMessageViewModel>> GetRoomNewMessages(Guid id, long? offset)
         {
@@ -98,6 +101,7 @@ namespace ChatApp.Features.Room
             return messages;
         }
 
+        [ValidateRoomMember]
         [Route("messages/{id}/old/{offset}")]
         public async Task<IEnumerable<RoomMessageViewModel>> GetRoomOldMessages(Guid id, long offset)
         {
@@ -107,6 +111,7 @@ namespace ChatApp.Features.Room
         }
 
         [HttpPost]
+        [ValidateRoomMember]
         [Route("messages/{id}/create")]
         public async Task<object> MessageCreate([FromRoute]Guid id, [FromBody]PostMessageModel model) {
             if (ModelState.IsValid) {
