@@ -8,13 +8,17 @@ namespace ChatApp.Data
 {
     public class EntityBase
     {
+        [Required]
         public DateTimeOffset? CreatedDate { get; set; }
 
+        [Required]
         public DateTimeOffset? UpdatedDate { get; set; }
 
+        [Required]
         [MaxLength(128)]
         public string CreatedById { get; set; }
 
+        [Required]
         [MaxLength(128)]
         public string UpdatedById { get; set; }
     }
