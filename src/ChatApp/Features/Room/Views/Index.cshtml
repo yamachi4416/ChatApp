@@ -12,7 +12,8 @@
         <div class="row" id="chat-messages">
             <div ng-include="'templates/room/chat-messages.html'"></div>
         </div>
-        <div class="row" id="chat-messages-form" style="display:none;" ng-show="c.room.message != null">
+        <div class="row" id="chat-messages-form"
+            ng-style="{visibility: c.room.message ? 'visible' : 'hidden'}">
             <div ng-include="'templates/room/chat-messages-form.html'"></div>
         </div>
     </div>

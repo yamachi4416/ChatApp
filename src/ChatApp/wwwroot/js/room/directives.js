@@ -22,6 +22,7 @@
             if (!defered) return;
             containar().css({ 'opacity': '0' });
             return defered.finally(function() {
+                justMessageSize();
                 $timeout(function () {
                     containar()
                         .scrollTop(saveScrollMap[roomid] || content().height())
@@ -77,9 +78,6 @@
                 angular.element(window).bind('resize', justMessageSize);
                 justMessageSize();
                 restoreScroll($location.hash(), _chatRoomChange());
-                $timeout(function() {
-                    postform().show();
-                });
             });
 
             $rootScope.$on('chatRoomMessageScrollBottom', function(e, opts) {
