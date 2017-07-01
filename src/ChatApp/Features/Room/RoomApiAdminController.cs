@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
+using ChatApp.Attributes;
 
 namespace ChatApp.Features.Room {
 
     [Route("api/rooms/admin/{id}")]
     [Produces("application/json")]
     [Authorize]
+    [ValidateRoomMember(IsAdmin = true)]
     [ValidateAntiForgeryToken]
     public class RoomApiAdminController : RoomApiControllerBase
     {
