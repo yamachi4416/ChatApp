@@ -10,10 +10,14 @@ pipelines:
   default:
     - step:
         script:
-          - cd ./src/ChatApp
+          - apt-get update
+          - apt-get install -y nodejs npm
+          - npm i bower --global
+          - export PATH=$PATH:./node_modules/.bin
           - export CHATAPP_DATAPROVIDER=Postgres
           - export CHATAPP_CONNECTSTRING='Host=localhost; User ID=ChatApp; Password=Password; Port=5432; Database=ChatApp; Pooling=true;'
           - dotnet restore
+          - cd ./src/ChatApp
           - dotnet ef migrations add Init
           - dotnet ef database update
           - dotnet build
