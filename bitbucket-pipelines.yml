@@ -18,6 +18,7 @@ pipelines:
           - export CHATAPP_CONNECTSTRING='Host=localhost; User ID=ChatApp; Password=Password; Port=5432; Database=ChatApp; Pooling=true;'
           - dotnet restore
           - cd ./src/ChatApp
+          - rm -f ./Migrations/*.cs
           - dotnet ef migrations add Init
           - dotnet ef database update
           - dotnet build
