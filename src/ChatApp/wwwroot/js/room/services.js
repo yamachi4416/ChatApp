@@ -107,7 +107,7 @@
             getRoom: function(roomid) {
                 return this.roomIdMap[roomid];
             },
-            getRoomOrFirst(roomid) {
+            getRoomOrFirst: function (roomid) {
                 return this.getRoom(roomid) || this.rooms[0];
             },
             selectRoom: function(roomid) {
