@@ -55,7 +55,7 @@
   </Target>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="dotnet ef database update --prefix-output 0" />
+    <Exec Command="dotnet ef database update" />
   </Target>
 
   <ItemGroup>
