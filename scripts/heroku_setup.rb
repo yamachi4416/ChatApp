@@ -51,6 +51,10 @@ def database_configure
   puts config_set 'CHATAPP_CONNECTSTRING', "#{connect_string};Pooling=true;"
 end
 
+def stack_configure
+  puts heroku 'stack:set', 'heroku-16'
+end
+
 def buildpack_configure
   info 'ビルドパックをクリア'
   puts heroku 'buildpacks:clear'
@@ -59,6 +63,7 @@ def buildpack_configure
   puts heroku 'buildpacks:add', '--index', '1', 'heroku/nodejs'
 end
 
+stack_configure
 postgres_add
 database_configure
 buildpack_configure
