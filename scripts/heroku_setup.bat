@@ -7,4 +7,4 @@ IF %ERRORLEVEL%==1 (
   EXIT 1
 )
 
-ruby %~dp0heroku_setup.rb %*
+ruby "%~dp0heroku_setup.rb" %*
