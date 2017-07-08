@@ -110,6 +110,7 @@ namespace ChatApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                loggerFactory.AddFile(Configuration.GetSection("Logging"));
             }
 
             app.UseStaticFiles();
