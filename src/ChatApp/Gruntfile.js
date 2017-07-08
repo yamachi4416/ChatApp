@@ -7,31 +7,13 @@ module.exports = function (grunt) {
     const paths = require('path');
     const fs = require('fs');
 
-    let devPath = (path) => 'wwwdev/' + path;
-    let destPath = (path) => 'wwwroot/' + path;
-    let doOnChdir = (path, f) => {
-        process.chdir(path);
-        f();
-        process.chdir(__dirname);
-    };
+    let devPath = (path) => './wwwdev/' + path;
+    let destPath = (path) => './wwwroot/' + path;
 
-    let loadNpmTasks = (name) => {
-        let root = paths.resolve('/');
-        let cdir = '.';
-        while (root != paths.resolve(cdir)) {
-            let p = paths.resolve(cdir, 'node_modules', name);
-            if (fs.existsSync(p)) {
-                doOnChdir(cdir, () => grunt.loadNpmTasks(name));
-                return;
-            }
-            cdir += '/../'
-        }
-    };
-
-    loadNpmTasks('grunt-contrib-uglify');
-    loadNpmTasks('grunt-contrib-less');
-    loadNpmTasks('grunt-contrib-watch');
-    loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     let uglify_wwwroot_files = () => {
         let setting = {};
