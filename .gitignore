@@ -301,3 +301,5 @@ Migrations/
 
 appsettings.Development.json
 appsettings.Production.json
+
+package-lock.json
