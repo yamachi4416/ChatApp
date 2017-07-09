@@ -4,15 +4,25 @@ using System.Threading.Tasks;
 using ChatApp.Controllers;
 using ChatApp.Data;
 using ChatApp.Features.Room.Models;
+using ChatApp.Features.Room.Services;
 using ChatApp.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Features.Room
 {
+    [Authorize]
+    [Produces("application/json")]
     public class RoomApiControllerBase : AppControllerBase
     {
-        public RoomApiControllerBase(IControllerService service) : base(service)
+        protected readonly IRoomWebSocketService _ws;
+
+        public RoomApiControllerBase(
+            IControllerService service,
+            IRoomWebSocketService ws) : base(service)
         {
+            _ws = ws;
         }
 
         protected IQueryable<RoomMemberViewModel> QueryChatMembers()
@@ -79,6 +89,62 @@ namespace ChatApp.Features.Room
                         select r;
 
             return await query.SingleOrDefaultAsync();
+        }
+
+        protected async Task SendWsMessageForUser<E>(
+            Guid roomId,
+            RoomWsMessageType messageType,
+            E messageBody,
+            string userId)
+        {
+            var message = new RoomWsModel<E>(
+                messageType: messageType,
+                messageBody: messageBody,
+                roomId: roomId
+            );
+            
+            await _ws.SendAsync(message, userId);
+        }
+
+        protected async Task<Task> SendWsMessageForRoomMembersDeferd<E>(
+            Guid roomId,
+            RoomWsMessageType messageType,
+            E messageBody,
+            string excludeUserId = null)
+        {
+            var query =
+                from m in _db.ChatRoomMembers
+                where m.ChatRoomId == roomId
+                select m.UserId;
+
+            if (!string.IsNullOrEmpty(excludeUserId))
+            {
+                query = query.Where(m => m != excludeUserId);
+            }
+
+            var message = new RoomWsModel<E>(
+                messageType: messageType,
+                messageBody: messageBody,
+                roomId: roomId
+            );
+
+            return _ws.SendAsync(message, await query.ToListAsync());
+        }
+
+        protected async Task SendWsMessageForRoomMembers<E>(
+            Guid roomId,
+            RoomWsMessageType messageType,
+            E messageBody,
+            string excludeUserId = null)
+        {
+            var task = SendWsMessageForRoomMembersDeferd(
+                roomId: roomId,
+                messageType: messageType,
+                messageBody: messageBody,
+                excludeUserId: excludeUserId
+            );
+
+            await task;
         }
     }
 }

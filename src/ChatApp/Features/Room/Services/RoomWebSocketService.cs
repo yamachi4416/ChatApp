@@ -9,12 +9,15 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Serialization;
 
 namespace ChatApp.Features.Room.Services
 {
     public interface IRoomWebSocketService : IDisposable
     {
-        Task SendAsync(object value, IEnumerable<string> userIds);
+        Task SendAsync<E>(E value, string userId);
+
+        Task SendAsync<E>(E value, IEnumerable<string> userIds);
 
         Task AddAsync(string userId, HttpContext context);
 
@@ -29,6 +32,12 @@ namespace ChatApp.Features.Room.Services
     {
         private readonly RoomWebSocketContainer
             _container = new RoomWebSocketContainer();
+
+        private readonly JsonSerializerSettings jsonSettings =
+            new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
 
         private IEnumerable<RoomWebSocket> Channels => _container.Channels.Values;
 
@@ -52,18 +61,23 @@ namespace ChatApp.Features.Room.Services
             _container.Remove(s => s.UserId == userId);
         }
 
-        public async Task SendAsync(object value, IEnumerable<string> userIds)
+        public async Task SendAsync<E>(E value, IEnumerable<string> userIds)
         {
             if (userIds.Count() == 0) return;
 
             var userIdSet = new HashSet<string>(userIds);
-            var jsonStr = JsonConvert.SerializeObject(value);
+            var jsonStr = JsonConvert.SerializeObject(value, jsonSettings);
             var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(jsonStr));
 
             await Task.WhenAll(
                 from s in Channels
                 where userIdSet.Contains(s.UserId)
                 select s.Send(buffer));
+        }
+
+        public async Task SendAsync<E>(E value, string userId)
+        {
+            await SendAsync(value, new HashSet<string>{ userId });
         }
 
         public ISet<string> RegistedSet(IEnumerable<string> userIds)
@@ -91,7 +105,7 @@ namespace ChatApp.Features.Room.Services
         {
             using (var sock = new RoomWebSocket(userId, socket, this))
             {
-                await sock.Wait((r, b) => {});
+                await sock.Wait((r, b) => { });
             }
         }
 
@@ -163,11 +177,11 @@ namespace ChatApp.Features.Room.Services
             while (IsOpen)
             {
                 var arrayBuffer = new ArraySegment<byte>(buffer);
-                
+
                 var ret = await _socket.ReceiveAsync(
                     buffer: arrayBuffer,
                     cancellationToken: CancellationToken.None);
-                
+
                 callback(ret, arrayBuffer);
             }
         }

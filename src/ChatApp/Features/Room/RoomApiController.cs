@@ -13,17 +13,18 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net.Http;
 using System.Net;
 using ChatApp.Attributes;
+using ChatApp.Features.Room.Services;
 
 namespace ChatApp.Features.Room
 {
-    [Produces("application/json")]
     [Route("api/rooms")]
-    [Authorize]
     public class RoomApiController : RoomApiControllerBase
     {
         private readonly int _takeCount = 30;
 
-        public RoomApiController(IControllerService service) : base(service)
+        public RoomApiController(
+            IControllerService service,
+            IRoomWebSocketService ws) : base(service, ws)
         {
         }
 
@@ -65,11 +66,10 @@ namespace ChatApp.Features.Room
 
                 await _db.SaveChangesAsync();
 
-                return MergeModel(to: new RoomViewModel
-                    {
-                        IsAdmin = true
-                    }, from: newRoom,
-                    keys:"Id,Name,Description,CreatedDate,UpdatedDate");
+                return MergeModel(
+                    to: new RoomViewModel { IsAdmin = true },
+                    from: newRoom,
+                    keys: "Id,Name,Description,CreatedDate,UpdatedDate");
             }
 
             return ApiValidateErrorResult();
@@ -90,7 +90,7 @@ namespace ChatApp.Features.Room
         {
             var query = QueryRoomMessages(id);
 
-            if(offset != null)
+            if (offset != null)
             {
                 query = query.Where(m => m.Id > offset);
             }
@@ -113,11 +113,14 @@ namespace ChatApp.Features.Room
         [HttpPost]
         [ValidateRoomMember]
         [Route("messages/{id}/create")]
-        public async Task<object> MessageCreate([FromRoute]Guid id, [FromBody]PostMessageModel model) {
-            if (ModelState.IsValid) {
+        public async Task<object> MessageCreate([FromRoute]Guid id, [FromBody]PostMessageModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 var user = await GetCurrentUserAsync();
 
-                var message = CreateModel(new ChatMessage() {
+                var message = CreateModel(new ChatMessage()
+                {
                     ChatRoomId = id,
                     UserId = user.Id,
                     Message = model.Message
@@ -125,10 +128,18 @@ namespace ChatApp.Features.Room
 
                 await _db.SaveChangesAsync();
 
-                var viewMessage = new RoomMessageViewModel() {
+                var viewMessage = new RoomMessageViewModel()
+                {
                     UserFirstName = user.FirstName,
                     UserLastName = user.LastName,
                 }.SetChatMessage(message);
+
+                await SendWsMessageForRoomMembers(
+                    roomId: id,
+                    messageType: RoomWsMessageType.CREATE_MESSAGE,
+                    messageBody: viewMessage,
+                    excludeUserId: null
+                );
 
                 return viewMessage;
             }
