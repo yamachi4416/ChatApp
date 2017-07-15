@@ -24,8 +24,9 @@
             return defered.finally(function() {
                 justMessageSize();
                 $timeout(function () {
+                    var top = saveScrollMap[roomid];
                     containar()
-                        .scrollTop(saveScrollMap[roomid] || content().height())
+                        .scrollTop(top == null ? content().height() : top)
                         .animate({ 'opacity': '1' });
                 });
             });
@@ -86,7 +87,7 @@
                 var oldHeight = content().height();
                 
                 if (opt.ifShowBottom && !isForceScrollBottom) {
-                    if (oldHeight - oldTop > containar().height()) return;
+                    if (oldHeight - oldTop -10 > containar().height()) return;
                 }
 
                 isForceScrollBottom = false;

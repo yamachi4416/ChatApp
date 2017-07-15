@@ -14,6 +14,7 @@ using ChatApp.Services;
 using ChatApp.Config;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
+using ChatApp.Features.Room.Services;
 
 namespace ChatApp
 {
@@ -94,6 +95,7 @@ namespace ChatApp
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddSingleton<IDateTimeService, DateTimeService>();
             services.AddTransient<IControllerService, ControllerBaseService>();
+            services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,7 +126,7 @@ namespace ChatApp
                 return next(context);
             });
 
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseWebSockets();
 
             app.UseMvc(routes =>
             {

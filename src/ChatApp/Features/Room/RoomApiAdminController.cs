@@ -9,17 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
 using ChatApp.Attributes;
+using ChatApp.Features.Room.Services;
 
-namespace ChatApp.Features.Room {
+namespace ChatApp.Features.Room
+{
 
     [Route("api/rooms/admin/{id}")]
-    [Produces("application/json")]
-    [Authorize]
     [ValidateRoomMember(IsAdmin = true)]
     [ValidateAntiForgeryToken]
     public class RoomApiAdminController : RoomApiControllerBase
     {
-        public RoomApiAdminController(IControllerService service) : base(service)
+        public RoomApiAdminController(
+            IControllerService service,
+            IRoomWebSocketService ws) : base(service, ws)
         {
         }
 
@@ -48,13 +50,31 @@ namespace ChatApp.Features.Room {
                     from m in _db.ChatRoomMembers
                     where m.ChatRoomId == id && m.UserId == member.Id
                     select m;
-                
+
                 var exists = await existsQuery.SingleOrDefaultAsync();
 
                 if (exists != null && !exists.IsAdmin)
                 {
                     _db.ChatRoomMembers.Remove(exists);
+
                     await _db.SaveChangesAsync();
+
+                    await SendWsMessageForUser(
+                        roomId: id,
+                        userId: exists.UserId,
+                        messageType: RoomWsMessageType.DEFECT_ROOM,
+                        messageBody: new { }
+                    );
+
+                    await SendWsMessageForRoomMembers(
+                        roomId: id,
+                        excludeUserId: GetCurrentUserId(),
+                        messageType: RoomWsMessageType.DELETE_MEMBER,
+                        messageBody: new RoomMemberViewModel
+                        {
+                            Id = exists.UserId
+                        }
+                    );
 
                     return member;
                 }
@@ -78,16 +98,54 @@ namespace ChatApp.Features.Room {
 
                 var addUser = await addUserQuery.SingleOrDefaultAsync();
 
-                if (addUser != null) {
-                    CreateModel(new ChatRoomMember {
+                if (addUser != null)
+                {
+                    var newMember = new ChatRoomMember
+                    {
                         ChatRoomId = id,
                         UserId = addUser.Id,
-                    });
+                    };
+
+                    CreateModel(newMember);
 
                     await _db.SaveChangesAsync();
 
+                    var room = await (
+                        from r in _db.ChatRooms
+                        where r.Id == id
+                        select r).SingleOrDefaultAsync();
+
+                    await SendWsMessageForUser(
+                        roomId: id,
+                        messageType: RoomWsMessageType.JOIN_ROOM,
+                        messageBody: new RoomViewModel
+                        {
+                            Id = id,
+                            Name = room.Name,
+                            Description = room.Description,
+                            CreatedDate = room.CreatedDate,
+                            UpdatedDate = room.UpdatedDate,
+                            IsAdmin = false
+                        },
+                        userId: newMember.UserId);
+
+                    await SendWsMessageForRoomMembers(
+                        roomId: id,
+                        messageType: RoomWsMessageType.CREATE_MEMBER,
+                        messageBody: new RoomMemberViewModel
+                        {
+                            Id = newMember.UserId,
+                            RoomId = id,
+                            Email = addUser.Email,
+                            FirstName = addUser.FirstName,
+                            LastName = addUser.LastName,
+                            IsAdmin = newMember.IsAdmin
+                        },
+                        excludeUserId: newMember.UserId
+                    );
+
                     return addUser;
-                }                
+                }
             }
 
             return null;
@@ -103,7 +161,7 @@ namespace ChatApp.Features.Room {
             {
                 var exists = await SelectChatRoomById(id);
 
-                if (exists == null) 
+                if (exists == null)
                 {
                     return null;
                 }
@@ -125,13 +183,21 @@ namespace ChatApp.Features.Room {
         {
             var exists = await SelectChatRoomById(id);
 
-            if (exists != null) 
+            if (exists != null)
             {
-                _db.ChatRooms.Remove(exists);
+                var sendTask = await SendWsMessageForRoomMembersDeferd(
+                    roomId: id,
+                    messageType: RoomWsMessageType.DELETE_ROOM,
+                    messageBody: new { }
+                );
 
+                _db.ChatRooms.Remove(exists);
+                
                 await _db.SaveChangesAsync();
 
-                return new RoomViewModel{ Id = id };
+                await sendTask;
+
+                return new RoomViewModel { Id = id };
             }
 
             return null;
