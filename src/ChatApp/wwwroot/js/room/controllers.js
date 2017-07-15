@@ -137,7 +137,7 @@ angular.module('ChatApp')
 
             this.OpenAddMember = function () {
                 openAdminModalUi({
-                    templateUrl: '/templates/room/modal-members-add.html',
+                    templateUrl: '../templates/room/modal-members-add.html',
                     controller: 'RoomMemberAddController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -148,7 +148,7 @@ angular.module('ChatApp')
 
             this.OpenRemoveMember = function () {
                 openAdminModalUi({
-                    templateUrl: '/templates/room/modal-members-remove.html',
+                    templateUrl: '../templates/room/modal-members-remove.html',
                     controller: 'RoomMemberRemoveController',
                     controllerAs: 'ctrl',
                     resolve: {
