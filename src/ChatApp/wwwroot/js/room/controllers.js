@@ -56,7 +56,7 @@ angular.module('ChatApp')
             $($window).on('focus', function() {
                 ws.connect();
                 if (c.room) {
-                    fetchNewMessages(c.room, false);
+                    c.room.fetchNewMessages();
                 }
             }.bind(this));
 
@@ -159,7 +159,7 @@ angular.module('ChatApp')
 
             this.OpenCreateRoom = function () {
                 openModalUi({
-                    templateUrl: '/templates/room/modal-room-create.html',
+                    templateUrl: '../templates/room/modal-room-create.html',
                     controller: 'RoomCreateController',
                     controllerAs: 'ctrl'
                 }, function (room) {
@@ -170,7 +170,7 @@ angular.module('ChatApp')
 
             this.OpenEditRoom = function (room) {
                 openAdminModalUi({
-                    templateUrl: '/templates/room/modal-room-edit.html',
+                    templateUrl: '../templates/room/modal-room-edit.html',
                     controller: 'RoomEditController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -189,7 +189,7 @@ angular.module('ChatApp')
 
             this.OpenDetailRoom = function (room) {
                 openModalUi({
-                    templateUrl: '/templates/room/modal-room-detail.html',
+                    templateUrl: '../templates/room/modal-room-detail.html',
                     controller: 'RoomDetailController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -200,7 +200,7 @@ angular.module('ChatApp')
 
             this.OpenRemoveRoom = function (room) {
                 openAdminModalUi({
-                    templateUrl: '/templates/room/modal-confirm.html',
+                    templateUrl: '../templates/room/modal-confirm.html',
                     controller: ['RoomAdminService', '$uibModalInstance',
                         function (service, $uibModalInstance) {
                             this.title = '本当に"' + room.name + '"を削除しますか？';
