@@ -257,7 +257,7 @@
                 var protocol = location.protocol.replace('http', 'ws');
                 var hostname = location.hostname;
                 var port = location.port ? ':' + location.port : '';
-                var pathname = location.pathname.replace(/\/([^\/]+)$/, '/ws/rooms/connect');
+                var pathname = location.pathname.replace(/\/([^\/]+)\/?$/, '/ws/rooms/connect');
                 var url = protocol + '//' + hostname + port + pathname;
 
                 var self = this;
