@@ -3,8 +3,7 @@
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', [chatapp.directives.chatMessageImage]);
-}
-(function chatapp_directives(chatapp) {
+}(function chatapp_directives(chatapp) {
     'use strict';
 
     var directives = chatapp.directives = {};
@@ -20,11 +19,11 @@
 
         function restoreScroll(roomid, defered) {
             if (!defered) return;
+            var top = saveScrollMap[roomid];
             containar().css({ 'opacity': '0' });
             return defered.finally(function() {
                 justMessageSize();
                 $timeout(function () {
-                    var top = saveScrollMap[roomid];
                     containar()
                         .scrollTop(top == null ? content().height() : top)
                         .animate({ 'opacity': '1' });
@@ -65,19 +64,17 @@
         }
 
         function registerHandles(scope) {
-            containar().bind('scroll', function(e) {
-                if (scope.chatRoom == null) return;
-                saveScrollMap[scope.chatRoom.id] = containar().scrollTop();
-                return keepScrollTop(getOldMessages(e));
-            });
-
             $rootScope.$on('$locationChangeSuccess', function(e) {
                 return restoreScroll($location.hash(), _chatRoomChange());
             });
 
             $rootScope.$on('chatRoomMessageReady', function() {
                 angular.element(window).bind('resize', justMessageSize);
-                justMessageSize();
+                containar().bind('scroll', function(e) {
+                    if (scope.chatRoom == null) return;
+                    saveScrollMap[scope.chatRoom.id] = containar().scrollTop();
+                    return keepScrollTop(getOldMessages(e));
+                });
                 restoreScroll($location.hash(), _chatRoomChange());
             });
 
