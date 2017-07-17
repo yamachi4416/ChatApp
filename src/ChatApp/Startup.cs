@@ -45,7 +45,8 @@ namespace ChatApp
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddAntiforgery(options => {
+            services.AddAntiforgery(options =>
+            {
                 options.HeaderName = "X-" + XSRF_TOKEN_NAME;
             });
 
@@ -119,10 +120,17 @@ namespace ChatApp
 
             app.UseIdentity();
 
-            app.Use(next => context => {
+            app.UseGoogleAuthentication(new GoogleOptions()
+            {
+                ClientId = Configuration["Authentication:Google:ClientId"],
+                ClientSecret = Configuration["Authentication:Google:ClientSecret"]
+            });
+
+            app.Use(next => context =>
+            {
                 var token = antiforgery.GetAndStoreTokens(context);
-                context.Response.Cookies.Append(XSRF_TOKEN_NAME, token.RequestToken, 
-                    new CookieOptions(){ HttpOnly = false });
+                context.Response.Cookies.Append(XSRF_TOKEN_NAME, token.RequestToken,
+                    new CookieOptions() { HttpOnly = false });
                 return next(context);
             });
 
