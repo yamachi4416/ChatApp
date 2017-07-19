@@ -1,16 +1,17 @@
 (function angular_directives(chatapp) {
     angular.module('ChatApp')
+        .value('chatMessageNoImage', '../images/noimage.jpg')
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
-        .directive('chatMessageImage', [chatapp.directives.chatMessageImage]);
+        .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage]);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
     var directives = chatapp.directives = {};
-    
+
     directives.ChatRoom = function ($timeout, $location, $rootScope, $q) {
-        var containar, 
-            content, 
+        var containar,
+            content,
             postform,
             saveScrollMap = {},
             isForceScrollBottom = true,
@@ -21,7 +22,7 @@
             if (!defered) return;
             var top = saveScrollMap[roomid];
             containar().css({ 'opacity': '0' });
-            return defered.finally(function() {
+            return defered.finally(function () {
                 justMessageSize();
                 $timeout(function () {
                     containar()
@@ -32,7 +33,7 @@
         }
 
         function keepScrollTop(defered) {
-            return defered && defered.then(function() {
+            return defered && defered.then(function () {
                 var oldHeight = content().height();
                 return $timeout(function () {
                     containar().scrollTop(content().height() - oldHeight);
@@ -46,7 +47,7 @@
                 var def = _getOldMessages();
                 if (!def) return;
                 getOldMessages.enable = false;
-                return def.finally(function() {
+                return def.finally(function () {
                     getOldMessages.enable = true;
                 });
             }
@@ -55,7 +56,7 @@
         getOldMessages.enable = true;
 
         function justMessageSize() {
-            $timeout(function() {
+            $timeout(function () {
                 var cm = containar();
                 var cf = postform();
                 cm.css({ 'overflow-y': 'scroll' });
@@ -64,13 +65,13 @@
         }
 
         function registerHandles(scope) {
-            $rootScope.$on('$locationChangeSuccess', function(e) {
+            $rootScope.$on('$locationChangeSuccess', function (e) {
                 return restoreScroll($location.hash(), _chatRoomChange());
             });
 
-            $rootScope.$on('chatRoomMessageReady', function() {
+            $rootScope.$on('chatRoomMessageReady', function () {
                 angular.element(window).bind('resize', justMessageSize);
-                containar().bind('scroll', function(e) {
+                containar().bind('scroll', function (e) {
                     if (scope.chatRoom == null) return;
                     saveScrollMap[scope.chatRoom.id] = containar().scrollTop();
                     return keepScrollTop(getOldMessages(e));
@@ -78,18 +79,18 @@
                 restoreScroll($location.hash(), _chatRoomChange());
             });
 
-            $rootScope.$on('chatRoomMessageScrollBottom', function(e, opts) {
+            $rootScope.$on('chatRoomMessageScrollBottom', function (e, opts) {
                 var opt = angular.extend({}, opts);
                 var oldTop = containar().scrollTop();
                 var oldHeight = content().height();
-                
+
                 if (opt.ifShowBottom && !isForceScrollBottom) {
-                    if (oldHeight - oldTop -10 > containar().height()) return;
+                    if (oldHeight - oldTop - 10 > containar().height()) return;
                 }
 
                 isForceScrollBottom = false;
 
-                $timeout(function() {
+                $timeout(function () {
                     var height = content().height();
                     containar().scrollTop(height - containar().height());
                 });
@@ -97,24 +98,24 @@
         }
 
         function link(scope, elem, attrs, ctrl) {
-            var _containar = angular.element('#' + scope.chatPrefix); 
-            
+            var _containar = angular.element('#' + scope.chatPrefix);
+
             _getOldMessages = scope.oldMessages;
             _chatRoomChange = scope.chatRoomChange;
 
-            containar = function() {
+            containar = function () {
                 return _containar;
             };
 
-            content = function() {
+            content = function () {
                 return containar().find(scope.chatContent);
             };
 
-            postform = function() {
+            postform = function () {
                 return angular.element('#' + scope.chatPrefix + '-form');
             };
 
-            postform().on('click', 'button', function() {
+            postform().on('click', 'button', function () {
                 isForceScrollBottom = true;
             });
 
@@ -136,7 +137,7 @@
         };
     };
 
-    directives.ChatSidebar = function() {
+    directives.ChatSidebar = function () {
         return {
             scope: {
                 chatPrefix: '@',
@@ -145,19 +146,19 @@
             restrict: 'A',
             transclude: true,
             replace: true,
-            controller: function() {
+            controller: function () {
                 this.selector = '';
                 this.isShowSidebar = false;
 
-                this.sidebarColClass = function() {
+                this.sidebarColClass = function () {
                     var cls = [];
-                    angular.forEach(this.sizes, function(v, k) {
+                    angular.forEach(this.sizes, function (v, k) {
                         cls.push('col-' + k + '-' + v);
                     });
                     return cls.join(' ');
                 };
 
-                this.toggleSidebar = function() {
+                this.toggleSidebar = function () {
                     var ele = angular.element('#' + this.selector);
                     this.isShowSidebar = ele.is('.hidden-xs');
                     ele.toggleClass('hidden-xs');
@@ -165,26 +166,38 @@
             },
             controllerAs: 'ctrl',
             templateUrl: '../templates/room/sidebar.html',
-            link: function(scope, elem, attrs, ctrl) {
+            link: function (scope, elem, attrs, ctrl) {
                 ctrl.selector = scope.chatPrefix;
                 ctrl.sizes = scope.chatSidebar;
             }
         };
     };
 
-    directives.chatMessageImage = function() {
+    directives.chatMessageImage = function (noImage) {
+        var error_urls = {};
+
+        function errorHandle(elem) {
+            error_urls[elem.attr('src')] = true;
+            var a = angular.element('<a>').attr({
+                target: '_blank',
+                title: elem.attr('alt'),
+                href: elem.attr('src')
+            });
+            elem.attr('src', noImage).unbind('load').unwrap().wrap(a);
+        }
+
         return {
             restrict: 'A',
-            link: function(scope, elem, attrs, ctrl) {
-                elem.on('load', function() {
-                    elem.unwrap();
-                }).on('error', function() {
-                    var a = angular.element('<a>').attr({
-                        target: '_blank',
-                        href: elem.attr('src')
-                    }).text(elem.attr('src'));
-                    elem.unwrap().replaceWith(a);
-                }).wrap(angular.element('<div>').addClass('chat-img-loading'));
+            link: function (scope, elem, attrs, ctrl) {
+                if (error_urls[elem.attr('src')]) {
+                    errorHandle(elem);
+                } else {
+                    elem.on('load', function () {
+                        elem.unwrap();
+                    }).on('error', function() {
+                        errorHandle(elem);
+                    }).wrap(angular.element('<div>').addClass('chat-img-loading'));
+                }
             }
         };
     };
