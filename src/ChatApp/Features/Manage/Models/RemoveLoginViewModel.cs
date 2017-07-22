@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ChatApp.Manage.Models
+namespace ChatApp.Features.Manage.Models
 {
     public class RemoveLoginViewModel
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace ChatApp.Manage.Models
+namespace ChatApp.Features.Manage.Models
 {
     public class IndexViewModel
     {

@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ChatApp.Services;
 using ChatApp.Data;
-using ChatApp.Manage.Models;
+using ChatApp.Features.Manage.Models;
 
-namespace ChatApp.Manage
+namespace ChatApp.Features.Manage
 {
     [Authorize]
     public class ManageController : Controller
