@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using ChatApp.Services;
 using ChatApp.Data;
 using ChatApp.Features.Manage.Models;
+using ChatApp.Models;
 
 namespace ChatApp.Features.Manage
 {
@@ -40,6 +41,8 @@ namespace ChatApp.Features.Manage
             ViewData["StatusMessage"] =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+                : message == ManageMessageId.AddLoginSuccess ? "The external login was added."
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
 
@@ -48,11 +51,33 @@ namespace ChatApp.Features.Manage
             {
                 return View("Error");
             }
+
+            var userLogins = await _userManager.GetLoginsAsync(user);
+            var externalLogins = _signInManager.GetExternalAuthenticationSchemes()
+                .Select(o => {
+                    var login = userLogins.FirstOrDefault(u => u.LoginProvider == o.DisplayName);
+                    return new ManageLoginsViewModel
+                    {
+                        ProviderName = o.DisplayName,
+                        CurrentLogin = login,
+                        OtherLogin = o
+                    };
+                });
+            
             var model = new IndexViewModel
             {
+                Id = user.Id,
+                Email = user.Email,
                 HasPassword = await _userManager.HasPasswordAsync(user),
-                Logins = await _userManager.GetLoginsAsync(user),
+                ExternalLogins = externalLogins,
+                UserInfo = new UserInfoViewModel
+                {
+                    LastName = user.LastName,
+                    FirstName = user.FirstName
+                }
             };
+
+            ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
             return View(model);
         }
 
@@ -73,7 +98,7 @@ namespace ChatApp.Features.Manage
                     message = ManageMessageId.RemoveLoginSuccess;
                 }
             }
-            return RedirectToAction(nameof(ManageLogins), new { Message = message });
+            return RedirectToAction(nameof(Index), new { Message = message });
         }
 
         //
@@ -144,30 +169,6 @@ namespace ChatApp.Features.Manage
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
-        //GET: /Manage/ManageLogins
-        [HttpGet]
-        public async Task<IActionResult> ManageLogins(ManageMessageId? message = null)
-        {
-            ViewData["StatusMessage"] =
-                message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.AddLoginSuccess ? "The external login was added."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
-            var userLogins = await _userManager.GetLoginsAsync(user);
-            var otherLogins = _signInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
-            ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
-            return View(new ManageLoginsViewModel
-            {
-                CurrentLogins = userLogins,
-                OtherLogins = otherLogins
-            });
-        }
-
         //
         // POST: /Manage/LinkLogin
         [HttpPost]
@@ -193,11 +194,11 @@ namespace ChatApp.Features.Manage
             var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
             if (info == null)
             {
-                return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
             }
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
-            return RedirectToAction(nameof(ManageLogins), new { Message = message });
+            return RedirectToAction(nameof(Index), new { Message = message });
         }
 
         #region Helpers

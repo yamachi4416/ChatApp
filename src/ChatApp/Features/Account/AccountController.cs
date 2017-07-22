@@ -12,29 +12,26 @@ using ChatApp.Services;
 using ChatApp.Features.Home;
 using ChatApp.Data;
 using ChatApp.Features.Account.Models;
+using ChatApp.Controllers;
 
 namespace ChatApp.Features.Account
 {
     [Authorize]
-    public class AccountController : Controller
+    public partial class AccountController : AppControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
+            IControllerService service,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory
+            ) : base(service)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
@@ -388,10 +385,6 @@ namespace ChatApp.Features.Account
             {
                 await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
             }
-            else if (model.SelectedProvider == "Phone")
-            {
-                await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
-            }
 
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
@@ -453,9 +446,10 @@ namespace ChatApp.Features.Account
             }
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        [HttpGet]
+        public IActionResult AccessDenied(string returnUrl = null)
         {
-            return _userManager.GetUserAsync(HttpContext.User);
+            return RedirectToLocal(returnUrl);
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

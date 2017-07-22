@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatApp.Models;
 
 namespace ChatApp.Features.Account.Models
 {
-    public class RegisterViewModel
+    public class RegisterViewModel : UserInfoViewModel
     {
         [Required]
         [EmailAddress]
@@ -18,14 +19,6 @@ namespace ChatApp.Features.Account.Models
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
-
-        [Required]
-        [MaxLength(30)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [MaxLength(30)]
-        public string LastName { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]

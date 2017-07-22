@@ -9,8 +9,10 @@ namespace ChatApp.Features.Manage.Models
 {
     public class ManageLoginsViewModel
     {
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        public string ProviderName { get; set; }
+        
+        public UserLoginInfo CurrentLogin { get; set; }
 
-        public IList<AuthenticationDescription> OtherLogins { get; set; }
+        public AuthenticationDescription OtherLogin { get; set; }
     }
 }

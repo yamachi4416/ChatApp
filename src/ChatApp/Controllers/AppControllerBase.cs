@@ -15,7 +15,7 @@ namespace ChatApp.Controllers
     {
         private readonly IControllerService _service;
 
-        private UserManager<ApplicationUser> _userManager { get { return _service.UserManager; } }
+        protected UserManager<ApplicationUser> _userManager { get { return _service.UserManager; } }
 
         protected ApplicationDbContext _db { get { return _service.DbContext; } }
 

@@ -3,27 +3,61 @@
     ViewData["Title"] = "Manage your account";
 }
 
-<h2>@ViewData["Title"].</h2>
 <p class="text-success">@ViewData["StatusMessage"]</p>
 
 <div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
-            @if (Model.HasPassword)
-            {
-                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
-            }
-            else
-            {
-                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
-            }
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
-            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
-        </dd>
-    </dl>
+    <div class="">
+        <dl class="dl-horizontal">
+            <dt>アバター:</dt>
+            <dd>
+                <div class="">
+                    <img src="@Url.UserAvatar(Model.Id)" class="img-thumbnail img-circle" />
+                </div>
+            </dd>
+            <dt>メール:</dt>
+            <dd>@Model.Email</dd>
+            <dt>名前:</dt>
+            <dd>@Model.UserInfo.LastName @Model.UserInfo.FirstName</dd>
+            <dt>パスワード:</dt>
+            <dd>
+                @if (Model.HasPassword)
+                {
+                    <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">変更</a>
+                }
+                else
+                {
+                    <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">追加</a>
+                }
+            </dd>
+            <dt>外部ログイン:</dt>
+            <dd>
+                @foreach (var ex in Model.ExternalLogins)
+                {
+                    <div>
+                    @if (ex.CurrentLogin == null)
+                    {
+                        <form asp-controller="Manage" asp-action="LinkLogin" method="post" class="form-inline"
+                            style="display: inline;">
+                            <input type="hidden" asp-for="@ex.OtherLogin.AuthenticationScheme" name="provider"/>
+                            <a title="Log in using your @ex.ProviderName account" href="#"
+                                class="btn-bracketed"
+                                onclick="$(this).closest('form').submit()">追加</a>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="form-inline"
+                            style="display:inline;">
+                            <input asp-for="@ex.CurrentLogin.LoginProvider" name="LoginProvider" type="hidden" />
+                            <input asp-for="@ex.CurrentLogin.ProviderKey" name="ProviderKey" type="hidden" />
+                            <a href="#" on onclick="$(this).closest('form').submit()"
+                                class="btn-bracketed">削除</a>
+                        </form>
+                    }
+                    <span>@(ex.ProviderName)でログイン</span>
+                    </div>
+                }
+            </dd>
+        </dl>
+    </div>
 </div>
