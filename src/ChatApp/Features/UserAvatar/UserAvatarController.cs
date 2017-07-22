@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using ChatApp.Controllers;
 using ChatApp.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.Features.UserAvatar
 {
+    [Authorize]
     public class UserAvatarController : AppControllerBase
     {
         public UserAvatarController(IControllerService service) : base(service)
