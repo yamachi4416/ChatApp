@@ -10,60 +10,43 @@ using ChatApp.Services;
 using ChatApp.Data;
 using ChatApp.Features.Manage.Models;
 using ChatApp.Models;
+using Microsoft.AspNetCore.Authentication;
+using ChatApp.Controllers;
 
 namespace ChatApp.Features.Manage
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : AppControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public ManageController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IEmailSender emailSender,
-        ILoggerFactory loggerFactory)
+            IControllerService service,
+            IEmailSender emailSender,
+            SignInManager<ApplicationUser> signInManager,
+            ILoggerFactory loggerFactory) : base(service)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _logger = loggerFactory.CreateLogger<ManageController>();
+            _logger = loggerFactory.CreateLogger(nameof(GetType));
         }
 
-        //
-        // GET: /Manage/Index
         [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
+        public async Task<IActionResult> Index()
         {
-            ViewData["StatusMessage"] =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.AddLoginSuccess ? "The external login was added."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
-
             var user = await GetCurrentUserAsync();
+
             if (user == null)
             {
                 return View("Error");
             }
 
-            var userLogins = await _userManager.GetLoginsAsync(user);
-            var externalLogins = _signInManager.GetExternalAuthenticationSchemes()
-                .Select(o => {
-                    var login = userLogins.FirstOrDefault(u => u.LoginProvider == o.DisplayName);
-                    return new ManageLoginsViewModel
-                    {
-                        ProviderName = o.DisplayName,
-                        CurrentLogin = login,
-                        OtherLogin = o
-                    };
-                });
-            
+            var loginInfos = await _userManager.GetLoginsAsync(user);
+            var externalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync())
+                .Select(provider => new ManageLoginsViewModel(provider: provider, loginInfos: loginInfos));
+
             var model = new IndexViewModel
             {
                 Id = user.Id,
@@ -77,12 +60,11 @@ namespace ChatApp.Features.Manage
                 }
             };
 
-            ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
+            SetViewBagFromTempMessage();
+
             return View(model);
         }
 
-        //
-        // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
@@ -91,6 +73,14 @@ namespace ChatApp.Features.Manage
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+                var hasPassword = await _userManager.HasPasswordAsync(user);
+                var loginInfos = await _userManager.GetLoginsAsync(user);
+
+                if (!hasPassword && loginInfos.Count == 1)
+                {
+                    return RedirectToIndex(message);
+                }
+                
                 var result = await _userManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
                 if (result.Succeeded)
                 {
@@ -98,19 +88,16 @@ namespace ChatApp.Features.Manage
                     message = ManageMessageId.RemoveLoginSuccess;
                 }
             }
-            return RedirectToAction(nameof(Index), new { Message = message });
+
+            return RedirectToIndex(message);
         }
 
-        //
-        // GET: /Manage/ChangePassword
         [HttpGet]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
-        //
-        // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -127,12 +114,14 @@ namespace ChatApp.Features.Manage
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User changed their password successfully.");
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
+
+                    return RedirectToIndex(ManageMessageId.ChangePasswordSuccess);
                 }
                 AddErrors(result);
                 return View(model);
             }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+
+            return RedirectToIndex(ManageMessageId.Error);
         }
 
         //
@@ -161,12 +150,14 @@ namespace ChatApp.Features.Manage
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetPasswordSuccess });
+
+                    return RedirectToIndex(ManageMessageId.SetPasswordSuccess);
                 }
                 AddErrors(result);
                 return View(model);
             }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+
+            return RedirectToIndex(ManageMessageId.Error);
         }
 
         //
@@ -175,8 +166,7 @@ namespace ChatApp.Features.Manage
         [ValidateAntiForgeryToken]
         public IActionResult LinkLogin(string provider)
         {
-            // Request a redirect to the external login provider to link a login for the current user
-            var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
+            var redirectUrl = Url.Action(nameof(LinkLoginCallback), "Manage");
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
             return Challenge(properties, provider);
         }
@@ -194,14 +184,14 @@ namespace ChatApp.Features.Manage
             var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
             if (info == null)
             {
-                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+                return RedirectToIndex(ManageMessageId.Error);
             }
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
-            return RedirectToAction(nameof(Index), new { Message = message });
+
+            return RedirectToIndex(message);
         }
 
-        #region Helpers
 
         private void AddErrors(IdentityResult result)
         {
@@ -209,6 +199,31 @@ namespace ChatApp.Features.Manage
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+        private ActionResult RedirectToIndex(ManageMessageId? messageId)
+        {
+            SetTempMessage(messageId);
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void SetTempMessage(ManageMessageId? messageId)
+        {
+            var message =
+                messageId == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : messageId == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : messageId == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+                : messageId == ManageMessageId.AddLoginSuccess ? "The external login was added."
+                : messageId == ManageMessageId.Error ? "An error has occurred."
+                : "";
+
+            TempData["StatusMessage"] = message;
+        }
+
+        private void SetViewBagFromTempMessage()
+        {
+            var message = TempData["StatusMessage"]?.ToString();
+            ViewData["StatusMessage"] = message;
         }
 
         public enum ManageMessageId
@@ -219,12 +234,5 @@ namespace ChatApp.Features.Manage
             RemoveLoginSuccess,
             Error
         }
-
-        private Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return _userManager.GetUserAsync(HttpContext.User);
-        }
-
-        #endregion
     }
 }

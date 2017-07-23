@@ -13,6 +13,8 @@ using ChatApp.Features.Home;
 using ChatApp.Data;
 using ChatApp.Features.Account.Models;
 using ChatApp.Controllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ChatApp.Features.Account
 {
@@ -41,6 +43,10 @@ namespace ChatApp.Features.Account
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
+            Response.Cookies.Delete("Identity.External", new CookieOptions
+                {
+                    Path = Request.PathBase
+                });
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -62,10 +68,6 @@ namespace ChatApp.Features.Account
                 {
                     _logger.LogInformation(1, "User logged in.");
                     return RedirectToLocal(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
@@ -191,8 +193,12 @@ namespace ChatApp.Features.Account
                 // If the user does not have an account, then ask the user to create an account.
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
+                {
+                    Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                    FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
+                    LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)
+                });
             }
         }
 
@@ -211,7 +217,14 @@ namespace ChatApp.Features.Account
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

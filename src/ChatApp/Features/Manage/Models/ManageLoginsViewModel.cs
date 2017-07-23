@@ -1,18 +1,28 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChatApp.Features.Manage.Models
 {
     public class ManageLoginsViewModel
     {
-        public string ProviderName { get; set; }
-        
-        public UserLoginInfo CurrentLogin { get; set; }
+        public string LoginProvider => Provider.Name;
 
-        public AuthenticationDescription OtherLogin { get; set; }
+        public string DisplayName => Provider.DisplayName;
+
+        public string ProviderKey => LoginInfo?.ProviderKey;
+
+        public bool IsLoggedIn => LoginInfo != null;
+
+        public UserLoginInfo LoginInfo { get; set; }
+
+        public AuthenticationScheme Provider { get; set; }
+
+        public ManageLoginsViewModel(AuthenticationScheme provider, IEnumerable<UserLoginInfo> loginInfos)
+        {
+            Provider = provider;
+            LoginInfo = loginInfos.SingleOrDefault(logininfo => provider.Name == logininfo.LoginProvider);
+        }
     }
 }

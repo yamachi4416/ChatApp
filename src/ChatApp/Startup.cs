@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +10,9 @@ using ChatApp.Config;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using ChatApp.Features.Room.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace ChatApp
 {
@@ -28,12 +26,6 @@ namespace ChatApp
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets<Startup>();
-            }
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -50,13 +42,30 @@ namespace ChatApp
                 options.HeaderName = "X-" + XSRF_TOKEN_NAME;
             });
 
+            services.AddSession();
+
+            services.AddMemoryCache();
+
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
+            
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddCookieAuthentication(
+                CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = new PathString("/login");
+                })
+                .AddGoogleAuthentication(options =>
+                {
+                    options.ClientId = Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    options.AccessType = Configuration["Authentication:Google:AccessType"];
+                    options.SaveTokens = true;
+                });
 
             services.AddMvc(o => o.Conventions.Add(new FeatureConvention()))
                 .AddRazorOptions(options =>
@@ -85,10 +94,15 @@ namespace ChatApp
             services.AddSingleton<IDateTimeService, DateTimeService>();
             services.AddTransient<IControllerService, ControllerBaseService>();
             services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IAntiforgery antiforgery)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -104,25 +118,27 @@ namespace ChatApp
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
             }
 
+            app.UsePathBase(Configuration["PathBase"]);
+
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            app.UseAuthentication();
 
-            app.UseGoogleAuthentication(new GoogleOptions()
-            {
-                ClientId = Configuration["Authentication:Google:ClientId"],
-                ClientSecret = Configuration["Authentication:Google:ClientSecret"]
-            });
+            app.UseWebSockets();
 
             app.Use(next => context =>
             {
                 var token = antiforgery.GetAndStoreTokens(context);
                 context.Response.Cookies.Append(XSRF_TOKEN_NAME, token.RequestToken,
-                    new CookieOptions() { HttpOnly = false });
+                    new CookieOptions()
+                    {
+                        HttpOnly = false,
+                        Path = context.Request.PathBase
+                    });
                 return next(context);
             });
 
-            app.UseWebSockets();
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

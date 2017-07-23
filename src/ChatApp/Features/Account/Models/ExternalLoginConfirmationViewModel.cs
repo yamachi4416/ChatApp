@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using ChatApp.Models;
 
 namespace ChatApp.Features.Account.Models
 {
-    public class ExternalLoginConfirmationViewModel
+    public class ExternalLoginConfirmationViewModel : UserInfoViewModel
     {
         [Required]
         [EmailAddress]
