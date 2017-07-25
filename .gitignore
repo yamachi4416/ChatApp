@@ -295,9 +295,6 @@ __pycache__/
 .vscode
 jsconfig.json
 
-# Migrations
-Migrations/
-
 appsettings.Development.json
 appsettings.Production.json
 
