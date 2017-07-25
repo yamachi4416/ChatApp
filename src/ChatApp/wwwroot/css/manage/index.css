@@ -1,0 +1,23 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.main-contents .alert {
+  margin: 10px;
+}
+.main-contents .user-info dl dt,
+.main-contents .user-info dl dd {
+  padding: 5px;
+}
+.main-contents .user-info dl dd form.external-login-form {
+  display: inline;
+}
+.main-contents .user-info dl dd .avatar img {
+  width: 200px;
+  height: 200px;
+  animation: fadeIn 3s ease 0s 1 normal;
+}

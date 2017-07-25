@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +8,6 @@ using ChatApp.Services;
 using ChatApp.Data;
 using ChatApp.Features.Manage.Models;
 using ChatApp.Models;
-using Microsoft.AspNetCore.Authentication;
 using ChatApp.Controllers;
 
 namespace ChatApp.Features.Manage
@@ -18,6 +15,10 @@ namespace ChatApp.Features.Manage
     [Authorize]
     public class ManageController : AppControllerBase
     {
+        private static readonly string StausKey = "Status";
+
+        private static readonly string StatusMessageKey = "StatusMessage";
+
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
@@ -62,7 +63,7 @@ namespace ChatApp.Features.Manage
 
             SetViewBagFromTempMessage();
 
-            return View(model);
+            return View(nameof(Index), model);
         }
 
         [HttpPost]
@@ -80,7 +81,7 @@ namespace ChatApp.Features.Manage
                 {
                     return RedirectToIndex(message);
                 }
-                
+
                 var result = await _userManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
                 if (result.Succeeded)
                 {
@@ -174,13 +175,14 @@ namespace ChatApp.Features.Manage
         //
         // GET: /Manage/LinkLoginCallback
         [HttpGet]
-        public async Task<ActionResult> LinkLoginCallback()
+        public async Task<IActionResult> LinkLoginCallback()
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
                 return View("Error");
             }
+
             var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
             if (info == null)
             {
@@ -201,29 +203,37 @@ namespace ChatApp.Features.Manage
             }
         }
 
-        private ActionResult RedirectToIndex(ManageMessageId? messageId)
+        private ActionResult RedirectToIndex(ManageMessageId? messageId = null, string message = null)
         {
-            SetTempMessage(messageId);
+            SetTempMessage(messageId, message);
             return RedirectToAction(nameof(Index));
         }
 
-        private void SetTempMessage(ManageMessageId? messageId)
+        private void SetTempMessage(ManageMessageId? messageId = null, string message = null)
         {
-            var message =
-                messageId == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : messageId == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : messageId == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : messageId == ManageMessageId.AddLoginSuccess ? "The external login was added."
-                : messageId == ManageMessageId.Error ? "An error has occurred."
-                : "";
+            if (string.IsNullOrEmpty(message))
+            {
+                message =
+                    messageId == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                    : messageId == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                    : messageId == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+                    : messageId == ManageMessageId.AddLoginSuccess ? "The external login was added."
+                    : messageId == ManageMessageId.Error ? "An error has occurred."
+                    : "";
+            }
 
-            TempData["StatusMessage"] = message;
+            if (messageId != null)
+            {
+                var status = messageId == ManageMessageId.Error ? "alert-danger" : "alert-success";
+                TempData[StausKey] = status;
+                TempData[StatusMessageKey] = message;
+            }
         }
 
         private void SetViewBagFromTempMessage()
         {
-            var message = TempData["StatusMessage"]?.ToString();
-            ViewData["StatusMessage"] = message;
+            ViewData[StausKey] = TempData[StausKey];
+            ViewData[StatusMessageKey] = TempData[StatusMessageKey];
         }
 
         public enum ManageMessageId

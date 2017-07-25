@@ -3,23 +3,22 @@
     ViewData["Title"] = "Manage your account";
 }
 
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<div class="container-fluid main-contents">
+    <p class="alert @ViewData["Status"]">@ViewData["StatusMessage"]</p>
 
-<div>
-    <div class="">
+    <div class="user-info">
         <dl class="dl-horizontal">
-            <dt>アバター:</dt>
+            <dt>アバター</dt>
             <dd>
-                <div class="">
-                    <img src="@Url.UserAvatar(Model.Id)" class="img-thumbnail img-circle"
-                        width="200" height="200" style="width:200px; height: 200px;" />
+                <div class="avatar">
+                    <img src="@Url.UserAvatar(Model.Id)" class="img-thumbnail img-circle"/>
                 </div>
             </dd>
-            <dt>メール:</dt>
+            <dt>メール</dt>
             <dd>@Model.Email</dd>
-            <dt>名前:</dt>
-            <dd>@Model.UserInfo.LastName @Model.UserInfo.FirstName</dd>
-            <dt>パスワード:</dt>
+            <dt>お名前</dt>
+            <dd>@Model.UserInfo.FirstName @Model.UserInfo.LastName</dd>
+            <dt>パスワード</dt>
             <dd>
                 @if (Model.HasPassword)
                 {
@@ -30,15 +29,14 @@
                     <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">追加</a>
                 }
             </dd>
-            <dt>外部ログイン:</dt>
+            <dt>外部ログイン</dt>
             <dd>
                 @foreach (var ex in Model.ExternalLogins)
                 {
                     <div>
                     @if (ex.IsLoggedIn)
                     {
-                        <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="form-inline"
-                            style="display:inline;">
+                        <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="external-login-form">
                             <input asp-for="@ex.LoginProvider" name="LoginProvider" type="hidden" />
                             <input asp-for="@ex.ProviderKey" name="ProviderKey" type="hidden" />
                             <a onclick="$(this).closest('form').submit(); return false;"
@@ -47,8 +45,7 @@
                     }
                     else
                     {
-                        <form asp-controller="Manage" asp-action="LinkLogin" method="post" class="form-inline"
-                            style="display: inline;">
+                        <form asp-controller="Manage" asp-action="LinkLogin" method="post" class="external-login-form">
                             <input type="hidden" asp-for="@ex.LoginProvider" name="provider"/>
                             <a title="Log in using your @ex.DisplayName account"
                                 onclick="$(this).closest('form').submit(); return false;"
@@ -70,5 +67,15 @@
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" type="text/css" href="~/css/manage/index.min.css"/>
+    </environment>
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script type="text/javascript" src="~/js/index.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/js/index.min.js"></script>
     </environment>
 }
