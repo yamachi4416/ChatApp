@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using ChatApp.Features.Room.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ChatApp
 {
@@ -48,7 +49,7 @@ namespace ChatApp
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -116,6 +117,11 @@ namespace ChatApp
                 app.UseExceptionHandler("/Home/Error");
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
             }
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UsePathBase(Configuration["PathBase"]);
 
