@@ -15,7 +15,7 @@ namespace ChatApp.Features.Manage
     [Authorize]
     public class ManageController : AppControllerBase
     {
-        private static readonly string StausKey = "Status";
+        private static readonly string StatusKey = "Status";
 
         private static readonly string StatusMessageKey = "StatusMessage";
 
@@ -225,14 +225,14 @@ namespace ChatApp.Features.Manage
             if (messageId != null)
             {
                 var status = messageId == ManageMessageId.Error ? "alert-danger" : "alert-success";
-                TempData[StausKey] = status;
+                TempData[StatusKey] = status;
                 TempData[StatusMessageKey] = message;
             }
         }
 
         private void SetViewBagFromTempMessage()
         {
-            ViewData[StausKey] = TempData[StausKey];
+            ViewData[StatusKey] = TempData[StatusKey];
             ViewData[StatusMessageKey] = TempData[StatusMessageKey];
         }
 
