@@ -27,6 +27,7 @@ module.exports = function (grunt) {
         };
         
         setting[_('site.min.js')] = _('site.js');
+        setting[_('manage/index.min.js')] = _('manage/index.js');
         angular_scripts('room');
 
         return setting;
