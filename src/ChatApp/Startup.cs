@@ -87,6 +87,9 @@ namespace ChatApp
 
                     options.ViewLocationExpanders.Add(new FeatureConvention());
                 });
+            
+            // GMail Options
+            services.Configure<GMailOptions>(Configuration.GetSection("GMailOptions"));
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -94,6 +97,7 @@ namespace ChatApp
             services.AddSingleton<IDateTimeService, DateTimeService>();
             services.AddTransient<IControllerService, ControllerBaseService>();
             services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
+            services.AddSingleton<IEmailSender, GMailSender>();
             services.AddMvc();
         }
 
