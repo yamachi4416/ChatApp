@@ -13,6 +13,7 @@ using ChatApp.Features.Room.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
+using System;
 
 namespace ChatApp
 {
@@ -50,7 +51,16 @@ namespace ChatApp
                 .AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+                    options.SignIn.RequireConfirmedEmail = true;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                    options.User.RequireUniqueEmail = true;
+
+                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
