@@ -19,7 +19,7 @@ namespace ChatApp.Features.UserAvatar
 
         private IActionResult DefaultAvatar()
         {
-            return Redirect("~/images/avatar.png");
+            return RedirectToLocal("~/images/avatar.png");
         }
 
         [HttpGet]

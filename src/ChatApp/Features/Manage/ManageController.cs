@@ -21,7 +21,6 @@ namespace ChatApp.Features.Manage
 
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly ILogger _logger;
 
         public ManageController(
             IControllerService service,
@@ -31,7 +30,6 @@ namespace ChatApp.Features.Manage
         {
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _logger = loggerFactory.CreateLogger(nameof(GetType));
         }
 
         [HttpGet]
@@ -226,7 +224,7 @@ namespace ChatApp.Features.Manage
             {
                 var status = messageId == ManageMessageId.Error ? "alert-danger" : "alert-success";
                 TempData[StatusKey] = status;
-                TempData[StatusMessageKey] = message;
+                TempData[StatusMessageKey] = string.IsNullOrEmpty(message) ? "" : _localizer[message];
             }
         }
 

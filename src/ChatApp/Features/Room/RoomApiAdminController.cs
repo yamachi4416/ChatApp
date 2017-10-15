@@ -96,7 +96,8 @@ namespace ChatApp.Features.Room
                     where m.Id == member.Id
                     select m;
 
-                var addUser = await addUserQuery.SingleOrDefaultAsync();
+                var addUser = await addUserQuery.AsNoTracking()
+                    .SingleOrDefaultAsync();
 
                 if (addUser != null)
                 {
@@ -111,7 +112,7 @@ namespace ChatApp.Features.Room
                     await _db.SaveChangesAsync();
 
                     var room = await (
-                        from r in _db.ChatRooms
+                        from r in _db.ChatRooms.AsNoTracking()
                         where r.Id == id
                         select r).SingleOrDefaultAsync();
 

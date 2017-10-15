@@ -17,7 +17,7 @@ namespace ChatApp.Features.ChatRoomAvatar
 
         private IActionResult DefaultAvatar()
         {
-            return Redirect("~/images/group.png");
+            return RedirectToLocal("~/images/group.png");
         }
 
         [HttpGet]

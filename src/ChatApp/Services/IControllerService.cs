@@ -1,9 +1,8 @@
 using ChatApp.Data;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Services
 {
@@ -14,5 +13,9 @@ namespace ChatApp.Services
         UserManager<ApplicationUser> UserManager { get; }
 
         DateTimeOffset DateTimeOffsetNow { get; }
+
+        ILoggerFactory LoggerFactory { get; }
+
+        IStringLocalizerFactory LocalizeFactory { get; }
     }
 }

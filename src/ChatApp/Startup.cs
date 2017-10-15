@@ -14,6 +14,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using System;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Localization;
+using ChatApp.SharedResources;
+using Microsoft.AspNetCore.Mvc.Razor;
+using ChatApp.IdentityLocaleError;
 
 namespace ChatApp
 {
@@ -39,9 +44,9 @@ namespace ChatApp
         {
             // Add framework services.
             services.AddAntiforgery(options =>
-            {
-                options.HeaderName = "X-" + XSRF_TOKEN_NAME;
-            });
+                {
+                    options.HeaderName = "X-" + XSRF_TOKEN_NAME;
+                });
 
             services.AddSession();
 
@@ -51,7 +56,8 @@ namespace ChatApp
                 .AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
                     options.SignIn.RequireConfirmedEmail = true;
                     options.SignIn.RequireConfirmedPhoneNumber = false;
 
@@ -61,25 +67,28 @@ namespace ChatApp
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                     options.Lockout.MaxFailedAccessAttempts = 5;
                 })
+                .AddErrorDescriber<IdentityLocaleErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddCookieAuthentication(
-                CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.LoginPath = new PathString("/login");
+            services.AddCookieAuthentication(CookieAuthenticationDefaults.AuthenticationScheme, options => {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/LogOff";
                 })
-                .AddGoogleAuthentication(options =>
-                {
+                .AddGoogleAuthentication(options => {
                     options.ClientId = Configuration["Authentication:Google:ClientId"];
                     options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
                     options.AccessType = Configuration["Authentication:Google:AccessType"];
                     options.SaveTokens = true;
                 });
+            
+            // Localization
+            services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
 
-            services.AddMvc(o => o.Conventions.Add(new FeatureConvention()))
-                .AddRazorOptions(options =>
-                {
+            // Mvc
+            services.AddMvc(options => {
+                    options.Conventions.Add(new FeatureConvention());
+                }).AddRazorOptions(options => {
                     // {0} - Action Name
                     // {1} - Controller Name
                     // {2} - Area Name
@@ -96,19 +105,25 @@ namespace ChatApp
                     options.ViewLocationFormats.Add("/Features/Shared/{1}/{0}.cshtml");
 
                     options.ViewLocationExpanders.Add(new FeatureConvention());
+                }).AddDataAnnotationsLocalization(options => {
+                    options.DataAnnotationLocalizerProvider = (type, factory) => {
+                        return factory.Create(typeof(SharedResource));
+                    };
+                }).AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder, options => {
+                    options.ResourcesPath = "Resources";
                 });
-            
-            // GMail Options
-            services.Configure<GMailOptions>(Configuration.GetSection("GMailOptions"));
 
-            // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
+            // EMailSender
+            services.Configure<MailOptions>(Configuration.GetSection("MailOptions"));
+            services.AddTransient<IEmailSender, GMailSender>();
+
+            // SmsSender
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            // Application services.
             services.AddSingleton<IDateTimeService, DateTimeService>();
             services.AddTransient<IControllerService, ControllerBaseService>();
             services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
-            services.AddSingleton<IEmailSender, GMailSender>();
-            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -152,7 +167,7 @@ namespace ChatApp
                     new CookieOptions()
                     {
                         HttpOnly = false,
-                        Path = context.Request.PathBase
+                        Path = context.Request.PathBase,
                     });
                 return next(context);
             });

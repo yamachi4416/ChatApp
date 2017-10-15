@@ -4,31 +4,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Services
 {
     public class ControllerBaseService : IControllerService
     {
-        private ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        private UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        private IDateTimeService _dateTimeSerice;
+        private readonly IDateTimeService _dateTimeSerice;
 
-        public ApplicationDbContext DbContext { get { return _db; } }
+        private readonly ILoggerFactory _loggerFactory;
 
-        public UserManager<ApplicationUser> UserManager { get { return _userManager; } }
+        private readonly IStringLocalizerFactory _localizeFactory;
 
-        public DateTimeOffset DateTimeOffsetNow { get { return _dateTimeSerice.Now; } }
+        public ApplicationDbContext DbContext => _db;
+
+        public UserManager<ApplicationUser> UserManager => _userManager;
+
+        public DateTimeOffset DateTimeOffsetNow => _dateTimeSerice.Now;
+
+        public ILoggerFactory LoggerFactory => _loggerFactory;
+
+        public IStringLocalizerFactory LocalizeFactory => _localizeFactory;
 
         public ControllerBaseService(
             ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
-            IDateTimeService dateTimeService)
+            IDateTimeService dateTimeService,
+            IStringLocalizerFactory stringLocalizerFactory,
+            ILoggerFactory loggerFactory)
         {
             _db = db;
             _userManager = userManager;
             _dateTimeSerice = dateTimeService;
+            _localizeFactory = stringLocalizerFactory;
+            _loggerFactory = loggerFactory;
         }
     }
 }

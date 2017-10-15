@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
+using ChatApp.SharedResources;
 
 namespace ChatApp.Features.Account.Models
 {
     public class VerifyCodeViewModel
     {
-        [Required]
+        [Required(ErrorMessage = SharedResource.Required)]
         public string Provider { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = SharedResource.Required)]
         public string Code { get; set; }
 
         public string ReturnUrl { get; set; }

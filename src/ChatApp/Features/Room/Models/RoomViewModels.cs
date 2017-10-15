@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatApp.SharedResources;
 
 namespace ChatApp.Features.Room.Models
 {
@@ -11,11 +12,11 @@ namespace ChatApp.Features.Room.Models
     {
         public Guid? Id { get; set; }
 
-        [Required]
-        [MaxLength(30)]
+        [Required(ErrorMessage = SharedResource.Required)]
+        [StringLength(30, ErrorMessage = SharedResource.StringLength)]
         public string Name { get; set; }
 
-        [MaxLength(255)]
+        [StringLength(255, ErrorMessage = SharedResource.StringLength)]
         public string Description { get; set; }
 
         public bool? IsAdmin { get;set; }
@@ -81,8 +82,8 @@ namespace ChatApp.Features.Room.Models
 
     public class PostMessageModel
     {
-        [Required]
-        [MaxLength(300)]
+        [Required(ErrorMessage = SharedResource.Required)]
+        [StringLength(300, ErrorMessage = SharedResource.StringLength)]
         public string Message { get; set; }
     }
 }

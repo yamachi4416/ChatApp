@@ -3,6 +3,6 @@
 <ul class="nav navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li><a asp-area="" asp-controller="Room" asp-action="Index">ROOM</a></li>
+        <li><a asp-area="" asp-controller="Room" asp-action="Index">@Localizer["ROOM"]</a></li>
     }
 </ul>

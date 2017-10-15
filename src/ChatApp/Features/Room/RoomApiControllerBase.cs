@@ -128,7 +128,7 @@ namespace ChatApp.Features.Room
                 roomId: roomId
             );
 
-            return _ws.SendAsync(message, await query.ToListAsync());
+            return _ws.SendAsync(message, await query.AsNoTracking().ToListAsync());
         }
 
         protected async Task SendWsMessageForRoomMembers<E>(

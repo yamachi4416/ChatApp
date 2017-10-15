@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ChatApp.Data;
@@ -8,6 +7,10 @@ using ChatApp.Services;
 using System.Collections.Generic;
 using ChatApp.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
+using ChatApp.SharedResources;
 
 namespace ChatApp.Controllers
 {
@@ -21,11 +24,17 @@ namespace ChatApp.Controllers
 
         protected DateTimeOffset DateTimeOffsetNow { get { return _service.DateTimeOffsetNow; } }
 
+        protected ILogger _logger { get; }
+
+        protected IStringLocalizer _localizer { get; }
+
         public AppControllerBase(IControllerService service)
         {
             _service = service;
+            _logger = service.LoggerFactory.CreateLogger(GetType());
+            _localizer = service.LocalizeFactory.Create(typeof(SharedResource));
         }
-        
+
         protected string GetCurrentUserId()
         {
             return _userManager.GetUserId(User);
@@ -69,6 +78,18 @@ namespace ChatApp.Controllers
                 }
             }
             return errorsMap;
+        }
+
+        protected IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(Features.Home.HomeController.Index), "Home");
+            }
         }
     }
 }

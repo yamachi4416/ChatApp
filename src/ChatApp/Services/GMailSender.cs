@@ -4,11 +4,11 @@ using System.Net.Mail;
 
 namespace ChatApp.Services
 {
-    public class GMailOptions
+    public class MailOptions
     {
-        public string Host { get; set; } = "smtp.gmail.com";
+        public string Host { get; set; }
 
-        public int Port { get; set; } = 587;
+        public int Port { get; set; }
 
         public string Email { get; set; }
 
@@ -21,9 +21,9 @@ namespace ChatApp.Services
 
     public class GMailSender : IEmailSender
     {
-        public GMailOptions Options { get; }
+        public MailOptions Options { get; }
 
-        public GMailSender(IOptions<GMailOptions> options)
+        public GMailSender(IOptions<MailOptions> options)
         {
             Options = options.Value;
         }
