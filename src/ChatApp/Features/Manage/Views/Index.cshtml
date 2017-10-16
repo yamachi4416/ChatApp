@@ -1,6 +1,6 @@
 @model IndexViewModel
 @{
-    ViewData["Title"] = "Manage your account";
+    ViewData["Title"] = Localizer["Manage your account"];
 }
 
 <div class="container-fluid main-contents">
@@ -8,28 +8,28 @@
 
     <div class="user-info">
         <dl class="dl-horizontal">
-            <dt>アバター</dt>
+            <dt>@Localizer["Avatar"]</dt>
             <dd>
                 <div class="avatar">
                     <img src="@Url.UserAvatar(Model.Id)" class="img-thumbnail img-circle"/>
                 </div>
             </dd>
-            <dt>メール</dt>
-            <dd>@Model.Email</dd>
-            <dt>お名前</dt>
+            <dt>@Localizer["Full Name"]</dt>
             <dd>@Model.UserInfo.FirstName @Model.UserInfo.LastName</dd>
-            <dt>パスワード</dt>
+            <dt>@Localizer[@Html.DisplayNameFor(m => m.Email)]</dt>
+            <dd>@Model.Email</dd>
+            <dt>@Localizer["Password"]</dt>
             <dd>
                 @if (Model.HasPassword)
                 {
-                    <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">変更</a>
+                    <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">@Localizer["Change"]</a>
                 }
                 else
                 {
-                    <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">追加</a>
+                    <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">@Localizer["Add"]</a>
                 }
             </dd>
-            <dt>外部ログイン</dt>
+            <dt>@Localizer["External Login"]</dt>
             <dd>
                 @foreach (var ex in Model.ExternalLogins)
                 {
@@ -40,7 +40,7 @@
                             <input asp-for="@ex.LoginProvider" name="LoginProvider" type="hidden" />
                             <input asp-for="@ex.ProviderKey" name="ProviderKey" type="hidden" />
                             <a onclick="$(this).closest('form').submit(); return false;"
-                                class="btn-bracketed">削除</a>
+                                class="btn-bracketed">@Localizer["Remove"]</a>
                         </form>
                     }
                     else
@@ -49,10 +49,10 @@
                             <input type="hidden" asp-for="@ex.LoginProvider" name="provider"/>
                             <a title="Log in using your @ex.DisplayName account"
                                 onclick="$(this).closest('form').submit(); return false;"
-                                class="btn-bracketed">追加</a>
+                                class="btn-bracketed">@Localizer["Add"]</a>
                         </form>
                     }
-                    <span>@(ex.DisplayName)でログイン</span>
+                    <span>@Localizer["Login Via {0}", ex.DisplayName]</span>
                     </div>
                 }
             </dd>
