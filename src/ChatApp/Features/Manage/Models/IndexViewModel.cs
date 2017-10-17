@@ -22,6 +22,6 @@ namespace ChatApp.Features.Manage.Models
 
         public IEnumerable<ManageLoginsViewModel> ExternalLogins { get; set; }
 
-        public bool CanRemoveExternalLogin => HasPassword && ExternalLogins.Count() > 1;
+        public bool CanRemoveExternalLogin => HasPassword || ExternalLogins.Count() > 1;
     }
 }
