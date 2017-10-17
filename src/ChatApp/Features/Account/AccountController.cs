@@ -186,15 +186,22 @@ namespace ChatApp.Features.Account
             }
             else
             {
-                // If the user does not have an account, then ask the user to create an account.
-                ViewData["ReturnUrl"] = returnUrl;
-                ViewData["LoginProvider"] = info.LoginProvider;
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
+                var model = new ExternalLoginConfirmationViewModel
                 {
-                    Email = info.Principal.FindFirstValue(ClaimTypes.Email),
                     FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
                     LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)
-                });
+                };
+
+                if (string.IsNullOrEmpty(model.FirstName) || string.IsNullOrEmpty(model.LastName))
+                {
+                    ViewData["ReturnUrl"] = returnUrl;
+                    ViewData["LoginProvider"] = info.LoginProvider;
+                    return View(nameof(ExternalLoginConfirmation), model);
+                }
+                else
+                {
+                    return await ExternalLoginConfirmation(model, returnUrl);
+                }
             }
         }
 
@@ -214,10 +221,11 @@ namespace ChatApp.Features.Account
                     return View("ExternalLoginFailure");
                 }
 
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
-                    Email = model.Email,
+                    UserName = email,
+                    Email = email,
                     FirstName = model.FirstName,
                     LastName = model.LastName
                 };
@@ -257,7 +265,7 @@ namespace ChatApp.Features.Account
                 return View("Error");
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return View(result.Succeeded ? nameof(ConfirmEmail) : "Error");
         }
 
         //
@@ -288,7 +296,7 @@ namespace ChatApp.Features.Account
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                var callbackUrl = Url.Action(nameof(ResetPassword), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, _localizer["Reset Password"],
                    _localizer["Please reset your password by clicking here: <a href=\"{0}\">link</a>", callbackUrl]);
                 return View(nameof(ForgotPasswordConfirmation));

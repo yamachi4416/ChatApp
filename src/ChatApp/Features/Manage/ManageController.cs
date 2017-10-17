@@ -68,7 +68,7 @@ namespace ChatApp.Features.Manage
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
         {
-            ManageMessageId? message = ManageMessageId.Error;
+            ManageMessageId message = ManageMessageId.CanNotRemoveLogin;
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
@@ -187,9 +187,9 @@ namespace ChatApp.Features.Manage
                 return RedirectToIndex(ManageMessageId.Error);
             }
             var result = await _userManager.AddLoginAsync(user, info);
-            var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
+            var messageId = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
 
-            return RedirectToIndex(message);
+            return RedirectToIndex(messageId);
         }
 
 
@@ -201,13 +201,13 @@ namespace ChatApp.Features.Manage
             }
         }
 
-        private ActionResult RedirectToIndex(ManageMessageId? messageId = null, string message = null)
+        private ActionResult RedirectToIndex(ManageMessageId messageId, string message = null)
         {
             SetTempMessage(messageId, message);
             return RedirectToAction(nameof(Index));
         }
 
-        private void SetTempMessage(ManageMessageId? messageId = null, string message = null)
+        private void SetTempMessage(ManageMessageId messageId, string message = null)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -217,15 +217,17 @@ namespace ChatApp.Features.Manage
                     : messageId == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                     : messageId == ManageMessageId.AddLoginSuccess ? "The external login was added."
                     : messageId == ManageMessageId.Error ? "An error has occurred."
+                    : messageId == ManageMessageId.CanNotRemoveLogin ? "The external login can't removed."
                     : "";
             }
 
-            if (messageId != null)
+            var status = "alert-success";
+            if (messageId == ManageMessageId.Error || messageId == ManageMessageId.CanNotRemoveLogin)
             {
-                var status = messageId == ManageMessageId.Error ? "alert-danger" : "alert-success";
-                TempData[StatusKey] = status;
-                TempData[StatusMessageKey] = string.IsNullOrEmpty(message) ? "" : _localizer[message];
+                status = "alert-danger";
             }
+            TempData[StatusKey] = status;
+            TempData[StatusMessageKey] = string.IsNullOrEmpty(message) ? "" : _localizer[message];
         }
 
         private void SetViewBagFromTempMessage()
@@ -240,6 +242,7 @@ namespace ChatApp.Features.Manage
             ChangePasswordSuccess,
             SetPasswordSuccess,
             RemoveLoginSuccess,
+            CanNotRemoveLogin,
             Error
         }
     }

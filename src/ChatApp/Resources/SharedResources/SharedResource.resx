@@ -155,8 +155,11 @@
   <data name="The external login was removed." xml:space="preserve">
     <value>外部ログインが削除されました。</value>
   </data>
-  <data name="The external login was removed." xml:space="preserve">
+  <data name="The external login was added." xml:space="preserve">
     <value>外部ログインが追加されました。</value>
+  </data>
+  <data name="The external login can't removed." xml:space="preserve">
+    <value>外部ログインを削除できません。</value>
   </data>
   <data name="An error has occurred." xml:space="preserve">
     <value>エラーが発生しました。</value>

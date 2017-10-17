@@ -36,12 +36,15 @@
                     <div>
                     @if (ex.IsLoggedIn)
                     {
-                        <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="external-login-form">
-                            <input asp-for="@ex.LoginProvider" name="LoginProvider" type="hidden" />
-                            <input asp-for="@ex.ProviderKey" name="ProviderKey" type="hidden" />
-                            <a onclick="$(this).closest('form').submit(); return false;"
-                                class="btn-bracketed">@Localizer["Remove"]</a>
-                        </form>
+                        @if (Model.CanRemoveExternalLogin)
+                        {
+                            <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="external-login-form">
+                                <input asp-for="@ex.LoginProvider" name="LoginProvider" type="hidden" />
+                                <input asp-for="@ex.ProviderKey" name="ProviderKey" type="hidden" />
+                                <a onclick="$(this).closest('form').submit(); return false;"
+                                    class="btn-bracketed">@Localizer["Remove"]</a>
+                            </form>
+                        }
                     }
                     else
                     {
