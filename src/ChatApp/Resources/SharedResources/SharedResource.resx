@@ -250,7 +250,7 @@
   </data>
 
   <!-- ResetPassword -->
-  <data name="Reset Password." xml:space="preserve">
+  <data name="Reset password." xml:space="preserve">
     <value>パスワードのリセット</value>
   </data>
   <data name="Reset your password." xml:space="preserve">
