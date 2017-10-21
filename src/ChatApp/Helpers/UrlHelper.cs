@@ -9,6 +9,11 @@ namespace ChatApp.Helpers
 {
     public static class UrlHelperExt
     {
+        public static string UserAvatar(this IUrlHelper helper)
+        {
+            return helper.Action("Get", "UserAvatar");
+        }
+
         public static string UserAvatar(this IUrlHelper helper, string userId)
         {
             return helper.Action("Get", "UserAvatar", new { id = userId });

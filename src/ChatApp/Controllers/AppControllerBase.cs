@@ -45,41 +45,6 @@ namespace ChatApp.Controllers
             return _userManager.GetUserAsync(HttpContext.User);
         }
 
-        protected IDictionary<string, IEnumerable<ApiValidationErrorViewModel>> ApiValidateErrorResult()
-        {
-            Response.StatusCode = 400;
-            return CreateApiValidationErrorsMap();
-        }
-
-        protected IDictionary<string, IEnumerable<ApiValidationErrorViewModel>>
-            CreateApiValidationErrorsMap()
-        {
-            var errorsMap = new Dictionary<string, IEnumerable<ApiValidationErrorViewModel>>();
-            foreach (var key in ModelState.Keys)
-            {
-                var state = ModelState[key];
-                if (state.ValidationState != ModelValidationState.Invalid)
-                    continue;
-
-                var errors = new List<ApiValidationErrorViewModel>();
-                var jsonKey = char.ToLower(key[0]) + key.Substring(1);
-
-                errorsMap[jsonKey] = errors;
-
-                foreach (var e in state.Errors)
-                {
-                    var error = new ApiValidationErrorViewModel
-                    {
-                        ErrorMessage = e.ErrorMessage,
-                        Key = jsonKey
-                    };
-
-                    errors.Add(error);
-                }
-            }
-            return errorsMap;
-        }
-
         protected IActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -90,6 +55,51 @@ namespace ChatApp.Controllers
             {
                 return RedirectToAction(nameof(Features.Home.HomeController.Index), "Home");
             }
+        }
+
+        protected IDictionary<string, IEnumerable<ValidationErrorViewModel>> ApiValidateErrorResult()
+        {
+            Response.StatusCode = 400;
+            return CreateApiValidationErrorsMap(camelCase: true);
+        }
+
+        protected IActionResult JsonValidateErrorResult(bool camelCase = false)
+        {
+            Response.StatusCode = 400;
+            return Json(CreateApiValidationErrorsMap(camelCase: camelCase));
+        }
+
+        protected IDictionary<string, IEnumerable<ValidationErrorViewModel>> CreateApiValidationErrorsMap(bool camelCase = true)
+        {
+            var errorsMap = new Dictionary<string, IEnumerable<ValidationErrorViewModel>>();
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.ValidationState != ModelValidationState.Invalid)
+                    continue;
+
+                var errors = new List<ValidationErrorViewModel>();
+
+                var jsonKey = key;
+                if (camelCase)
+                {
+                    jsonKey = char.ToLower(key[0]) + (key.Length > 1 ? key.Substring(1) : string.Empty);
+                }
+
+                errorsMap[jsonKey] = errors;
+
+                foreach (var e in state.Errors)
+                {
+                    var error = new ValidationErrorViewModel
+                    {
+                        ErrorMessage = e.ErrorMessage,
+                        Key = jsonKey
+                    };
+
+                    errors.Add(error);
+                }
+            }
+            return errorsMap;
         }
     }
 }

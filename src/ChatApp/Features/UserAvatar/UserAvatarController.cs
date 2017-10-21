@@ -7,6 +7,9 @@ using ChatApp.Controllers;
 using ChatApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using ChatApp.Features.UserAvatar.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace ChatApp.Features.UserAvatar
 {
@@ -27,7 +30,7 @@ namespace ChatApp.Features.UserAvatar
         {
             if (String.IsNullOrEmpty(id))
             {
-                return DefaultAvatar();
+                id = GetCurrentUserId();
             }
 
             var att = await (from a in _db.UserAvatars
@@ -40,6 +43,48 @@ namespace ChatApp.Features.UserAvatar
             }
 
             return File(att.Content, att.ContentType);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(UploadAvatarModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return JsonValidateErrorResult();
+            }
+
+            var avatar = new Data.UserAvatar
+            {
+                UserId = GetCurrentUserId(),
+                Content = new byte[model.ImageFile.Length],
+                ContentType = model.ImageFile.ContentType
+            };
+
+            if (!TryValidateModel(avatar))
+            {
+                return JsonValidateErrorResult();
+            }
+
+            using (var upFile = model.ImageFile.OpenReadStream())
+            {
+                await upFile.ReadAsync(avatar.Content, 0, avatar.Content.Length);
+            }
+
+            var exists = await _db.UserAvatars.SingleOrDefaultAsync(a => a.UserId == avatar.UserId);
+            if (exists != null)
+            {
+                exists.Content = avatar.Content;
+                exists.ContentType = avatar.ContentType;
+            }
+            else
+            {
+                _db.UserAvatars.Add(avatar);
+            }
+
+            await _db.SaveChangesAsync();
+
+            return View(model);
         }
     }
 }

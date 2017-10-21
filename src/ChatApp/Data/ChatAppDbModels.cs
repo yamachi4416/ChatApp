@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatApp.SharedResources;
 
 namespace ChatApp.Data
 {
@@ -81,7 +82,8 @@ namespace ChatApp.Data
         public string ContentType { get; set; }
 
         [Required]
-        [MaxLength(100000)]
+        [MaxLength(100000, ErrorMessage = SharedResource.MaxLength)]
+        [Display(Name = "ImageFile")]
         public byte[] Content { get; set; }
     }
 
@@ -96,7 +98,8 @@ namespace ChatApp.Data
         public string ContentType { get; set; }
 
         [Required]
-        [MaxLength(50000)]
+        [MaxLength(50000, ErrorMessage = SharedResource.MaxLength)]
+        [Display(Name = "ImageFile")]
         public byte[] Content { get; set; }
     }
 
