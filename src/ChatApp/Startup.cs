@@ -1,24 +1,23 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ChatApp.Data;
-using ChatApp.Services;
-using ChatApp.Config;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
-using ChatApp.Features.Room.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
-using System;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Localization;
-using ChatApp.SharedResources;
 using Microsoft.AspNetCore.Mvc.Razor;
+using ChatApp.Data;
+using ChatApp.Services;
+using ChatApp.Config;
+using ChatApp.Features.Room.Services;
+using ChatApp.SharedResources;
 using ChatApp.IdentityLocaleError;
+using ChatApp.Features.Room;
 
 namespace ChatApp
 {
@@ -159,6 +158,8 @@ namespace ChatApp
             app.UseAuthentication();
 
             app.UseWebSockets();
+
+            app.UseMiddleware<RoomWebSocketServer>("/ws/rooms/connect");
 
             app.Use(next => context =>
             {
