@@ -27,7 +27,7 @@ $(function () {
         cliper.toBlob().then(function (blob) {
             var cookie = getCookies();
             
-            cliper.postImage('../UserAvatar/Upload', 'ImageFile', {
+            cliper.postImage($modal.data('upload-url'), 'ImageFile', {
                 headers: {
                     'X-XSRF-TOKEN': cookie['XSRF-TOKEN']
                 }
