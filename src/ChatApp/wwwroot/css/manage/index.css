@@ -21,3 +21,39 @@
   height: 200px;
   animation: fadeIn 3s ease 0s 1 normal;
 }
+#imageClipModal {
+  padding: 30px;
+}
+#imageClipModal .clip-image {
+  width: 250px;
+  height: 250px;
+  display: inline-block;
+  border-radius: 50%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  outline: none;
+}
+#imageClipModal .clip-image img {
+  margin: 0;
+}
+#imageClipModal .modal-header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#imageClipModal .modal-body {
+  background-color: #fff;
+}
+#imageClipModal .modal-body > div {
+  padding: 10px 0;
+  text-align: center;
+}
+#imageClipModal .modal-footer {
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.modal-backdrop {
+  background-color: transparent;
+}

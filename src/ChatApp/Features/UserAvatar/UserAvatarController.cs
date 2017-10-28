@@ -84,7 +84,7 @@ namespace ChatApp.Features.UserAvatar
 
             await _db.SaveChangesAsync();
 
-            return View(model);
+            return Json("OK");
         }
     }
 }

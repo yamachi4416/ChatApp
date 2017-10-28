@@ -98,7 +98,7 @@ namespace ChatApp.Data
         public string ContentType { get; set; }
 
         [Required]
-        [MaxLength(50000, ErrorMessage = SharedResource.MaxLength)]
+        [MaxLength(150000, ErrorMessage = SharedResource.MaxLength)]
         [Display(Name = "ImageFile")]
         public byte[] Content { get; set; }
     }

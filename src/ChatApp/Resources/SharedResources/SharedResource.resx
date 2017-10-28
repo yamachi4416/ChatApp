@@ -179,6 +179,9 @@
   <data name="Reset" xml:space="preserve">
     <value>リセット</value>
   </data>
+  <data name="Select file" xml:space="preserve">
+    <value>ファイルを選択</value>
+  </data>
 
   <!-- Common Message -->
   <data name="Enter your {0}." xml:space="preserve">
@@ -296,7 +299,10 @@
     <value>氏名</value>
   </data>
   <data name="Avatar" xml:space="preserve">
-    <value>アバター</value>
+    <value>画像</value>
+  </data>
+  <data name="Change avatar" xml:space="preserve">
+    <value>画像を変更する</value>
   </data>
 
   <!-- Identity Error Messages -->

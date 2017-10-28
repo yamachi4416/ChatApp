@@ -14,10 +14,6 @@
                 padding: 5px;
             }
 
-            dt {
-
-            }
-
             dd {
                 form.external-login-form {
                     display: inline;
@@ -33,4 +29,48 @@
             }
         }
     }
+}
+
+#imageClipModal {
+    padding: 30px;
+
+    .clip-image {
+        width: 250px;
+        height: 250px;
+        display: inline-block;
+        border-radius: 50%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid #ccc;
+        outline: none;
+
+        img {
+            margin: 0;
+        }
+    }
+
+    .modal-header {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+
+        & > div {
+            padding: 10px 0;
+            text-align: center;
+        }
+    }
+
+    .modal-footer {
+        text-align: center;
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+}
+
+.modal-backdrop {
+    background-color: transparent;
 }
