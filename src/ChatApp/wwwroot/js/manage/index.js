@@ -31,9 +31,11 @@ $(function () {
                 headers: {
                     'X-XSRF-TOKEN': cookie['XSRF-TOKEN']
                 }
-            }, blob).done(function () {
-                var url = URL.createObjectURL(blob);
-                $('#user-avater').attr('src', url);
+            }, blob).done(function (data) {
+                console.log(arguments);
+                var avatar = $('#user-avater');
+                var url = avatar.attr('src');
+                avatar.attr('src', url.replace(/[^\/]+$/, data.id));
             }).fail(function () {
                 console.log(arguments);
             }).always(function () {

@@ -180,7 +180,6 @@
     ImageCliper.prototype.toBlob = function(callback) {
         var context = this.drawImageContext();
         var canvas = context.canvas;
-        console.log(canvas.prototype);
         if (typeof canvas.toBlob === 'function') {
             canvas.toBlob(callback, this.opts.imageType);
         } else {
