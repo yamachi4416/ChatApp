@@ -7,6 +7,7 @@
         this.opts = $.extend({
             zoomStep: 0.5,
             imageType: 'image/png',
+            imageQuality: 1,
             minRatio: 0.5,
             maxRatio: 5,
         }, options);
@@ -181,9 +182,9 @@
         var context = this.drawImageContext();
         var canvas = context.canvas;
         if (typeof canvas.toBlob === 'function') {
-            canvas.toBlob(callback, this.opts.imageType);
+            canvas.toBlob(callback, this.opts.imageType, this.opts.imageQuality);
         } else {
-            var dataUrl = canvas.toDataURL(this.opts.imageType);
+            var dataUrl = canvas.toDataURL(this.opts.imageType, this.opts.imageQuality);
             callback(this._dataUrlToBlob(dataUrl));
         }
     };

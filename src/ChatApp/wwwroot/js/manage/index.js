@@ -4,7 +4,8 @@ $(function () {
 
     var cliper = $('#image-clip').imageCliper({
         zoomStep: 10,
-        imageType: 'image/png'
+        imageType: 'image/jpeg',
+        imageQuality: 0.95
     }).start(window);
 
     $('#fileSelectButton').on('click', function () {
@@ -26,6 +27,7 @@ $(function () {
 
         cliper.toBlob().then(function (blob) {
             var cookie = getCookies();
+            console.log(blob.size);
             
             cliper.postImage($modal.data('upload-url'), 'ImageFile', {
                 headers: {
