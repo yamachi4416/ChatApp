@@ -28,7 +28,7 @@ $(function () {
         cliper.toBlob().then(function (blob) {
             var cookie = getCookies();
             console.log(blob.size);
-            
+
             cliper.postImage($modal.data('upload-url'), 'ImageFile', {
                 headers: {
                     'X-XSRF-TOKEN': cookie['XSRF-TOKEN']
@@ -37,7 +37,7 @@ $(function () {
                 console.log(arguments);
                 var avatar = $('#user-avater');
                 var url = avatar.attr('src');
-                avatar.attr('src', url.replace(/[^\/]+$/, data.id));
+                avatar.attr('src', url.replace(/[gG]et\/?[^\/]*$/, 'Get/' + data.id));
             }).fail(function () {
                 console.log(arguments);
             }).always(function () {
@@ -59,7 +59,7 @@ $(function () {
 
     function getCookies() {
         var cookie = {};
-        document.cookie.split(';').forEach(function(val) {
+        document.cookie.split(';').forEach(function (val) {
             var kv = val.trim().split('=');
             if (!cookie[kv[0]]) {
                 cookie[kv[0]] = decodeURIComponent(kv[1] || '');

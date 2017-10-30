@@ -168,7 +168,7 @@
         return context;
     };
 
-    ImageCliper.prototype._dataUrlToBlob = function(dataUrl) {
+    ImageCliper.prototype._dataUrlToBlob = function (dataUrl) {
         var b64 = dataUrl.replace(/^data:image\/[^;]+;base64,/, '');
         var binary = atob(b64);
         var array = new Uint8Array(binary.length);
@@ -178,7 +178,7 @@
         return new Blob([array], { type: this.opts.imageType });
     };
 
-    ImageCliper.prototype.toBlob = function(callback) {
+    ImageCliper.prototype.toBlob = function (callback) {
         var context = this.drawImageContext();
         var canvas = context.canvas;
         if (typeof canvas.toBlob === 'function') {
@@ -290,7 +290,7 @@
 
     $.fn.imageCliper = function (options) {
         var cliper = new ImageCliper(options, this);
-        var dnoop = function() {
+        var dnoop = function () {
             var df = new $.Deferred();
             return df.resolve.call(df, arguments).promise();
         };
