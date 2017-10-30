@@ -50,6 +50,7 @@ namespace ChatApp.Features.Manage
             {
                 Id = user.Id,
                 Email = user.Email,
+                AvatarId = user.UserAvatarId,
                 HasPassword = await _userManager.HasPasswordAsync(user),
                 ExternalLogins = externalLogins,
                 UserInfo = new UserInfoViewModel

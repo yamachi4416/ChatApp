@@ -140,6 +140,7 @@ namespace ChatApp.Features.Room
                             Email = addUser.Email,
                             FirstName = addUser.FirstName,
                             LastName = addUser.LastName,
+                            AvatarId = addUser.AvatarId,
                             IsAdmin = newMember.IsAdmin
                         },
                         excludeUserId: newMember.UserId

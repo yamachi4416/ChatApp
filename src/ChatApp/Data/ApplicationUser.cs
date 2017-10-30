@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatApp.Data
 {
@@ -18,5 +19,7 @@ namespace ChatApp.Data
         [Required]
         [MaxLength(128)]
         public string LastName { get; set; }
+
+        public Guid? UserAvatarId { get; set; }
     }
 }

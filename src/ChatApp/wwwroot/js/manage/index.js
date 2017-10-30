@@ -57,7 +57,9 @@ $(function () {
         var cookie = {};
         document.cookie.split(';').forEach(function(val) {
             var kv = val.trim().split('=');
-            cookie[kv[0]] = kv[1] || '';
+            if (!cookie[kv[0]]) {
+                cookie[kv[0]] = decodeURIComponent(kv[1] || '');
+            }
         });
         return cookie;
     }

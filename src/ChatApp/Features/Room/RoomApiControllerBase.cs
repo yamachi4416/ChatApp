@@ -37,7 +37,8 @@ namespace ChatApp.Features.Room
                              Email = u.Email,
                              FirstName = u.FirstName,
                              LastName = u.LastName,
-                             IsAdmin = m.IsAdmin
+                             IsAdmin = m.IsAdmin,
+                             AvatarId = u.UserAvatarId
                          });
             return query;
         }
@@ -56,6 +57,7 @@ namespace ChatApp.Features.Room
                              UserId = u == null ? "" : u.Id,
                              UserFirstName = u == null ? "" : u.FirstName,
                              UserLastName = u == null ? "" : u.LastName,
+                             AvatarId = u.UserAvatarId,
                              CreatedDate = m.CreatedDate,
                              UpdatedDate = m.UpdatedDate
                          });
@@ -76,6 +78,7 @@ namespace ChatApp.Features.Room
                             Email = u.Email,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
+                            AvatarId = u.UserAvatarId,
                             IsAdmin = false
                         };
 

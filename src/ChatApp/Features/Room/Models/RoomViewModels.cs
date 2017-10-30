@@ -19,7 +19,7 @@ namespace ChatApp.Features.Room.Models
         [StringLength(255, ErrorMessage = SharedResource.StringLength)]
         public string Description { get; set; }
 
-        public bool? IsAdmin { get;set; }
+        public bool? IsAdmin { get; set; }
 
         public DateTimeOffset? CreatedDate { get; set; }
 
@@ -50,6 +50,8 @@ namespace ChatApp.Features.Room.Models
         public string Email { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        public Guid? AvatarId { get; set; }
     }
 
     public class RoomMessageViewModel
@@ -59,6 +61,8 @@ namespace ChatApp.Features.Room.Models
         public string Message { get; set; }
 
         public string UserId { get; set; }
+
+        public Guid? AvatarId { get; set; }
 
         public string UserFirstName { get; set; }
 
@@ -78,7 +82,7 @@ namespace ChatApp.Features.Room.Models
 
             return this;
         }
-     }
+    }
 
     public class PostMessageModel
     {

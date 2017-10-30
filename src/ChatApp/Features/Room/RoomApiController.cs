@@ -132,6 +132,7 @@ namespace ChatApp.Features.Room
                 {
                     UserFirstName = user.FirstName,
                     UserLastName = user.LastName,
+                    AvatarId = user.UserAvatarId
                 }.SetChatMessage(message);
 
                 await SendWsMessageForRoomMembers(

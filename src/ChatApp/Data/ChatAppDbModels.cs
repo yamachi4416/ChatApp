@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatApp.SharedResources;
@@ -90,7 +91,14 @@ namespace ChatApp.Data
     public class UserAvatar
     {
         [Key]
+        public Guid Id { get; set; }
+
+        [Required]
+        [StringLength(38)]
         public string UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser User { get; set; }
 
         [Required]
         [MaxLength(30)]

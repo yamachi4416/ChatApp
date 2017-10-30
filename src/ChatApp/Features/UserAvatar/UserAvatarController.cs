@@ -22,20 +22,21 @@ namespace ChatApp.Features.UserAvatar
 
         private IActionResult DefaultAvatar()
         {
-            return RedirectToLocal("~/images/avatar.png");
+            return File("~/images/avatar.png", "image/png");
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string id)
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 120 * 60)]
+        public async Task<IActionResult> Get(Guid? id)
         {
-            if (String.IsNullOrEmpty(id))
+            if (id == null)
             {
-                id = GetCurrentUserId();
+                return DefaultAvatar();
             }
-
-            var att = await (from a in _db.UserAvatars
-                             where a.UserId == id
-                             select a).SingleOrDefaultAsync();
+            
+            var att = await _db.UserAvatars.Select(a => a)
+                .Where(a => a.Id == id)
+                .SingleOrDefaultAsync();
 
             if (att == null)
             {
@@ -54,9 +55,10 @@ namespace ChatApp.Features.UserAvatar
                 return JsonValidateErrorResult();
             }
 
+            var user = await GetCurrentUserAsync();
             var avatar = new Data.UserAvatar
             {
-                UserId = GetCurrentUserId(),
+                UserId = user.Id,
                 Content = new byte[model.ImageFile.Length],
                 ContentType = model.ImageFile.ContentType
             };
@@ -71,20 +73,24 @@ namespace ChatApp.Features.UserAvatar
                 await upFile.ReadAsync(avatar.Content, 0, avatar.Content.Length);
             }
 
-            var exists = await _db.UserAvatars.SingleOrDefaultAsync(a => a.UserId == avatar.UserId);
+            var exists = await (from a in _db.UserAvatars
+                                where a.UserId == avatar.UserId
+                                select new Data.UserAvatar { Id = a.Id }).ToListAsync();
+
             if (exists != null)
             {
-                exists.Content = avatar.Content;
-                exists.ContentType = avatar.ContentType;
+                _db.UserAvatars.RemoveRange(exists);
             }
-            else
-            {
-                _db.UserAvatars.Add(avatar);
-            }
+
+            _db.UserAvatars.Add(avatar);
 
             await _db.SaveChangesAsync();
 
-            return Json("OK");
+            user.UserAvatarId = avatar.Id;
+
+            await _userManager.UpdateAsync(user);
+
+            return Json(new Data.UserAvatar { Id = avatar.Id });
         }
     }
 }

@@ -15,6 +15,8 @@ namespace ChatApp.Features.Manage.Models
 
         public string Id { get; set; }
 
+        public Guid? AvatarId { get; set; }
+
         [Display(Name = nameof(Email))]
         public string Email { get; set; }
 
