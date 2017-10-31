@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using ChatApp.Controllers;
 using ChatApp.Services;
 using Microsoft.EntityFrameworkCore;
+using ChatApp.Features.ChatRoomAvatar.Models;
+using ChatApp.Attributes;
+using ChatApp.Data;
 
 namespace ChatApp.Features.ChatRoomAvatar
 {
@@ -36,6 +39,67 @@ namespace ChatApp.Features.ChatRoomAvatar
             }
 
             return File(att.Content, att.ContentType);
+        }
+
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        [ValidateRoomMember(IsAdmin = true)]
+        public async Task<IActionResult> Upload([FromRoute]Guid id, [FromBody]UploadAvatarModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return JsonValidateErrorResult();
+            }
+
+            var avatar = new Data.ChatRoomAvatar
+            {
+                ChatRoomId = id,
+                Content = new byte[model.ImageFile.Length],
+                ContentType = model.ImageFile.ContentType
+            };
+
+            if (!TryValidateModel(avatar))
+            {
+                return JsonValidateErrorResult();
+            }
+
+            using (var upFile = model.ImageFile.OpenReadStream())
+            {
+                await upFile.ReadAsync(avatar.Content, 0, avatar.Content.Length);
+            }
+
+            return Json(UpdateAvatar(avatar));
+        }
+
+        private async Task<ChatRoom> UpdateAvatar(Data.ChatRoomAvatar avatar)
+        {
+            using (var tx = await _db.Database.BeginTransactionAsync())
+            {
+                var id = avatar.ChatRoomId;
+                var room = await _db.ChatRooms
+                    .Where(r => r.Id == id).SingleOrDefaultAsync();
+
+                if (room != null)
+                {
+                    var exists = await _db.ChatRoomAvatars
+                        .Where(a => a.ChatRoomId == id).ToListAsync();
+
+                    if (exists.Count != 0)
+                    {
+                        _db.ChatRoomAvatars.RemoveRange(exists);
+                    }
+
+                    await _db.ChatRoomAvatars.AddAsync(avatar);
+                    await _db.SaveChangesAsync();
+
+                    room.ChatRoomAvatarId = avatar.Id;
+                    await _db.SaveChangesAsync();
+
+                    tx.Commit();
+                }
+
+                return room;
+            }
         }
     }
 }
