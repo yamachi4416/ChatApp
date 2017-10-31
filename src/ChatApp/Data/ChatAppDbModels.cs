@@ -36,6 +36,8 @@ namespace ChatApp.Data
         [MaxLength(255)]
         public string Description { get; set; }
 
+        public Guid? ChatRoomAvatarId { get; set; }
+
         public virtual ICollection<ChatMessage> ChatMessages { get; set; }
 
         public virtual ICollection<ChatRoomMember> ChatRoomMembers { get; set; }
@@ -75,7 +77,13 @@ namespace ChatApp.Data
     public class ChatRoomAvatar
     {
         [Key]
+        public Guid Id { get; set; }
+
+        [Required]
         public Guid? ChatRoomId { get; set; }
+
+        [ForeignKey("ChatRoomId")]
+        public virtual ChatRoom ChatRoom { get; set; }
 
         [Required]
         [MaxLength(30)]

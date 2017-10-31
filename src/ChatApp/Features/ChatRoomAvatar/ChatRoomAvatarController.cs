@@ -17,21 +17,18 @@ namespace ChatApp.Features.ChatRoomAvatar
 
         private IActionResult DefaultAvatar()
         {
-            return RedirectToLocal("~/images/group.png");
+            return File("~/images/group.png", "image/png");
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(Guid? id)
         {
-            Guid chatRoomId;
-            if (!Guid.TryParse(id, out chatRoomId))
+            if (id == null)
             {
                 return DefaultAvatar();
             }
 
-            var att = await (from a in _db.ChatRoomAvatars
-                             where a.ChatRoomId == chatRoomId
-                             select a).SingleOrDefaultAsync();
+            var att = await _db.ChatRoomAvatars.FirstOrDefaultAsync(a => a.Id == id);
 
             if (att == null)
             {
