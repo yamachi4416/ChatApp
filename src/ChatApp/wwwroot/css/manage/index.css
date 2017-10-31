@@ -16,24 +16,30 @@
 .main-contents .user-info dl dd form.external-login-form {
   display: inline;
 }
-.main-contents .user-info dl dd .avatar img {
+.main-contents .user-info dl dd .avatar {
+  display: inline-block;
   width: 200px;
   height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.main-contents .user-info dl dd .avatar img {
+  width: 100%;
+  height: 100%;
   animation: fadeIn 3s ease 0s 1 normal;
 }
 #imageClipModal {
   padding: 30px;
 }
 #imageClipModal .clip-image {
+  display: inline-block;
   width: 250px;
   height: 250px;
-  display: inline-block;
   border-radius: 50%;
+  overflow: hidden;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   border: 1px solid #ccc;
-  outline: none;
 }
 #imageClipModal .clip-image img {
   margin: 0;

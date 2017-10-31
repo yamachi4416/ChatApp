@@ -3,6 +3,14 @@
     100% { opacity: 1; }
 }
 
+.circlebox(@size) {
+    display: inline-block;
+    width: @size;
+    height: @size;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
 .main-contents {
     .alert {
         margin: 10px;
@@ -20,9 +28,11 @@
                 }
 
                 .avatar {
+                    .circlebox(200px);
+
                     img {
-                        width: 200px;
-                        height: 200px;
+                        width: 100%;
+                        height: 100%;
                         animation: fadeIn 3s ease 0s 1 normal;
                     }
                 }
@@ -35,15 +45,11 @@
     padding: 30px;
 
     .clip-image {
-        width: 250px;
-        height: 250px;
-        display: inline-block;
-        border-radius: 50%;
+        .circlebox(250px);
+
         margin: 0;
         padding: 0;
-        overflow: hidden;
         border: 1px solid #ccc;
-        outline: none;
 
         img {
             margin: 0;
