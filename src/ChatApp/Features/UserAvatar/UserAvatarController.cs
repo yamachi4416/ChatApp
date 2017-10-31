@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +7,6 @@ using ChatApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using ChatApp.Features.UserAvatar.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace ChatApp.Features.UserAvatar
 {
@@ -77,7 +74,7 @@ namespace ChatApp.Features.UserAvatar
                                 where a.UserId == avatar.UserId
                                 select new Data.UserAvatar { Id = a.Id }).ToListAsync();
 
-            if (exists != null)
+            if (exists.Count != 0)
             {
                 _db.UserAvatars.RemoveRange(exists);
             }
