@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h3 class="modal-title">
+        <span>ルームの画像編集</span>
+        <a class="pull-right" ng-click="ctrl.close()">
+            <i class="glyphicon glyphicon-remove-sign"></i>
+        </a>
+    </h3>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div>
+            <span class="clip-image" chat-image-cliper
+                c:ctrl="ctrl" c:assign="c"
+                c:option="{zoomStep: 10, imageType: 'image/jpeg', imageQuality: 0.95}"
+                style="display: inline-block; width: 250px; height:250px; border-radius: 10px; overflow: hidden;">
+                <img src="" />
+            </span>
+        </div>
+    </div>
+    <input type="range" ng-change="ctrl.changeRange()"
+        ng-model="ctrl.c.range.val"
+        min="{{ ctrl.c.range.min }}"
+        max="{{ ctrl.c.range.max }}" tabindex="-1" />
+    <button class="btn btn-default" ng-click="ctrl.fileSelect()">ファイル選択</button>
+    <button class="btn btn-default" ng-click="ctrl.upload()" ng-disabled="ctrl.disableUpload()">送信する</button>
+</div>

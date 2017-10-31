@@ -3,7 +3,8 @@
         .value('chatMessageNoImage', '../images/noimage.jpg')
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
-        .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage]);
+        .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
+        .directive('chatImageCliper', ['$timeout', '$window', chatapp.directives.ChatImageCliper]);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
@@ -194,10 +195,40 @@
                 } else {
                     elem.on('load', function () {
                         elem.unwrap();
-                    }).on('error', function() {
+                    }).on('error', function () {
                         errorHandle(elem);
                     }).wrap(angular.element('<div>').addClass('chat-img-loading'));
                 }
+            }
+        };
+    };
+
+    directives.ChatImageCliper = function ($timeout, $window) {
+        return {
+            scope: {
+                cCtrl: '=',
+                cAssign: '@',
+                cOption: '<'
+            },
+            restrict: 'A',
+            link: function (scope, elem, attrs) {
+                var cliper = angular.element(elem).imageCliper(scope.cOption);
+                var range = { min: 0, val: 50, max: 100 };
+
+                scope.cCtrl[scope.cAssign] = {
+                    cliper: cliper,
+                    range: range
+                };
+
+                cliper.on('cliper.zoomed', function (e, info) {
+                    $timeout(function () { range.val = info.width });
+                });
+
+                scope.$on('$destroy', function () {
+                    cliper.stop($window);
+                });
+
+                cliper.start($window);
             }
         };
     };

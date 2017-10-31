@@ -20,6 +20,11 @@
         };
 
         this.initElements(ele);
+
+        this._window_events = {
+            mousemove: this.drag.bind(this),
+            mouseup: this.dragStop.bind(this)
+        };
     };
 
     ImageCliper.prototype.initElements = function (ele) {
@@ -275,10 +280,20 @@
         }
     };
 
+    ImageCliper.prototype.stop = function (ele) {
+        var $ele = $(ele);
+
+        for (var ename in this._window_events) {
+            $ele.unbind(ename, this._window_events[ename]);
+        }
+    };
+
     ImageCliper.prototype.start = function (ele) {
-        $(ele)
-            .on('mousemove', this.drag.bind(this))
-            .on('mouseup', this.dragStop.bind(this));
+        var $ele = $(ele);
+
+        for (var ename in this._window_events) {
+            $ele.on(ename, this._window_events[ename]);
+        }
 
         this._clip
             .on('mousedown', this.dragStart.bind(this))
@@ -296,8 +311,15 @@
         };
 
         return $.extend(this, {
+            getSrc: function() {
+                return cliper._img.attr('src');
+            },
             start: function () {
                 cliper.start.apply(cliper, arguments);
+                return this;
+            },
+            stop: function () {
+                cliper.stop.apply(cliper, arguments);
                 return this;
             },
             zoom: function () {
@@ -354,6 +376,9 @@
                     }).click();
 
                 return df.promise();
+            },
+            imageInfo: function () {
+                return cliper.imageInfo();
             }
         });
     };

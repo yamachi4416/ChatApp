@@ -42,6 +42,7 @@ namespace ChatApp.Features.Room
                              Name = r.Name,
                              Description = r.Description,
                              IsAdmin = m.IsAdmin,
+                             AvatarId = r.ChatRoomAvatarId,
                              CreatedDate = r.CreatedDate,
                              UpdatedDate = r.UpdatedDate
                          });

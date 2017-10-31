@@ -42,9 +42,10 @@ namespace ChatApp.Features.ChatRoomAvatar
         }
 
         [HttpPost]
+        [Route("api/rooms/admin/{id}/avatars/upload")]
         [AutoValidateAntiforgeryToken]
         [ValidateRoomMember(IsAdmin = true)]
-        public async Task<IActionResult> Upload([FromRoute]Guid id, [FromBody]UploadAvatarModel model)
+        public async Task<IActionResult> Upload([FromRoute]Guid id, UploadAvatarModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -68,7 +69,9 @@ namespace ChatApp.Features.ChatRoomAvatar
                 await upFile.ReadAsync(avatar.Content, 0, avatar.Content.Length);
             }
 
-            return Json(UpdateAvatar(avatar));
+            var updated = await UpdateAvatar(avatar);
+
+            return Json(updated.ChatRoomAvatarId);
         }
 
         private async Task<ChatRoom> UpdateAvatar(Data.ChatRoomAvatar avatar)

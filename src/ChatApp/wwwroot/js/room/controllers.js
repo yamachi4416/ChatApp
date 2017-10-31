@@ -53,7 +53,7 @@ angular.module('ChatApp')
                 }.bind(this));
             });
 
-            $($window).on('focus', function() {
+            $($window).on('focus', function () {
                 ws.connect();
                 if (c.room) {
                     c.room.fetchNewMessages();
@@ -220,6 +220,66 @@ angular.module('ChatApp')
                     c.removeRoom(roomid);
                     $location.hash('');
                 }.bind(this));
+            };
+
+            this.OpenRoomImageEditDialog = function (room) {
+                openAdminModalUi({
+                    templateUrl: '../templates/room/modal-room-edit-image.html',
+                    controller: ['RoomAdminService', '$uibModalInstance',
+                        function (service, $uibModalInstance) {
+
+                            function updateRange(range, info) {
+                                $timeout(function () {
+                                    range.max = info.maxWidth;
+                                    range.min = info.minWidth;
+                                    $timeout(function () { range.val = info.width; });
+                                });
+                            }
+
+                            this.fileSelect = function () {
+                                var cliper = this.c.cliper;
+                                cliper.openFileDialog()
+                                    .then(function (files) {
+                                        cliper.loadFile(files[0]).then(function (info) {
+                                            updateRange(this.c.range, info);
+                                        }.bind(this));
+                                    }.bind(this));
+                            };
+
+                            this.changeRange = function () {
+                                var info = this.c.cliper.imageInfo();
+                                var range = this.c.range;
+                                this.c.cliper.zoom(range.val - info.width);
+                            };
+
+                            this.close = function () {
+                                $uibModalInstance.dismiss();
+                            };
+
+                            this.disableUpload = function() {
+                                return !this.c.cliper.getSrc();
+                            };
+
+                            this.upload = function () {
+                                if (this.disableUpload())
+                                    return;
+
+                                var cliper = this.c.cliper;
+                                cliper.toBlob().then(function (blob) {
+                                    return service.uploadImage(room, blob)
+                                        .then(function (avatarId) {
+                                            room.avatarId = avatarId;
+                                        });
+                                }).fail(function () {
+                                    console.log(arguments);
+                                }).always(function () {
+                                    $uibModalInstance.dismiss();
+                                });
+                            };
+                        }],
+                    size: 'sm',
+                    controllerAs: 'ctrl'
+                });
             };
 
             this.InitRooms();

@@ -21,6 +21,8 @@ namespace ChatApp.Features.Room.Models
 
         public bool? IsAdmin { get; set; }
 
+        public Guid? AvatarId { get; set; }
+
         public DateTimeOffset? CreatedDate { get; set; }
 
         public DateTimeOffset? UpdatedDate { get; set; }
