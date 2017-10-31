@@ -1,4 +1,6 @@
 $(function () {
+    'use strict';
+
     var $modal = $('#imageClipModal');
     var $img = $modal.find('img');
 
@@ -26,12 +28,11 @@ $(function () {
         }
 
         cliper.toBlob().then(function (blob) {
-            var cookie = getCookies();
             console.log(blob.size);
 
             cliper.postImage($modal.data('upload-url'), 'ImageFile', {
                 headers: {
-                    'X-XSRF-TOKEN': cookie['XSRF-TOKEN']
+                    'X-XSRF-TOKEN': $.cookie('XSRF-TOKEN') || ''
                 }
             }, blob).done(function (data) {
                 console.log(arguments);
@@ -56,15 +57,4 @@ $(function () {
     $('#image-clip').on('cliper.zoomed', function (e, info) {
         $('#zoomRange').val(info.width);
     });
-
-    function getCookies() {
-        var cookie = {};
-        document.cookie.split(';').forEach(function (val) {
-            var kv = val.trim().split('=');
-            if (!cookie[kv[0]]) {
-                cookie[kv[0]] = decodeURIComponent(kv[1] || '');
-            }
-        });
-        return cookie;
-    }
 });
