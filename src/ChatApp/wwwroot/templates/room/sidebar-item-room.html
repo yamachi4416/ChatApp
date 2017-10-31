@@ -2,8 +2,7 @@
     <h4 class="title">
         <span>ルーム</span>
         <span class="pull-right small" uib-dropdown dropdown-append-to-body>
-            <a class="glyphicon glyphicon-align-justify toggle-tooltip"
-                uib-dropdown-toggle></a>
+            <a class="glyphicon glyphicon-align-justify toggle-tooltip" uib-dropdown-toggle></a>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                 <li role="menuitem">
                     <a ng-click="RoomCtrl.OpenCreateRoom()">
@@ -15,12 +14,10 @@
         </span>
     </h4>
     <div class="media-list">
-        <div class="media" ng-repeat="r in c.rooms"
-            ng-class="{active: c.room == r}">
-            <div class="media-left media-middle"
-                ng-click="RoomCtrl.SelectRoom(r)">
-                <span class="img-thumbnail">
-                    <img class="img-rounded" ng-src="../ChatRoomAvatar/Get/{{r.avatarId}}" width="30" height="30" />
+        <div class="media" ng-repeat="r in c.rooms" ng-class="{active: c.room == r}">
+            <div class="media-left media-middle" ng-click="RoomCtrl.SelectRoom(r)">
+                <span class="img-thumbnail" style="padding: 1px;">
+                    <img ng-src="../ChatRoomAvatar/Get/{{r.avatarId}}" style="border-radius: 2px;" height="50" />
                 </span>
             </div>
             <div class="media-body" ng-click="RoomCtrl.SelectRoom(r)">
@@ -28,8 +25,7 @@
             </div>
             <div class="media-right">
                 <span class="pull-right" uib-dropdown dropdown-append-to-body>
-                    <a class="glyphicon glyphicon-option-horizontal toggle-tooltip"
-                        uib-dropdown-toggle href="javascript:void(0)"></a>
+                    <a class="glyphicon glyphicon-option-horizontal toggle-tooltip" uib-dropdown-toggle href="javascript:void(0)"></a>
                     <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                         <li role="menuitem">
                             <a ng-click="RoomCtrl.OpenDetailRoom(r)">
