@@ -6,8 +6,7 @@ $(function () {
 
     var cliper = $('#image-clip').imageCliper({
         zoomStep: 10,
-        imageType: 'image/jpeg',
-        imageQuality: 0.95
+        imageType: 'image/png'
     }).start(window);
 
     $('#fileSelectButton').on('click', function () {

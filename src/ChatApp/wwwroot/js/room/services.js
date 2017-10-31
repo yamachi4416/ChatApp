@@ -172,7 +172,7 @@
             },
             uploadImage: function (room, blob) {
                 var formData = new FormData();
-                formData.append('ImageFile', new File([blob], 'RoomAvatar.jpeg', { type: blob.type }));
+                formData.append('ImageFile', new File([blob], 'RoomAvatar.png', { type: blob.type }));
                 return this._request('Post', room, 'avatars/upload', formData, {
                     headers: { 'Content-Type': undefined },
                     transformRequest: angular.identity

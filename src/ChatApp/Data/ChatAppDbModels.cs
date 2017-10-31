@@ -85,11 +85,11 @@ namespace ChatApp.Data
 
         [Required]
         [MaxLength(30)]
-        [RegularExpression("image/jpeg")]
+        [RegularExpression("image/png")]
         public string ContentType { get; set; }
 
         [Required]
-        [MaxLength(100000, ErrorMessage = SharedResource.MaxLength)]
+        [MaxLength(300000, ErrorMessage = SharedResource.MaxLength)]
         [Display(Name = "ImageFile")]
         public byte[] Content { get; set; }
     }
@@ -108,11 +108,11 @@ namespace ChatApp.Data
 
         [Required]
         [MaxLength(30)]
-        [RegularExpression("image/jpeg")]
+        [RegularExpression("image/png")]
         public string ContentType { get; set; }
 
         [Required]
-        [MaxLength(100000, ErrorMessage = SharedResource.MaxLength)]
+        [MaxLength(300000, ErrorMessage = SharedResource.MaxLength)]
         [Display(Name = "ImageFile")]
         public byte[] Content { get; set; }
     }
