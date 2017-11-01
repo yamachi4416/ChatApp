@@ -1,3 +1,9 @@
+body {
+  overflow: hidden;
+}
+li[role="menuitem"] {
+  cursor: pointer;
+}
 @keyframes __fadein__opacity__ {
   0% {
     opacity: 0;
@@ -20,29 +26,6 @@
 }
 .modal-backdrop {
   background-color: transparent;
-}
-body {
-  overflow: hidden;
-}
-li[role="menuitem"] {
-  cursor: pointer;
-}
-.modal-content {
-  background-color: #fff;
-}
-.modal-content .modal-header {
-  background-color: #fff;
-  padding: 0 0 10px 10px;
-}
-.modal-content .modal-header .modal-title {
-  font-size: 1.4em;
-}
-.modal-content .modal-main {
-  background-color: #fff;
-  padding: 10px;
-}
-.modal-content .modal-footer {
-  background-color: #fff;
 }
 #chat-sidebar-wrapper {
   height: calc(100vh - 50px);
@@ -132,6 +115,42 @@ li[role="menuitem"] {
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media p {
   word-break: break-all;
 }
+.modal-content {
+  background-color: #fff;
+}
+.modal-content .modal-header {
+  background-color: #fff;
+  padding: 0 0 10px 10px;
+}
+.modal-content .modal-header .modal-title {
+  font-size: 1.4em;
+}
+.modal-content .modal-main {
+  background-color: #fff;
+  padding: 10px;
+}
+.modal-content .modal-footer {
+  background-color: #fff;
+}
+.modal_room_detail div {
+  padding: 10px;
+}
+.modal_room_detail .description {
+  min-height: 5em;
+  white-space: pre-wrap;
+}
+.modal_room_edit_image {
+  text-align: center;
+}
+.modal_room_edit_image [chat-image-cliper] {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
 #chat-messages .message-list .message-item {
   margin: 0;
   padding: 10px 20px;
@@ -173,23 +192,4 @@ li[role="menuitem"] {
   height: 50px;
   overflow: hidden;
   border-radius: 50%;
-}
-.room-detail div {
-  padding: 10px;
-}
-.room-detail .description {
-  min-height: 5em;
-  white-space: pre-wrap;
-}
-.modal_room_edit_image {
-  text-align: center;
-}
-.modal_room_edit_image [chat-image-cliper] {
-  display: inline-block;
-  box-sizing: border-box;
-  width: 250px;
-  height: 250px;
-  overflow: hidden;
-  border: 1px solid #ccc;
-  border-radius: 10px;
 }
