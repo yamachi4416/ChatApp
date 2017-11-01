@@ -66,22 +66,18 @@
 <div class="modal fade" id="imageClipModal" data-upload-url="@Url.Content("~/UserAvatar/Upload")">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <p class="modal-title">@Localizer["Change avatar"]</p>
-            </div>
             <div class="modal-body">
-                <div class="container-fluid">
-                    <div>
-                        <span class="clip-image" id="image-clip">
-                            <img src="" />
-                        </span>
-                    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <p class="modal-title">@Localizer["Change avatar"]</p>
                 </div>
-                <input type="range" id="zoomRange" tabindex="-1" />
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group">
+                <div class="modal-main">
+                    <span class="clip-image" id="image-clip">
+                        <img src="" />
+                    </span>
+                    <input type="range" id="zoomRange" tabindex="-1" />
+                </div>
+                <div class="modal-footer">
                     <button class="btn btn-default" id="fileSelectButton">@Localizer["Select file"]</button>
                     <button class="btn btn-default" id="drawImageButton">@Localizer["Submit"]</button>
                 </div>

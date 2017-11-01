@@ -1,10 +1,25 @@
-@keyframes fadeIn {
+@keyframes __fadein__opacity__ {
   0% {
     opacity: 0;
   }
   100% {
     opacity: 1;
   }
+}
+* {
+  box-sizing: border-box;
+}
+*::-webkit-scrollbar {
+  width: 7px;
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb,
+* thumb {
+  background: rgba(200, 200, 200, 0.5);
+  border-radius: 10px;
+}
+.modal-backdrop {
+  background-color: transparent;
 }
 .main-contents .alert {
   margin: 10px;
@@ -18,25 +33,27 @@
 }
 .main-contents .user-info dl dd .avatar {
   display: inline-block;
+  box-sizing: border-box;
   width: 200px;
   height: 200px;
-  border-radius: 50%;
   overflow: hidden;
+  border-radius: 50%;
 }
 .main-contents .user-info dl dd .avatar img {
   width: 100%;
   height: 100%;
-  animation: fadeIn 3s ease 0s 1 normal;
+  animation: __fadein__opacity__ 3s ease 0s 1 normal;
 }
 #imageClipModal {
-  padding: 30px;
+  padding-top: 30px;
 }
 #imageClipModal .clip-image {
   display: inline-block;
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
+  box-sizing: border-box;
+  width: 252px;
+  height: 252px;
   overflow: hidden;
+  border-radius: 50%;
   margin: 0;
   padding: 0;
   border: 1px solid #ccc;
@@ -44,22 +61,21 @@
 #imageClipModal .clip-image img {
   margin: 0;
 }
-#imageClipModal .modal-header {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-#imageClipModal .modal-body {
+#imageClipModal .modal-content {
   background-color: #fff;
-}
-#imageClipModal .modal-body > div {
-  padding: 10px 0;
   text-align: center;
 }
-#imageClipModal .modal-footer {
-  text-align: center;
-  padding-top: 3px;
-  padding-bottom: 3px;
+#imageClipModal .modal-content .modal-header {
+  background-color: #fff;
+  padding: 0 0 10px 10px;
 }
-.modal-backdrop {
-  background-color: transparent;
+#imageClipModal .modal-content .modal-header .modal-title {
+  font-size: 1.4em;
+}
+#imageClipModal .modal-content .modal-main {
+  background-color: #fff;
+  padding: 10px;
+}
+#imageClipModal .modal-content .modal-footer {
+  background-color: #fff;
 }

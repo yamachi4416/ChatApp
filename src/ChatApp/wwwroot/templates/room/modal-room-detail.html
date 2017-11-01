@@ -1,13 +1,13 @@
-<div class="modal-header">
-    <h3 class="modal-title">
-        <span>ルームの詳細</span>
-        <a class="pull-right" ng-click="ctrl.close()">
-            <i class="glyphicon glyphicon-remove-sign"></i>
-        </a>
-    </h3>
-</div>
-<div class="modal-body">
-    <div class="room-detail">
+<div class="modal-body room-detail">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <span>ルームの詳細</span>
+            <a class="pull-right" ng-click="ctrl.close()">
+                <i class="glyphicon glyphicon-remove-sign"></i>
+            </a>
+        </h3>
+    </div>
+    <div class="modal-main">
         <dl>
             <dt>ルーム名</dt>
             <dd><div class="name">{{ctrl.room.name}}</div></dd>
