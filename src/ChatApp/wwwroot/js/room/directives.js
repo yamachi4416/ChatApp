@@ -166,7 +166,7 @@
                 };
             },
             controllerAs: 'ctrl',
-            templateUrl: '../templates/room/sidebar.html',
+            templateUrl: '/sidebar/main.tmpl.html',
             link: function (scope, elem, attrs, ctrl) {
                 ctrl.selector = scope.chatPrefix;
                 ctrl.sizes = scope.chatSidebar;

@@ -137,7 +137,7 @@ angular.module('ChatApp')
 
             this.OpenAddMember = function () {
                 openAdminModalUi({
-                    templateUrl: '../templates/room/modal-members-add.html',
+                    templateUrl: '/modal/member/add.tmpl.html',
                     controller: 'RoomMemberAddController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -148,7 +148,7 @@ angular.module('ChatApp')
 
             this.OpenRemoveMember = function () {
                 openAdminModalUi({
-                    templateUrl: '../templates/room/modal-members-remove.html',
+                    templateUrl: '/modal/member/remove.tmpl.html',
                     controller: 'RoomMemberRemoveController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -159,7 +159,7 @@ angular.module('ChatApp')
 
             this.OpenCreateRoom = function () {
                 openModalUi({
-                    templateUrl: '../templates/room/modal-room-create.html',
+                    templateUrl: '/modal/room/create.tmpl.html',
                     controller: 'RoomCreateController',
                     controllerAs: 'ctrl'
                 }, function (room) {
@@ -170,7 +170,7 @@ angular.module('ChatApp')
 
             this.OpenEditRoom = function (room) {
                 openAdminModalUi({
-                    templateUrl: '../templates/room/modal-room-edit.html',
+                    templateUrl: '/modal/room/edit.tmpl.html',
                     controller: 'RoomEditController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -189,7 +189,7 @@ angular.module('ChatApp')
 
             this.OpenDetailRoom = function (room) {
                 openModalUi({
-                    templateUrl: '../templates/room/modal-room-detail.html',
+                    templateUrl: '/modal/room/detail.tmpl.html',
                     controller: 'RoomDetailController',
                     controllerAs: 'ctrl',
                     resolve: {
@@ -200,13 +200,15 @@ angular.module('ChatApp')
 
             this.OpenRemoveRoom = function (room) {
                 openAdminModalUi({
-                    templateUrl: '../templates/room/modal-confirm.html',
+                    templateUrl: '/modal/room/delete-confirm.tmpl.html',
                     controller: ['RoomAdminService', '$uibModalInstance',
                         function (service, $uibModalInstance) {
-                            this.title = '本当に"' + room.name + '"を削除しますか？';
+                            this.room = room;
+
                             this.close = function () {
                                 $uibModalInstance.dismiss();
                             };
+
                             this.ok = function () {
                                 service.removeRoom(room)
                                     .then(function (room) {
@@ -224,7 +226,7 @@ angular.module('ChatApp')
 
             this.OpenRoomImageEditDialog = function (room) {
                 openAdminModalUi({
-                    templateUrl: '../templates/room/modal-room-edit-image.html',
+                    templateUrl: '/modal/room/edit-image.tmpl.html',
                     controller: ['RoomAdminService', '$uibModalInstance',
                         function (service, $uibModalInstance) {
 

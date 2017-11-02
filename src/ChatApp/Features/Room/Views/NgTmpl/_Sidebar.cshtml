@@ -1,0 +1,117 @@
+<script type="text/ng-template" id="/sidebar/main.tmpl.html">
+    <div id="{{ctrl.selector}}-wrapper" class="affix">
+        <div class="affix hidden-xs {{ctrl.sidebarColClass()}}" id="{{ctrl.selector}}">
+            <div class="{{ctrl.selector}}-content">
+                <ng-transclude></ng-transclude>
+                <a class="hidden-sm hidden-lg hidden-md btn {{ctrl.selector}}-toggle {{ctrl.selector}}-close"
+                    ng-hide="!ctrl.isShowSidebar"
+                    ng-click="ctrl.toggleSidebar()">
+                    <i class="glyphicon glyphicon-menu-left"></i>
+                </a>
+            </div>
+        </div>
+        <a class="hidden-sm hidden-lg hidden-md btn {{ctrl.selector}}-toggle {{ctrl.selector}}-open"
+            ng-hide="ctrl.isShowSidebar"
+            ng-click="ctrl.toggleSidebar()">
+            <i class="glyphicon glyphicon-menu-right"></i>
+        </a>
+    </div>
+</script>
+
+<script type="text/ng-template" id="/sidebar/room.tmpl.html">
+    <div class="chat-sidebar-item chat-sidebar-item-rooms">
+        <h4 class="title">
+            <span>ルーム</span>
+            <span class="pull-right small" uib-dropdown dropdown-append-to-body>
+                <a class="glyphicon glyphicon-align-justify toggle-tooltip" uib-dropdown-toggle></a>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                    <li role="menuitem">
+                        <a ng-click="RoomCtrl.OpenCreateRoom()">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <span>ルームの作成</span>
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </h4>
+        <div class="media-list">
+            <div class="media" ng-repeat="r in c.rooms" ng-class="{active: c.room == r}">
+                <div class="media-left media-middle" ng-click="RoomCtrl.SelectRoom(r)">
+                    <span class="img-thumbnail" style="padding: 1px;">
+                        <img ng-src="../ChatRoomAvatar/Get/{{r.avatarId}}" style="border-radius: 2px;" height="50" />
+                    </span>
+                </div>
+                <div class="media-body" ng-click="RoomCtrl.SelectRoom(r)">
+                    <p ng-bind="r.name"></p>
+                </div>
+                <div class="media-right">
+                    <span class="pull-right" uib-dropdown dropdown-append-to-body>
+                        <a class="glyphicon glyphicon-option-horizontal toggle-tooltip" uib-dropdown-toggle href="javascript:void(0)"></a>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                            <li role="menuitem">
+                                <a ng-click="RoomCtrl.OpenDetailRoom(r)">
+                                    <span class="glyphicon glyphicon-list-alt"></span>
+                                    <span>ルームの詳細</span>
+                                </a>
+                            </li>
+                            <li role="menuitem" ng-show="r.isAdmin">
+                                <a ng-click="RoomCtrl.OpenEditRoom(r)">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                    <span>ルームの編集</span>
+                                </a>
+                            </li>
+                            <li role="menuitem" ng-show="r.isAdmin">
+                                <a ng-click="RoomCtrl.OpenRoomImageEditDialog(r)">
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                    <span>ルームの画像</span>
+                                </a>
+                            </li>
+                            <li role="menuitem" ng-show="r.isAdmin">
+                                <a ng-click="RoomCtrl.OpenRemoveRoom(r)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                    <span>ルームの削除</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="/sidebar/member.tmpl.html">
+    <div class="chat-sidebar-item chat-sidebar-item-members">
+        <h4 class="title">
+            <span>メンバー</span>
+            <span class="pull-right small" uib-dropdown dropdown-append-to-body ng-show="c.room.isAdmin">
+                <a class="glyphicon glyphicon-align-justify toggle-tooltip" uib-dropdown-toggle></a>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                    <li role="menuitem">
+                        <a ng-click="RoomCtrl.OpenAddMember()">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>メンバー追加</span>
+                        </a>
+                    </li>
+                    <li role="menuitem">
+                        <a ng-click="RoomCtrl.OpenRemoveMember()">
+                            <i class="glyphicon glyphicon-trash"></i>
+                            <span>メンバー削除</span>
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </h4>
+        <div class="media-list">
+            <div class="media" ng-repeat="m in c.room.members">
+                <div class="media-left">
+                    <img class="img-circle" width="30" height="30" ng-src="../UserAvatar/Get/{{ m.avatarId }}" />
+                </div>
+                <div class="media-body">
+                    <span ng-bind="m.firstName"></span>
+                    <span ng-bind="m.lastName"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
