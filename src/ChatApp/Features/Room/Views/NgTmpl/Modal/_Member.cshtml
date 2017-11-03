@@ -30,7 +30,7 @@
     <div class="modal-body">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>メンバーの追加</span>
+                <span>@VLocalizer["Add member"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>
@@ -41,7 +41,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="ctrl.search" required minlength="3">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" ng-disabled="AddmemberSearchForm.$invalid">検索</button>
+                        <button class="btn btn-default" ng-disabled="AddmemberSearchForm.$invalid">@Localizer["Search"]</button>
                     </span>
                 </div>
             </form>
@@ -56,7 +56,7 @@
     <div class="modal-body">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>メンバーの削除</span>
+                <span>@VLocalizer["Remove member"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>

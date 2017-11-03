@@ -58,16 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- Common -->
-  <data name="Add" xml:space="preserve">
-    <value>追加</value>
-  </data>
-  <data name="Remove" xml:space="preserve">
-    <value>削除</value>
-  </data>
-  <data name="Change" xml:space="preserve">
-    <value>変更</value>
-  </data>
 
   <!-- Model Validation Messages -->
   <data name="The {0} field is required." xml:space="preserve">
@@ -181,6 +171,21 @@
   </data>
   <data name="Select file" xml:space="preserve">
     <value>ファイルを選択</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>変更</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>検索する</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
   </data>
 
   <!-- Common Message -->

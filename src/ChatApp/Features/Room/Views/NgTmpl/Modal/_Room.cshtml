@@ -2,33 +2,33 @@
     <form name="CreateRoomForm" ng-submit="ctrl.doRoom()" novalidate>
         <div class="form-group">
             <label for="CreateRoomForm_room_name">
-                <span>ルーム名</span>
+                <span>@VLocalizer["Name"]</span>
             </label>
             <input type="text" name="name"
                 id="CreateRoomForm_room_name"
                 class="form-control"
                 ng-model="ctrl.room.name"
-                placeholder="ルーム名は必須です"
+                placeholder="@VLocalizer["{0} is required.", @VLocalizer["Name"]]"
                 required
                 maxlength="30" />
         </div>
         <div class="form-group">
             <label for="CreateRoomForm_room_description">
-                <span>ルーム説明</span>
+                <span>@VLocalizer["Description"]</span>
             </label>
             <textarea name="description"
                 id="CreateRoomForm_room_description"
                 class="form-control"
                 ng-model="ctrl.room.description"
                 maxlength="255"
-                placeholder="説明は255文字までで入力してください"
+                placeholder="@Localizer["The field {0} must be a string with a maximum length of {1}.", @VLocalizer["Description"], 255]"
                 rows="8"
                 style="resize: vertical;"></textarea>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-default"
-                ng-disabled="CreateRoomForm.$invalid || !CreateRoomForm.$dirty">{{ctrl.doRoomLabel}}する</button>
-            <button type="button" class="btn btn-default" ng-click="ctrl.close()">キャンセル</button>
+                ng-disabled="CreateRoomForm.$invalid || !CreateRoomForm.$dirty">@Localizer["Submit"]</button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.close()">@Localizer["Cancel"]</button>
         </div>
     </from>
 </script>
@@ -37,7 +37,7 @@
     <div class="modal-body">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>ルームの作成</span>
+                <span>@VLocalizer["Create room"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>
@@ -51,7 +51,7 @@
     <div class="modal-body">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>ルームの編集</span>
+                <span>@VLocalizer["Edit room"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>
@@ -65,7 +65,7 @@
     <div class="modal-body modal_room_detail">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>ルームの詳細</span>
+                <span>@VLocalizer["Room detail"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>
@@ -73,13 +73,13 @@
         </div>
         <div class="modal-main">
             <dl>
-                <dt>ルーム名</dt>
+                <dt>@VLocalizer["Name"]</dt>
                 <dd><div class="name">{{ctrl.room.name}}</div></dd>
-                <dt>ルーム説明</dt>
+                <dt>@VLocalizer["Description"]</dt>
                 <dd><div class="description">{{ctrl.room.description}}</div></dd>
-                <dt>作成日</dt>
+                <dt>@VLocalizer["CreatedDate"]</dt>
                 <dd><div><time>{{ctrl.room.createdDate | date: 'yyyy/MM/dd HH:mm:ss'}}</time></div></dd>
-                <dt>更新日</dt>
+                <dt>@VLocalizer["UpdatedDate"]</dt>
                 <dd><div><time>{{ctrl.room.updatedDate | date: 'yyyy/MM/dd HH:mm:ss'}}</time></div></dd>
             </dl>
         </div>
@@ -90,7 +90,7 @@
     <div class="modal-body modal_room_edit_image">
         <div class="modal-header">
             <h3 class="modal-title">
-                <span>ルームの画像編集</span>
+                <span>@VLocalizer["Edit room image"]</span>
                 <a class="pull-right" ng-click="ctrl.close()">
                     <i class="glyphicon glyphicon-remove-sign"></i>
                 </a>
@@ -108,8 +108,8 @@
             </div>
         </div>
         <div class="modal-footer" style="text-align: center;">
-            <button class="btn btn-default" ng-click="ctrl.fileSelect()">ファイル選択</button>
-            <button class="btn btn-default" ng-click="ctrl.upload()" ng-disabled="ctrl.disableUpload()">送信する</button>
+            <button class="btn btn-default" ng-click="ctrl.fileSelect()">@Localizer["Select file"]</button>
+            <button class="btn btn-default" ng-click="ctrl.upload()" ng-disabled="ctrl.disableUpload()">@Localizer["Submit"]</button>
         </div>
     </div>
 </script>
@@ -118,15 +118,15 @@
     <div class="modal-body">
         <div class="modal-header">
             <h5 class="modal-title text-center">
-                <span>ルームのを削除</span>
+                <span>@VLocalizer["Remove room Confirmation"]</span>
             </h5>
         </div>
         <div class="modal-main">
-            <p>{{ctrl.room.name}}を削除します？</p>
+            <p>@VLocalizer["Are you sure you want to delete the room '{{{{ctrl.room.name}}}}' ?"]</p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" ng-click="ctrl.ok()">はい</button>
-            <button type="button" class="btn btn-default" ng-click="ctrl.close()">いいえ</button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.ok()">@Localizer["Yes"]</button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.close()">@Localizer["No"]</button>
         </div>
     </div>
 </script>

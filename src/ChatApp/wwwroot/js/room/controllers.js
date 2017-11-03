@@ -13,7 +13,7 @@ angular.module('ChatApp')
                 } else {
 
                 }
-            }.bind(this)).on(ws.types.CREATE_MEMBER, function (res) {
+            }).on(ws.types.CREATE_MEMBER, function (res) {
                 var room = c.getRoom(res.roomId);
                 if (!room) return;
 
@@ -23,8 +23,8 @@ angular.module('ChatApp')
                     } else {
 
                     }
-                }.bind(this));
-            }.bind(this)).on(ws.types.DELETE_MEMBER, function (res) {
+                });
+            }).on(ws.types.DELETE_MEMBER, function (res) {
                 var room = c.getRoom(res.roomId);
                 if (!room) return;
 
@@ -34,11 +34,11 @@ angular.module('ChatApp')
                     } else {
 
                     }
-                }.bind(this));
-            }.bind(this)).on(ws.types.DEFECT_ROOM, function (res) {
+                });
+            }).on(ws.types.DEFECT_ROOM, function (res) {
                 $timeout(function () {
                     c.removeRoom(res.roomId);
-                }.bind(this));
+                });
             }).on(ws.types.JOIN_ROOM, function (res) {
                 var len = (c.rooms || []).length;
                 $timeout(function () {
@@ -50,7 +50,7 @@ angular.module('ChatApp')
             }.bind(this)).on(ws.types.DELETE_ROOM, function (res) {
                 $timeout(function () {
                     c.removeRoom(res.roomId);
-                }.bind(this));
+                });
             });
 
             $($window).on('focus', function () {
@@ -58,7 +58,7 @@ angular.module('ChatApp')
                 if (c.room) {
                     c.room.fetchNewMessages();
                 }
-            }.bind(this));
+            });
 
             this.InitRooms = function () {
                 return c.fetchJoinRooms()
@@ -303,8 +303,6 @@ angular.module('ChatApp')
                 description: _room.description
             };
 
-            this.doRoomLabel = '変更';
-
             this.close = function () {
                 $uibModalInstance.dismiss();
             };
@@ -313,18 +311,15 @@ angular.module('ChatApp')
                 return service.editRoom(_room, this.room)
                     .then(function (room) {
                         $uibModalInstance.close(room);
-                    }, function (res) {
+                    }).fail(function (res) {
                         console.log(res.data);
                     });
             };
         }
     ])
-    .controller('RoomCreateController', ['RoomContext', 'RoomService', '$uibModalInstance',
-        function (RoomContext, service, $uibModalInstance) {
-            var c = RoomContext;
-
+    .controller('RoomCreateController', ['RoomService', '$uibModalInstance',
+        function (service, $uibModalInstance) {
             this.room = {};
-            this.doRoomLabel = '作成';
 
             this.close = function () {
                 $uibModalInstance.dismiss();
@@ -334,7 +329,7 @@ angular.module('ChatApp')
                 return service.createRoom(this.room)
                     .then(function (room) {
                         $uibModalInstance.close(room);
-                    }, function (res) {
+                    }).fail(function (res) {
                         console.log(res.data);
                     });
             };
