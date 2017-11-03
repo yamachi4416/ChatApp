@@ -4,7 +4,8 @@
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
-        .directive('chatImageCliper', ['$timeout', '$window', chatapp.directives.ChatImageCliper]);
+        .directive('chatImageCliper', ['$timeout', '$window', chatapp.directives.ChatImageCliper])
+        .directive('chatAutoResize', ['$window', chatapp.directives.chatAutoResize]);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
@@ -229,6 +230,46 @@
                 });
 
                 cliper.start($window);
+            }
+        };
+    };
+
+    directives.chatAutoResize = function ($window) {
+        return {
+            restrict: "A",
+            require: "ngModel",
+            scope: {
+                maxHeight: '<chatAutoResizeMaxHeight'
+            },
+            link: function (scope, element, attrs, ngModel) {
+                var $win = angular.element($window);
+                var diff = parseInt(element.css('padding-bottom')) +
+                    parseInt(element.css('padding-top'));
+
+                element.height(element.scrollHeight - diff);
+
+                var watchModel = scope.$watch(function () {
+                    return ngModel.$viewValue;
+                }, function (newVal, oldVal) {
+                    if (newVal == oldVal)
+                        return;
+
+                    var oldHeight = element.height();
+                    element.height(0);
+                    var newHeight = element[0].scrollHeight - diff;
+
+                    if (scope.maxHeight && newHeight > scope.maxHeight) {
+                        element.height(oldHeight);
+                    } else {
+                        element.height(newHeight);
+                    }
+
+                    $win.scrollTop($win.height());
+                });
+
+                scope.$on('$destroy', function () {
+                    watchModel();
+                });
             }
         };
     };
