@@ -29,9 +29,8 @@
             ng-maxlength="300"
             ng-model="c.room.message.message"
             ng-trim="false"
-            rows="1"
-            chat-auto-resize
-            chat-auto-resize-max-height="300"
+            chat-autoresize
+            style="max-height:50%;"
             required></textarea>
         <button class="btn btn-default" tabindex="2"
             ng-disabled="chatForm.$invalid || c.room.message.isPosting"
