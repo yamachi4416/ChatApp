@@ -187,6 +187,12 @@
   <data name="Cancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>
+  <data name="Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
 
   <!-- Common Message -->
   <data name="Enter your {0}." xml:space="preserve">

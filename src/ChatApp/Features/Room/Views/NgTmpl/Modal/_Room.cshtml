@@ -119,12 +119,15 @@
         <div class="modal-header">
             <h5 class="modal-title text-center">
                 <span>@VLocalizer["Remove room Confirmation"]</span>
+                <a class="pull-right" ng-click="ctrl.close()">
+                    <i class="glyphicon glyphicon-remove-sign"></i>
+                </a>
             </h5>
         </div>
         <div class="modal-main">
             <p>@VLocalizer["Are you sure you want to delete the room '{{{{ctrl.room.name}}}}' ?"]</p>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" style="text-align:center;">
             <button type="button" class="btn btn-default" ng-click="ctrl.ok()">@Localizer["Yes"]</button>
             <button type="button" class="btn btn-default" ng-click="ctrl.close()">@Localizer["No"]</button>
         </div>
