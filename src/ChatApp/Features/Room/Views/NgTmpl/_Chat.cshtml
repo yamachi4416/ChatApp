@@ -29,11 +29,16 @@
             ng-maxlength="300"
             ng-model="c.room.message.message"
             ng-trim="false"
+            ng-required="true"
+            ng-pattern="/[^\s]+/"
             chat-autoresize
-            style="max-height:50%;"
-            required></textarea>
+            rows="1"
+            style="max-height:50%;overflow:hidden;">
+        </textarea>
         <button class="btn btn-default" tabindex="2"
             ng-disabled="chatForm.$invalid || c.room.message.isPosting"
-            ng-show="chatForm.$valid && !c.room.message.isPosting">GO</button>
+            ng-show="chatForm.$valid && !c.room.message.isPosting">
+            <i class="glyphicon glyphicon-send"></i>
+        </button>
     </form>
 </script>

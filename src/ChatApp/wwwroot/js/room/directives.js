@@ -5,7 +5,7 @@
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
         .directive('chatImageCliper', ['$timeout', '$window', chatapp.directives.ChatImageCliper])
-        .directive('chatAutoResize', ['$window', chatapp.directives.chatAutoResize]);
+        .directive('chatAutoresize', ['$window', '$timeout', chatapp.directives.chatAutoresize]);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
@@ -234,42 +234,81 @@
         };
     };
 
-    directives.chatAutoResize = function ($window) {
+    directives.chatAutoresize = function ($window, $timeout) {
+        function getMaxHeight(element, parent) {
+            var maxHeight = element.css('max-height');
+            if (maxHeight == 'none' || !maxHeight) {
+                return null;
+            }
+
+            if (/^[0-9.]+%$/.test(maxHeight)) {
+                return parent.height() * parseFloat(maxHeight) / 100;
+            } else if (/^[0-9.]+$/.test(maxHeight)) {
+                return parseFloat(maxHeight);
+            }
+
+            return null;
+        }
+
+        function resize(element, parent, diff) {
+            var oldHeight = element.height();
+            element.height(0);
+            var newHeight = element[0].scrollHeight - diff;
+            var maxHeight = getMaxHeight(element, parent);
+
+            if (maxHeight && newHeight > maxHeight) {
+                element.height(maxHeight);
+            } else {
+                element.height(newHeight);
+            }
+
+            parent.scrollTop(parent.height());
+        }
+
+        function ScopeWatcher(scope, watcher, handler) {
+            var watch;
+            return {
+                start: function (isCall) {
+                    this.stop();
+                    isCall && handler();
+                    watch = scope.$watch(watcher, handler);
+                },
+                stop: function () {
+                    if (watch) {
+                        watch();
+                        watch = null;
+                    }
+                }
+            };
+        }
+
         return {
             restrict: "A",
             require: "ngModel",
-            scope: {
-                maxHeight: '<chatAutoResizeMaxHeight'
-            },
+            scope: {},
             link: function (scope, element, attrs, ngModel) {
-                var $win = angular.element($window);
-                var diff = parseInt(element.css('padding-bottom')) +
-                    parseInt(element.css('padding-top'));
+                var heightDiff = parseInt(element.css('padding-bottom')) + parseInt(element.css('padding-top'));
+                var resizeHandler = resize.bind(null, element, angular.element($window), heightDiff);
+                var modelWatcher = ScopeWatcher(scope, function () { return ngModel.$viewValue; }, resizeHandler);
+                var initHeight = element.height();
 
-                element.height(element.scrollHeight - diff);
+                element.bind('focus', function () {
+                    modelWatcher.start(true);
+                }).bind('blur', function () {
+                    modelWatcher.stop();
+                    $timeout(function () {
+                        var focus = element.closest('form').find(':focus');
+                        if (!focus.length) {
+                            element.height(initHeight);
+                        } else {
+                            focus.one('blur', function () {
+                                element.height(initHeight);
+                            });
+                        }
+                    });
+                }).height(element.scrollHeight - heightDiff);
 
-                var watchModel = scope.$watch(function () {
-                    return ngModel.$viewValue;
-                }, function (newVal, oldVal) {
-                    if (newVal == oldVal)
-                        return;
-
-                    var oldHeight = element.height();
-                    element.height(0);
-                    var newHeight = element[0].scrollHeight - diff;
-
-                    if (scope.maxHeight && newHeight > scope.maxHeight) {
-                        element.height(oldHeight);
-                    } else {
-                        element.height(newHeight);
-                    }
-
-                    $win.scrollTop($win.height());
-                });
-
-                scope.$on('$destroy', function () {
-                    watchModel();
-                });
+                scope.$on('$destroy', modelWatcher.stop.bind(modelWatcher));
             }
         };
     };
