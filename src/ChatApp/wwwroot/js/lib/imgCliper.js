@@ -50,14 +50,19 @@
     ImageCliper.prototype.dragStart = function (e) {
         this.state.drag = true;
         this.state.dragStart = true;
+        this.state.wrapper && this.state.wrapper.remove();
         this.state.wrapper = $(this.opts.dragWrapperTemplate)
             .css({ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' })
             .bind('mousemove', this.drag.bind(this))
             .bind('mouseup', this.dragStop.bind(this))
+            .bind('touchmove', this.touchMove.bind(this))
+            .bind('touchend touchcancel', this.dragStop.bind(this))
             .appendTo(this.opts.parentSelector);
     };
 
     ImageCliper.prototype.dragStop = function (e) {
+        e.preventDefault();
+
         this.state.dragStart = false;
         if (this.isDragEnable()) {
             this.state.drag = false;
@@ -79,10 +84,11 @@
     };
 
     ImageCliper.prototype.drag = function (e) {
+        e.preventDefault();
+
         if (!this.isDragEnable())
             return;
 
-        e.preventDefault();
         if (this.state.dragStart) {
             this.state.dragStart = false;
         } else {
@@ -208,27 +214,32 @@
     };
 
     ImageCliper.prototype.touchStart = function (e) {
+        e.preventDefault();
         e.stopImmediatePropagation();
+
         this.touchStart = e.originalEvent.touches;
         this.dragStart(e);
     };
 
     ImageCliper.prototype.touchMove = function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
         if (!this.isDragEnable())
             return;
 
         var ts = e.originalEvent.touches;
-        if (this.touchStart.length == 1) {
+        if (ts.length == 1) {
             e.pageX = ts[0].clientX;
             e.pageY = ts[0].clientY;
+            this.touchStart = ts;
             this.drag(e);
         } else {
-            e.preventDefault();
             var rs = this.touchStart;
             var r1 = this.touchRect(rs);
             var r2 = this.touchRect(ts);
+            this.touchStart = ts;
             if (Math.abs(Math.abs(r1) - Math.abs(r2)) >= this.opts.zoomStep) {
-                this.touchStart = ts;
                 r1 < r2 ? this.zoomInHandle(e) : this.zoomOutHandle(e);
             }
         }
@@ -249,14 +260,16 @@
             image.onload = function (e) {
                 var $img = this._img
                     .attr('src', image.src)
-                    .css('width', image.width);
-                var c = this.rectInfo(this._clip);
-                var i = this.rectInfo($img);
-                $img.css({
-                    left: (c.width - i.width) / 2,
-                    top: (c.height - i.height) / 2
-                });
-                df.resolve(this.imageInfo());
+                    .css({ width: image.width, height: 'unset' })
+                    .one('load', function () {
+                        var c = this.rectInfo(this._clip);
+                        var i = this.rectInfo($img);
+                        $img.css({
+                            left: (c.width - i.width) / 2,
+                            top: (c.height - i.height) / 2
+                        });
+                        df.resolve(this.imageInfo());
+                    }.bind(this));
             }.bind(this);
 
             image.onerror = function (e) {
@@ -276,10 +289,9 @@
     };
 
     ImageCliper.prototype.wheelHandle = function (e) {
-        var oe = e.originalEvent;
-        if (Math.abs(oe.deltaY) < this.opts.zoomStep)
-            return;
+        e.preventDefault();
 
+        var oe = e.originalEvent;
         if (oe.deltaY < 0) {
             this.zoomOutHandle(e);
         } else if (oe.deltaY > 0) {
@@ -289,11 +301,11 @@
 
     ImageCliper.prototype.start = function () {
         this._clip
-            .on('mousedown', this.dragStart.bind(this))
-            .on('touchstart', this.touchStart.bind(this))
-            .on('touchmove', this.touchMove.bind(this))
-            .on('touchend touchcancel', this.dragStop.bind(this))
-            .on('wheel', this.wheelHandle.bind(this));
+            .bind('mousedown', this.dragStart.bind(this))
+            .bind('touchstart', this.touchStart.bind(this))
+            .bind('touchmove', this.touchMove.bind(this))
+            .bind('touchend touchcancel', this.dragStop.bind(this))
+            .bind('wheel', this.wheelHandle.bind(this));
     };
 
     $.fn.imageCliper = function (options) {
@@ -305,7 +317,7 @@
 
         function applyMethod(method) {
             var f = cliper[method];
-            return function() {
+            return function () {
                 f.apply(cliper, arguments);
                 return this;
             };
