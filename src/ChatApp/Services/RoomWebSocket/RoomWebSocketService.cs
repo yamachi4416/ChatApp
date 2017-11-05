@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Serialization;
 
-namespace ChatApp.Features.Room.Services
+namespace ChatApp.Services.RoomwebSocket
 {
     public interface IRoomWebSocketService : IDisposable
     {

@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using ChatApp.Data;
-using ChatApp.Features.Room.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace ChatApp.Features.Room
+namespace ChatApp.Services.RoomwebSocket
 {
     public class RoomWebSocketServer
     {

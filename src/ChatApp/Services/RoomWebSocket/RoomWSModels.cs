@@ -1,6 +1,6 @@
 using System;
 
-namespace ChatApp.Features.Room.Models
+namespace ChatApp.Services.RoomwebSocket
 {
     public enum RoomWsMessageType
     {
@@ -11,10 +11,9 @@ namespace ChatApp.Features.Room.Models
         CREATE_ROOM = 20,
         MODIFY_ROOM = 22,
         DELETE_ROOM = 23,
-
         JOIN_ROOM = 24,
-
         DEFECT_ROOM = 25,
+        MODIFY_ROOM_AVATAR = 26,
 
         CREATE_MEMBER = 30,
         DELETE_MEMBER = 33,

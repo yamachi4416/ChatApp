@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using ChatApp.Features.Room.Models;
 using ChatApp.Controllers;
 using ChatApp.Services;
+using ChatApp.Services.RoomwebSocket;
 using ChatApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http;
 using System.Net;
 using ChatApp.Attributes;
-using ChatApp.Features.Room.Services;
 
 namespace ChatApp.Features.Room
 {
@@ -24,7 +24,7 @@ namespace ChatApp.Features.Room
 
         public RoomApiController(
             IControllerService service,
-            IRoomWebSocketService ws) : base(service, ws)
+            IRoomWSSender wsSender) : base(service, wsSender)
         {
         }
 
@@ -136,7 +136,7 @@ namespace ChatApp.Features.Room
                     AvatarId = user.UserAvatarId
                 }.SetChatMessage(message);
 
-                await SendWsMessageForRoomMembers(
+                await _wsSender.SendWsMessageForRoomMembers(
                     roomId: id,
                     messageType: RoomWsMessageType.CREATE_MESSAGE,
                     messageBody: viewMessage,

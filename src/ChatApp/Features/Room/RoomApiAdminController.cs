@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChatApp.Features.Room.Models;
 using ChatApp.Services;
+using ChatApp.Services.RoomwebSocket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
 using ChatApp.Attributes;
-using ChatApp.Features.Room.Services;
 
 namespace ChatApp.Features.Room
 {
@@ -21,7 +21,7 @@ namespace ChatApp.Features.Room
     {
         public RoomApiAdminController(
             IControllerService service,
-            IRoomWebSocketService ws) : base(service, ws)
+            IRoomWSSender wsSender) : base(service, wsSender)
         {
         }
 
@@ -59,14 +59,14 @@ namespace ChatApp.Features.Room
 
                     await _db.SaveChangesAsync();
 
-                    await SendWsMessageForUser(
+                    await _wsSender.SendWsMessageForUser(
                         roomId: id,
                         userId: exists.UserId,
                         messageType: RoomWsMessageType.DEFECT_ROOM,
                         messageBody: new { }
                     );
 
-                    await SendWsMessageForRoomMembers(
+                    await _wsSender.SendWsMessageForRoomMembers(
                         roomId: id,
                         excludeUserId: GetCurrentUserId(),
                         messageType: RoomWsMessageType.DELETE_MEMBER,
@@ -116,7 +116,7 @@ namespace ChatApp.Features.Room
                         where r.Id == id
                         select r).SingleOrDefaultAsync();
 
-                    await SendWsMessageForUser(
+                    await _wsSender.SendWsMessageForUser(
                         roomId: id,
                         messageType: RoomWsMessageType.JOIN_ROOM,
                         messageBody: new RoomViewModel
@@ -130,7 +130,7 @@ namespace ChatApp.Features.Room
                         },
                         userId: newMember.UserId);
 
-                    await SendWsMessageForRoomMembers(
+                    await _wsSender.SendWsMessageForRoomMembers(
                         roomId: id,
                         messageType: RoomWsMessageType.CREATE_MEMBER,
                         messageBody: new RoomMemberViewModel
@@ -187,7 +187,7 @@ namespace ChatApp.Features.Room
 
             if (exists != null)
             {
-                var sendTask = await SendWsMessageForRoomMembersDeferd(
+                var sendTask = await _wsSender.SendWsMessageForRoomMembersDeferd(
                     roomId: id,
                     messageType: RoomWsMessageType.DELETE_ROOM,
                     messageBody: new { }

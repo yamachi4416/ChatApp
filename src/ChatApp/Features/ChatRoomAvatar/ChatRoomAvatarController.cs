@@ -9,13 +9,17 @@ using Microsoft.EntityFrameworkCore;
 using ChatApp.Features.ChatRoomAvatar.Models;
 using ChatApp.Attributes;
 using ChatApp.Data;
+using ChatApp.Services.RoomwebSocket;
 
 namespace ChatApp.Features.ChatRoomAvatar
 {
     public class ChatRoomAvatarController : AppControllerBase
     {
-        public ChatRoomAvatarController(IControllerService service) : base(service)
+        private readonly IRoomWSSender _sender;
+
+        public ChatRoomAvatarController(IControllerService service, IRoomWSSender sender) : base(service)
         {
+            this._sender = sender;
         }
 
         private IActionResult DefaultAvatar()
@@ -70,6 +74,13 @@ namespace ChatApp.Features.ChatRoomAvatar
             }
 
             var updated = await UpdateAvatar(avatar);
+
+            await _sender.SendWsMessageForRoomMembers
+            (
+                roomId: id,
+                messageType: RoomWsMessageType.MODIFY_ROOM_AVATAR,
+                messageBody: new { avatarId = updated.ChatRoomAvatarId }
+            );
 
             return Json(updated.ChatRoomAvatarId);
         }

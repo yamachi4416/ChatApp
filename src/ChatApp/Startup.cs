@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Razor;
 using ChatApp.Data;
 using ChatApp.Services;
+using ChatApp.Services.RoomwebSocket;
 using ChatApp.Config;
-using ChatApp.Features.Room.Services;
 using ChatApp.SharedResources;
 using ChatApp.IdentityLocaleError;
 using ChatApp.Features.Room;
@@ -123,6 +123,7 @@ namespace ChatApp
             services.AddSingleton<IDateTimeService, DateTimeService>();
             services.AddTransient<IControllerService, ControllerBaseService>();
             services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
+            services.AddSingleton<IRoomWSSender, RoomWSSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

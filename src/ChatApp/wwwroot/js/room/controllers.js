@@ -51,7 +51,13 @@ angular.module('ChatApp')
                 $timeout(function () {
                     c.removeRoom(res.roomId);
                 });
-            });
+            }).on(ws.types.MODIFY_ROOM_AVATAR, function (res) {
+                var room = c.getRoom(res.roomId);
+                if (!room) return;
+                $timeout(function () {
+                    room.avatarId = res.message.avatarId;
+                });
+            }.bind(this));
 
             $($window).on('focus', function () {
                 ws.connect();
@@ -258,7 +264,7 @@ angular.module('ChatApp')
                                 $uibModalInstance.dismiss();
                             };
 
-                            this.disableUpload = function() {
+                            this.disableUpload = function () {
                                 return !this.c.cliper.getSrc();
                             };
 
