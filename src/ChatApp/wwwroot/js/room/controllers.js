@@ -311,7 +311,7 @@ angular.module('ChatApp')
                 return service.editRoom(_room, this.room)
                     .then(function (room) {
                         $uibModalInstance.close(room);
-                    }).fail(function (res) {
+                    }, function (res) {
                         console.log(res.data);
                     });
             };
@@ -329,7 +329,7 @@ angular.module('ChatApp')
                 return service.createRoom(this.room)
                     .then(function (room) {
                         $uibModalInstance.close(room);
-                    }).fail(function (res) {
+                    }, function (res) {
                         console.log(res.data);
                     });
             };
