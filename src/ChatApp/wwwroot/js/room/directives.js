@@ -4,7 +4,7 @@
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
-        .directive('chatImageCliper', ['$timeout', '$window', chatapp.directives.ChatImageCliper])
+        .directive('chatImageCliper', ['$timeout', '$document', chatapp.directives.ChatImageCliper])
         .directive('chatAutoresize', ['$window', '$timeout', chatapp.directives.chatAutoresize]);
 }(function chatapp_directives(chatapp) {
     'use strict';
@@ -204,7 +204,7 @@
         };
     };
 
-    directives.ChatImageCliper = function ($timeout, $window) {
+    directives.ChatImageCliper = function ($timeout, $document) {
         return {
             scope: {
                 cCtrl: '=',
@@ -225,11 +225,7 @@
                     $timeout(function () { range.val = info.width });
                 });
 
-                scope.$on('$destroy', function () {
-                    cliper.stop($window);
-                });
-
-                cliper.start($window);
+                cliper.start();
             }
         };
     };

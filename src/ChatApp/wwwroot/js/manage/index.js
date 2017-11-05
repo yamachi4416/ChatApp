@@ -6,8 +6,9 @@ $(function () {
 
     var cliper = $('#image-clip').imageCliper({
         zoomStep: 10,
-        imageType: 'image/png'
-    }).start(window);
+        imageType: 'image/png',
+        parentSelector: '.modal'
+    }).start();
 
     $('#fileSelectButton').on('click', function () {
         cliper.openFileDialog()

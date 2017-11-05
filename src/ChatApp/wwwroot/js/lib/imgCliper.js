@@ -10,6 +10,8 @@
             imageQuality: 1,
             minRatio: 0.5,
             maxRatio: 5,
+            parentSelector: 'body',
+            dragWrapperTemplate: '<div id="imgCliperDragWrapper" style="z-index: 999;">'
         }, options);
 
         this.state = {
@@ -20,11 +22,6 @@
         };
 
         this.initElements(ele);
-
-        this._window_events = {
-            mousemove: this.drag.bind(this),
-            mouseup: this.dragStop.bind(this)
-        };
     };
 
     ImageCliper.prototype.initElements = function (ele) {
@@ -53,6 +50,11 @@
     ImageCliper.prototype.dragStart = function (e) {
         this.state.drag = true;
         this.state.dragStart = true;
+        this.state.wrapper = $(this.opts.dragWrapperTemplate)
+            .css({ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' })
+            .bind('mousemove', this.drag.bind(this))
+            .bind('mouseup', this.dragStop.bind(this))
+            .appendTo(this.opts.parentSelector);
     };
 
     ImageCliper.prototype.dragStop = function (e) {
@@ -60,6 +62,10 @@
         if (this.isDragEnable()) {
             this.state.drag = false;
             this.touchStart = null;
+        }
+        if (this.state.wrapper) {
+            this.state.wrapper.remove();
+            this.state.wrapper = null;
         }
     };
 
@@ -144,9 +150,7 @@
             return;
 
         e.preventDefault();
-        requestAnimationFrame(function () {
-            this.zoomIn();
-        }.bind(this));
+        this.zoomIn();
     };
 
     ImageCliper.prototype.zoomOutHandle = function (e) {
@@ -154,9 +158,7 @@
             return;
 
         e.preventDefault();
-        requestAnimationFrame(function () {
-            this.zoomOut();
-        }.bind(this));
+        this.zoomOut();
     };
 
     ImageCliper.prototype.drawImageContext = function () {
@@ -225,8 +227,10 @@
             var rs = this.touchStart;
             var r1 = this.touchRect(rs);
             var r2 = this.touchRect(ts);
-            this.touchStart = ts;
-            r1 == r2 || (r1 < r2 ? this.zoomInHandle(e) : this.zoomOutHandle(e));
+            if (Math.abs(Math.abs(r1) - Math.abs(r2)) >= this.opts.zoomStep) {
+                this.touchStart = ts;
+                r1 < r2 ? this.zoomInHandle(e) : this.zoomOutHandle(e);
+            }
         }
     };
 
@@ -273,6 +277,9 @@
 
     ImageCliper.prototype.wheelHandle = function (e) {
         var oe = e.originalEvent;
+        if (Math.abs(oe.deltaY) < this.opts.zoomStep)
+            return;
+
         if (oe.deltaY < 0) {
             this.zoomOutHandle(e);
         } else if (oe.deltaY > 0) {
@@ -280,21 +287,7 @@
         }
     };
 
-    ImageCliper.prototype.stop = function (ele) {
-        var $ele = $(ele);
-
-        for (var ename in this._window_events) {
-            $ele.unbind(ename, this._window_events[ename]);
-        }
-    };
-
-    ImageCliper.prototype.start = function (ele) {
-        var $ele = $(ele);
-
-        for (var ename in this._window_events) {
-            $ele.on(ename, this._window_events[ename]);
-        }
-
+    ImageCliper.prototype.start = function () {
         this._clip
             .on('mousedown', this.dragStart.bind(this))
             .on('touchstart', this.touchStart.bind(this))
@@ -310,30 +303,22 @@
             return df.resolve.call(df, arguments).promise();
         };
 
+        function applyMethod(method) {
+            var f = cliper[method];
+            return function() {
+                f.apply(cliper, arguments);
+                return this;
+            };
+        }
+
         return $.extend(this, {
-            getSrc: function() {
+            getSrc: function () {
                 return cliper._img.attr('src');
             },
-            start: function () {
-                cliper.start.apply(cliper, arguments);
-                return this;
-            },
-            stop: function () {
-                cliper.stop.apply(cliper, arguments);
-                return this;
-            },
-            zoom: function () {
-                cliper.zoom.apply(cliper, arguments);
-                return this;
-            },
-            zoomOut: function () {
-                cliper.zoomOut.apply(cliper, arguments);
-                return this;
-            },
-            zoomIn: function () {
-                cliper.zoomIn.apply(cliper, arguments);
-                return this;
-            },
+            start: applyMethod('start'),
+            zoom: applyMethod('zoom'),
+            zoomOut: applyMethod('zoomOut'),
+            zoomIn: applyMethod('zoomIn'),
             toBlob: function () {
                 var d = new $.Deferred();
                 cliper.toBlob(function (blob) {
