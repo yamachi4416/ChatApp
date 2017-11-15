@@ -5,7 +5,8 @@
         .directive('chatSidebar', [chatapp.directives.ChatSidebar])
         .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
         .directive('chatImageCliper', ['$timeout', '$document', chatapp.directives.ChatImageCliper])
-        .directive('chatAutoresize', ['$window', '$timeout', chatapp.directives.chatAutoresize]);
+        .directive('chatAutoresize', ['$window', '$timeout', chatapp.directives.chatAutoresize])
+        .directive('mediaClass', ['$window', chatapp.directives.mediaClass]);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
@@ -142,26 +143,15 @@
     directives.ChatSidebar = function () {
         return {
             scope: {
-                chatPrefix: '@',
-                chatSidebar: '<'
             },
             restrict: 'A',
             transclude: true,
             replace: true,
             controller: function () {
-                this.selector = '';
                 this.isShowSidebar = false;
 
-                this.sidebarColClass = function () {
-                    var cls = [];
-                    angular.forEach(this.sizes, function (v, k) {
-                        cls.push('col-' + k + '-' + v);
-                    });
-                    return cls.join(' ');
-                };
-
                 this.toggleSidebar = function () {
-                    var ele = angular.element('#' + this.selector);
+                    var ele = angular.element('#chat-sidebar');
                     this.isShowSidebar = ele.is('.hidden-xs');
                     ele.toggleClass('hidden-xs');
                 };
@@ -169,8 +159,6 @@
             controllerAs: 'ctrl',
             templateUrl: '/sidebar/main.tmpl.html',
             link: function (scope, elem, attrs, ctrl) {
-                ctrl.selector = scope.chatPrefix;
-                ctrl.sizes = scope.chatSidebar;
             }
         };
     };
@@ -305,6 +293,43 @@
                 }).height(element.scrollHeight - heightDiff);
 
                 scope.$on('$destroy', modelWatcher.stop.bind(modelWatcher));
+            }
+        };
+    };
+
+    directives.mediaClass = function ($window) {
+        var xs = 480;
+        var sm = 768;
+        var md = 992;
+
+        return {
+            restrict: "A",
+            scope: {
+                media: '<mediaClass'
+            },
+            link: function (scope, element, attrs) {
+                var xsClass = scope.media.xs,
+                    smClass = scope.media.sm,
+                    mdClass = scope.media.md;
+
+                var watcher = function () { return $window.innerWidth; };
+
+                var handler = function (newVal, oldVal) {
+                    xsClass && element.removeClass(xsClass);
+                    smClass && element.removeClass(smClass);
+                    mdClass && element.removeClass(mdClass);
+                    if (newVal <= xs) {
+                        xsClass && element.addClass(xsClass);
+                    } else if (newVal <= sm) {
+                        smClass && element.addClass(smClass);
+                    } else {
+                        mdClass && element.addClass(mdClass);
+                    }
+                };
+
+                scope.$watch(watcher, handler);
+
+                handler(watcher());
             }
         };
     };

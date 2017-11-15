@@ -1,16 +1,17 @@
 <script type="text/ng-template" id="/sidebar/main.tmpl.html">
-    <div id="{{ctrl.selector}}-wrapper" class="affix">
-        <div class="affix hidden-xs {{ctrl.sidebarColClass()}}" id="{{ctrl.selector}}">
-            <div class="{{ctrl.selector}}-content">
+    <div id="chat-sidebar-wrapper" class="affix">
+        <div class="affix hidden-xs"
+            media-class="{xs: 'col-xs-12', sm: 'col-xs-8', md: 'col-sm-3'}" id="chat-sidebar">
+            <div class="chat-sidebar-content">
                 <ng-transclude></ng-transclude>
-                <a class="hidden-sm hidden-lg hidden-md btn {{ctrl.selector}}-toggle {{ctrl.selector}}-close"
+                <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-close"
                     ng-hide="!ctrl.isShowSidebar"
                     ng-click="ctrl.toggleSidebar()">
                     <i class="glyphicon glyphicon-menu-left"></i>
                 </a>
             </div>
         </div>
-        <a class="hidden-sm hidden-lg hidden-md btn {{ctrl.selector}}-toggle {{ctrl.selector}}-open"
+        <a class="hidden-sm hidden-lg hidden-md btn chat-sidebar-toggle chat-sidebar-open"
             ng-hide="ctrl.isShowSidebar"
             ng-click="ctrl.toggleSidebar()">
             <i class="glyphicon glyphicon-menu-right"></i>
@@ -24,7 +25,7 @@
             <span>@VLocalizer["Room"]</span>
             <span class="pull-right small" uib-dropdown dropdown-append-to-body>
                 <a class="glyphicon glyphicon-align-justify toggle-tooltip" uib-dropdown-toggle></a>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                <ul class="dropdown-menu" media-class="{xs: 'dropdown-menu-right'}" uib-dropdown-menu role="menu">
                     <li role="menuitem">
                         <a ng-click="RoomCtrl.OpenCreateRoom()">
                             <span class="glyphicon glyphicon-plus"></span>
@@ -47,7 +48,7 @@
                 <div class="media-right">
                     <span class="pull-right" uib-dropdown dropdown-append-to-body>
                         <a class="glyphicon glyphicon-option-horizontal toggle-tooltip" uib-dropdown-toggle href="javascript:void(0)"></a>
-                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                        <ul class="dropdown-menu" media-class="{xs: 'dropdown-menu-right'}" uib-dropdown-menu role="menu">
                             <li role="menuitem">
                                 <a ng-click="RoomCtrl.OpenDetailRoom(r)">
                                     <span class="glyphicon glyphicon-list-alt"></span>
@@ -80,13 +81,16 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="/sidebar/room-dropdown-menu.tmpl.html">
+</script>
+
 <script type="text/ng-template" id="/sidebar/member.tmpl.html">
     <div class="chat-sidebar-item chat-sidebar-item-members">
         <h4 class="title">
             <span>@VLocalizer["Member"]</span>
             <span class="pull-right small" uib-dropdown dropdown-append-to-body ng-show="c.room.isAdmin">
                 <a class="glyphicon glyphicon-align-justify toggle-tooltip" uib-dropdown-toggle></a>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                <ul class="dropdown-menu" media-class="{xs: 'dropdown-menu-right'}" uib-dropdown-menu role="menu">
                     <li role="menuitem">
                         <a ng-click="RoomCtrl.OpenAddMember()">
                             <i class="glyphicon glyphicon-plus"></i>

@@ -1,8 +1,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
-<ul class="nav navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li><a asp-area="" asp-controller="Room" asp-action="Index">@Localizer["ROOM"]</a></li>
-    }
-</ul>
+@if (SignInManager.IsSignedIn(User))
+{
+    <li><a asp-area="" asp-controller="Room" asp-action="Index">@Localizer["ROOM"]</a></li>
+}

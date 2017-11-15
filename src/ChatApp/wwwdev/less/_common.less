@@ -1,6 +1,33 @@
+@import "../../wwwroot/lib/bootstrap/less/variables.less";
+
 @keyframes __fadein__opacity__ {
     0% {opacity: 0}
     100% {opacity: 1}
+}
+
+@keyframes __border_link_hover_color_fade__ {
+    0% { border-bottom-color: transparent; }
+    100% { border-bottom-color: @link-hover-color; }
+}
+
+.__screen_sm__(@rules) {
+    @media (min-width: @screen-sm-min) { @rules(); }
+}
+.__screen_md__(@rules) {
+    @media (min-width: @screen-md-min) { @rules(); }
+}
+.__screen_lg__(@rules) {
+    @media (min-width: @screen-lg-min) { @rules(); }
+}
+
+.__horizon_padding__(@pad) {
+    padding-left: @pad;
+    padding-right: @pad;
+}
+
+.__vertical_padding__(@pad) {
+    padding-top: @pad;
+    padding-bottom: @pad;
 }
 
 .__square_box__(@size) {
@@ -38,7 +65,7 @@
     }
 }
 
-* {
+body,html,div {
     box-sizing: border-box;
 
     &::-webkit-scrollbar {

@@ -1,49 +1,108 @@
-body {
-    padding-top: 50px;
-    padding-bottom: 20px;
-}
-
-#chatapp-navbar {
-    background: rgba(255, 255, 255, 0.95); 
-}
-
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-/* Set widths on the form inputs since otherwise they're 100% wide */
-
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
-}
-
-/* buttons and links extension to use brackets: [ click me ] */
-.btn-bracketed::before {
-    display:inline-block;
-    content: "[";
-    padding-right: 0.5em;
-}
-.btn-bracketed::after {
-    display:inline-block;
-    content: "]";
-    padding-left: 0.5em;
-}
-
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"]
-{
-    width: 100%;
-}
-
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-  /* Hide captions */
-  .carousel-caption {
-    display: none
+@keyframes __fadein__opacity__ {
+  0% {
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes __border_link_hover_color_fade__ {
+  0% {
+    border-bottom-color: transparent;
+  }
+  100% {
+    border-bottom-color: #23527c;
+  }
+}
+body,
+html,
+div {
+  box-sizing: border-box;
+}
+body::-webkit-scrollbar,
+html::-webkit-scrollbar,
+div::-webkit-scrollbar {
+  width: 7px;
+  background: transparent;
+}
+body::-webkit-scrollbar-thumb,
+html::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb,
+body thumb,
+html thumb,
+div thumb {
+  background: rgba(200, 200, 200, 0.5);
+  border-radius: 10px;
+}
+.modal-backdrop {
+  background-color: transparent;
+}
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+@media (min-width: 768px) {
+  body {
+    padding-top: 40px;
+  }
+}
+.body-content {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  min-height: 38px;
+}
+@media (min-width: 768px) {
+  .navbar {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .navbar .navbar-brand,
+  .navbar .navbar-nav li a,
+  .navbar .navbar-link {
+    margin: 0;
+    border: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .navbar .navbar-brand,
+  .navbar .navbar-nav li {
+    height: unset;
+    border-bottom: 2px solid transparent;
+    margin: 0;
+  }
+  .navbar .navbar-brand:hover,
+  .navbar .navbar-nav li:hover {
+    animation: __border_link_hover_color_fade__ 0.8s ease 0s 1 normal;
+    border-bottom-color: #23527c;
+  }
+  .navbar .navbar-brand:hover,
+  .navbar .navbar-nav li:hover,
+  .navbar .navbar-brand:hover a,
+  .navbar .navbar-nav li:hover a {
+    color: #23527c;
+  }
+}
+@media (min-width: 992px) {
+  .navbar {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+.navbar .navbar-brand,
+.navbar .navbar-nav,
+.navbar .navbar-link {
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+}
+.navbar .navbar-brand,
+.navbar .navbar-nav,
+.navbar .navbar-link,
+.navbar .navbar-brand li a,
+.navbar .navbar-nav li a,
+.navbar .navbar-link li a {
+  color: #aaa;
 }
