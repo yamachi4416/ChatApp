@@ -133,6 +133,15 @@
                     this.room = room;
                 }
                 return this;
+            },
+            getUnreadMessageInfo: function () {
+                var fg = this.room && this.room.unReadMessageCount || 0;
+                var bg = this.rooms.reduce(function(a, b) { return a + b.unReadMessageCount; }, 0);
+                if (fg + bg > 0) {
+                    return "[" + fg + "/" + bg + "] ";
+                } else {
+                    return "";
+                }
             }
         });
 
@@ -340,6 +349,7 @@
             this._membersMap = {};
             this._service = service;
             this.message = {};
+            this.unReadMessageCount = 0;
         }
 
         angular.forEach({

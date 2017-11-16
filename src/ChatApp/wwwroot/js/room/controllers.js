@@ -1,6 +1,6 @@
 angular.module('ChatApp')
-    .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window',
-        function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window) {
+    .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
+        function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
             var ws = c.ws;
 
@@ -9,9 +9,16 @@ angular.module('ChatApp')
                 if (!room) return;
 
                 if (c.room === room) {
+                    if ($document[0].hidden) {
+                        $timeout(function () {
+                            room.unReadMessageCount += 1;
+                        });
+                    }
                     fetchNewMessages(room, true);
                 } else {
-
+                    $timeout(function () {
+                        room.unReadMessageCount += 1;
+                    });
                 }
             }).on(ws.types.CREATE_MEMBER, function (res) {
                 var room = c.getRoom(res.roomId);
@@ -62,6 +69,7 @@ angular.module('ChatApp')
             $($window).on('focus', function () {
                 ws.connect();
                 if (c.room) {
+                    c.room.unReadMessageCount = 0;
                     c.room.fetchNewMessages();
                 }
             });
@@ -80,6 +88,8 @@ angular.module('ChatApp')
                     return $location.hash(null);
                 }
                 if (c.room == room) return;
+
+                room.unReadMessageCount = 0;
                 return $location.hash(room.id);
             };
 

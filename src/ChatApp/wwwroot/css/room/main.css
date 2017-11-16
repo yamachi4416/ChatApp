@@ -116,6 +116,7 @@ div thumb {
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media p {
   min-height: 30px;
   margin-bottom: 0;
+  word-break: break-all;
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active {
   background: rgba(220, 220, 220, 0.2);
@@ -128,8 +129,21 @@ div thumb {
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media.active .toggle-tooltip:hover {
   opacity: 0.8;
 }
-#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media p {
-  word-break: break-all;
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .room-avatar-thumbnail {
+  position: relative;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .room-avatar-thumbnail .has-message-mark {
+  position: absolute;
+  color: orange;
+  left: 2px;
+  top: 2.5px;
+  padding: 0;
+  line-height: 1.1;
+  border-radius: 2px 0 0 0;
+  overflow: hidden;
+}
+#chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-rooms .media .room-avatar-thumbnail .has-message-mark:after {
+  content: "\025e4";
 }
 #chat-sidebar-wrapper #chat-sidebar .chat-sidebar-item-members .media-body {
   vertical-align: middle;

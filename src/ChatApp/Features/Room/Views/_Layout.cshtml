@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="~/favicon.ico" />
-    <title ng-bind="c.room.name + ' - ChatApp'"></title>
+    <link rel="shortcut icon" href="~/favicon.ico" ng-href="../ChatRoomAvatar/Get/{{c.room.avatarId}}" />
+    <title ng-bind="c.getUnreadMessageInfo() + c.room.name + ' - ChatApp'"></title>
     @await Html.PartialAsync("_StylesPartial")
     <link asp-append-version="true" rel="stylesheet" href="~/lib/angular-bootstrap/ui-bootstrap-csp.css" />
     <link asp-append-version="true" rel="stylesheet" href="~/css/room/main.css" />

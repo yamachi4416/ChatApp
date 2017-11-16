@@ -38,8 +38,9 @@
         <div class="media-list">
             <div class="media" ng-repeat="r in c.rooms" ng-class="{active: c.room == r}">
                 <div class="media-left media-middle" ng-click="RoomCtrl.SelectRoom(r)">
-                    <span class="img-thumbnail" style="padding: 1px;">
+                    <span class="img-thumbnail room-avatar-thumbnail" style="padding: 1px;">
                         <img ng-src="../ChatRoomAvatar/Get/{{r.avatarId}}" style="border-radius: 2px;" height="50" />
+                        <i ng-show="r.unReadMessageCount > 0" class="has-message-mark"></i>
                     </span>
                 </div>
                 <div class="media-body" ng-click="RoomCtrl.SelectRoom(r)">

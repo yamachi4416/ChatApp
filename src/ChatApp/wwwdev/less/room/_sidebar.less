@@ -77,6 +77,7 @@
                 p {
                     min-height: 30px;
                     margin-bottom: 0;
+                    word-break: break-all;
                 }
 
                 &.active {
@@ -92,8 +93,23 @@
                     }
                 }
 
-                p {
-                    word-break: break-all;
+                .room-avatar-thumbnail {
+                    position: relative;
+                    
+                    .has-message-mark {
+                        position: absolute;
+                        color: orange;
+                        left: 2px;
+                        top: 2.5px;
+                        padding: 0;
+                        line-height: 1.1;
+                        border-radius: 2px 0 0 0;
+                        overflow: hidden;
+    
+                        &:after {
+                            content: "\025e4";
+                        }
+                    }
                 }
             }
         }
