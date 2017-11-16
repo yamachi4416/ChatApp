@@ -275,6 +275,10 @@
                 var resizeHandler = resize.bind(null, element, angular.element($window), heightDiff);
                 var modelWatcher = ScopeWatcher(scope, function () { return ngModel.$viewValue; }, resizeHandler);
                 var initHeight = element.height();
+                var restoreHeight = function () {
+                    element.height(initHeight);
+                    angular.element($window).trigger('resize');
+                };
 
                 element.bind('focus', function () {
                     modelWatcher.start(true);
@@ -283,11 +287,9 @@
                     $timeout(function () {
                         var focus = element.closest('form').find(':focus');
                         if (!focus.length) {
-                            element.height(initHeight);
+                            restoreHeight();
                         } else {
-                            focus.one('blur', function () {
-                                element.height(initHeight);
-                            });
+                            focus.one('blur', restoreHeight);
                         }
                     });
                 }).height(element.scrollHeight - heightDiff);
