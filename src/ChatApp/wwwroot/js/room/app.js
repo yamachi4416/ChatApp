@@ -19,8 +19,7 @@ angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
             },
             image: function() {
                 var img = renderer.image.apply(reciever, arguments);
-                return '<img chat-message-image '
-                    + img.substring('<img'.length);
+                return '<img chat-message-image ' + img.substring('<img'.length);
             }
         });
      }]);

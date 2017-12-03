@@ -47,7 +47,9 @@
             _reject: function () {
                 var d = this._defer();
                 d.reject();
-                return d.promise.then(angular.noop, angular.noop);
+                var def = d.promise.then(angular.noop, angular.noop);
+                def.rejected = true;
+                return def;
             },
             _all: function () {
                 return $q.all(arguments);

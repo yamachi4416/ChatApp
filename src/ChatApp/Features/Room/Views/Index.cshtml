@@ -8,7 +8,8 @@
         chat-room="c.room"
         chat-content=".media-list"
         chat-room-change="RoomCtrl.ChangeRoom()"
-        old-messages="RoomCtrl.GetOldmessages()">
+        old-messages="RoomCtrl.GetOldmessages()"
+        loading-template="'<div class=&quot;loading&quot;></div>'">
         <div class="row" id="chat-messages">
             <div ng-include="'/chat/messages.tmpl.html'"></div>
         </div>

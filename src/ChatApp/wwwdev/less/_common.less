@@ -10,6 +10,15 @@
     100% { border-bottom-color: @link-hover-color; }
 }
 
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .__screen_sm__(@rules) {
     @media (min-width: @screen-sm-min) { @rules(); }
 }
@@ -62,6 +71,26 @@
 
     .modal-footer {
         background-color: @bgColor;
+    }
+}
+
+.__loading_spin__(@size) {
+    position: relative;
+    display: inline-block;
+    left: calc(~'50% - ' @size/2);
+    width: @size;
+    height: @size;
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+    border-top-color: transparent;
+
+    &:before,
+    &:after {
+      left: -2px;
+      top: -2px;
+      display: none;
+      position: absolute;
+      content: '';
     }
 }
 

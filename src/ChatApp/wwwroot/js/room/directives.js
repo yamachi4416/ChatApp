@@ -19,7 +19,8 @@
             saveScrollMap = {},
             isForceScrollBottom = true,
             _getOldMessages,
-            _chatRoomChange;
+            _chatRoomChange,
+            _loadingTemplate;
 
         function restoreScroll(roomid, defered) {
             if (!defered) return;
@@ -48,9 +49,12 @@
             if (!getOldMessages.enable) return;
             if (containar().scrollTop() === 0) {
                 var def = _getOldMessages();
-                if (!def) return;
+                if (!def || def.rejected === true) return;
                 getOldMessages.enable = false;
+                var loading = angular.element(_loadingTemplate);
+                containar().prepend(loading);
                 return def.finally(function () {
+                    loading.remove();
                     getOldMessages.enable = true;
                 });
             }
@@ -73,7 +77,7 @@
             });
 
             $rootScope.$on('chatRoomMessageReady', function () {
-                angular.element(window).bind('resize', justMessageSize);
+                angular.element(window).bind('resize', justMessageSize).trigger('resize');
                 containar().bind('scroll', function (e) {
                     if (scope.chatRoom == null) return;
                     saveScrollMap[scope.chatRoom.id] = containar().scrollTop();
@@ -105,6 +109,7 @@
 
             _getOldMessages = scope.oldMessages;
             _chatRoomChange = scope.chatRoomChange;
+            _loadingTemplate = scope.loadingTemplate;
 
             containar = function () {
                 return _containar;
@@ -133,7 +138,8 @@
                 chatRoom: '<',
                 chatRoomChange: '&',
                 oldMessages: '&',
-                chatContent: '@'
+                chatContent: '@',
+                loadingTemplate: '<'
             },
             restrict: 'A',
             link: link
@@ -292,8 +298,13 @@
                             focus.one('blur', restoreHeight);
                         }
                     });
-                }).height(element.scrollHeight - heightDiff);
+                }).height(element.scrollHeight - heightDiff).css({
+                    opacity: 0
+                });
 
+                scope.$on('chatRoomMessageReady', function () {
+                    element.css({ opacity: 1 });
+                });
                 scope.$on('$destroy', modelWatcher.stop.bind(modelWatcher));
             }
         };

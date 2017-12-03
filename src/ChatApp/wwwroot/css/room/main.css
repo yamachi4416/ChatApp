@@ -20,6 +20,14 @@ li[role="menuitem"] {
     border-bottom-color: #23527c;
   }
 }
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 body,
 html,
 div {
@@ -183,6 +191,27 @@ div thumb {
   overflow: hidden;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+#chat-messages .loading {
+  border: 2px solid #09f;
+  opacity: 0.5;
+  margin-top: 10px;
+  position: relative;
+  display: inline-block;
+  left: calc(50% -  10px);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  border-top-color: transparent;
+}
+#chat-messages .loading:before,
+#chat-messages .loading:after {
+  left: -2px;
+  top: -2px;
+  display: none;
+  position: absolute;
+  content: '';
 }
 #chat-messages .message-list .message-item {
   margin: 0;
