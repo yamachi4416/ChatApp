@@ -294,6 +294,8 @@
                         if (!focus.length) {
                             modelWatcher.stop();
                             restoreHeight();
+                        } else {
+                            focus.one('blur', restoreHeight);
                         }
                     });
                 }).height(element.scrollHeight - heightDiff).css({
