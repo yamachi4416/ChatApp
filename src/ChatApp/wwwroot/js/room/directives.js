@@ -289,13 +289,11 @@
                 element.bind('focus', function () {
                     modelWatcher.start(true);
                 }).bind('blur', function () {
-                    modelWatcher.stop();
                     $timeout(function () {
                         var focus = element.closest('form').find(':focus');
                         if (!focus.length) {
+                            modelWatcher.stop();
                             restoreHeight();
-                        } else {
-                            focus.one('blur', restoreHeight);
                         }
                     });
                 }).height(element.scrollHeight - heightDiff).css({
