@@ -5,6 +5,7 @@
   "devDependencies": {
     "bower": "^1.8.0",
     "grunt": "^1.0.1",
+    "grunt-browserify": "^5.2.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-cssmin": "^2.2.0",
     "grunt-contrib-less": "^1.4.1",

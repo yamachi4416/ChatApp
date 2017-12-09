@@ -23,3 +23,8 @@ angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
             }
         });
      }]);
+
+require("../lib/imgCliper");
+require("./services");
+require("./directives");
+require("./controllers");

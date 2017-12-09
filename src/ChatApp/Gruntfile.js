@@ -10,33 +10,29 @@ module.exports = function (grunt) {
     let devPath = (path) => './wwwdev/' + path;
     let destPath = (path) => './wwwroot/' + path;
 
+    grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-    let uglify_wwwroot_files = () => {
-        let setting = {};
-        let _ = (p) => `${destPath('js/' + p )}`;
-
-        let angular_scripts = (mod) => {
-            let ax = ['app', 'services', 'directives', 'controllers']
-                .map((name) => _(`${mod}/${name}.js`));
-            ax.push('!*.min.js');
-            setting[_(`${mod}/app.min.js`)] = ax;
-        };
-        
-        setting[_('site.min.js')] = _('site.js');
-        setting[_('manage/index.min.js')] = [_('lib/imgCliper.js'), _('manage/index.js')];
-        angular_scripts('room');
-
-        return setting;
-    };
-
     grunt.initConfig({
+        browserify: {
+            dist: {
+                files: {
+                    'wwwroot/js/site.js': ['wwwdev/js/site.js'],
+                    'wwwroot/js/manage/index.js': ['wwwdev/js/manage/index.js'],
+                    'wwwroot/js/room/app.js': ['wwwdev/js/room/app.js']
+                }
+            }
+        },
         uglify: {
             wwwroot: {
-                files: uglify_wwwroot_files()
+                files: {
+                    "wwwroot/js/site.min.js": ["wwwroot/js/site.js"],
+                    "wwwroot/js/manage/index.min.js": ["wwwroot/js/manage/index.js"],
+                    "wwwroot/js/room/app.min.js": ["wwwroot/js/room/app.js",]
+                }
             }
         },
         less: {
@@ -74,5 +70,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('build', ['less', 'cssmin', 'uglify']);
+    grunt.registerTask('build', ['less', 'cssmin', 'browserify', 'uglify']);
 };

@@ -1,3 +1,5 @@
+require("../lib/imgCliper");
+
 $(function () {
     'use strict';
 
