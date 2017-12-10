@@ -1,6 +1,6 @@
 import { RoomModel, RoomMemberModel } from "./Models";
 import { RoomServiceModel } from "./RoomServiceModel";
-import { HttpServiceBase } from "./HttpServiceBase";
+import { HttpServiceBase, IRoomPromise } from "./HttpServiceBase";
 
 class RoomAdminService extends HttpServiceBase {
     constructor($http, $q) {
@@ -28,7 +28,7 @@ class RoomAdminService extends HttpServiceBase {
         return this.httpPost(`${room.id}/rooms/edit`, editroom);
     }
 
-    removeRoom(room: RoomModel) {
+    removeRoom(room: RoomModel): IRoomPromise<RoomModel> {
         return this.httpPost(`${room.id}/rooms/remove`);
     }
 

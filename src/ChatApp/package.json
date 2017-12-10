@@ -18,11 +18,12 @@
     "webpack": "^3.10.0"
   },
   "dependencies": {
+    "@types/angular-ui-bootstrap": "^0.13.46",
     "@types/angularjs": "^1.5.5-alpha",
     "@types/jquery": "^2.0.48",
     "angular": "^1.5.5",
-    "angular-bootstrap": "^0.12.2",
     "angular-marked": "^1.2.2",
+    "angular-ui-bootstrap": "^2.5.6",
     "bootstrap": "^3.3.6",
     "jquery": "^2.2.0",
     "jquery.cookie": "^1.4.1",

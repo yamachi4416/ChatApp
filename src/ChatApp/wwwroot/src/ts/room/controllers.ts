@@ -1,4 +1,7 @@
+import { RemoveRoomController } from "./controllers/admin/RemoveRoomController"
+
 angular.module('ChatApp')
+    .controller(RemoveRoomController.id, RemoveRoomController.injector)
     .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
         function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
@@ -66,7 +69,7 @@ angular.module('ChatApp')
                 });
             }.bind(this));
 
-            $($window).on('focus', function () {
+            angular.element($window).on('focus', function () {
                 ws.connect();
                 if (c.room) {
                     c.room.unReadMessageCount = 0;
@@ -167,9 +170,7 @@ angular.module('ChatApp')
                     templateUrl: '/modal/member/remove.tmpl.html',
                     controller: 'RoomMemberRemoveController',
                     controllerAs: 'ctrl',
-                    resolve: {
-                        room: c.room
-                    }
+                    resolve: { room: c.room }
                 });
             };
 
@@ -208,36 +209,18 @@ angular.module('ChatApp')
                     templateUrl: '/modal/room/detail.tmpl.html',
                     controller: 'RoomDetailController',
                     controllerAs: 'ctrl',
-                    resolve: {
-                        room: room
-                    }
+                    resolve: { room: room }
                 });
             };
 
             this.OpenRemoveRoom = function (room) {
                 openAdminModalUi({
-                    templateUrl: '/modal/room/delete-confirm.tmpl.html',
-                    controller: ['RoomAdminService', '$uibModalInstance',
-                        function (service, $uibModalInstance) {
-                            this.room = room;
-
-                            this.close = function () {
-                                $uibModalInstance.dismiss();
-                            };
-
-                            this.ok = function () {
-                                service.removeRoom(room)
-                                    .then(function (room) {
-                                        $uibModalInstance.close(room && room.id);
-                                    });
-                            };
-                        }],
                     size: 'sm',
-                    controllerAs: 'ctrl'
-                }, function (roomid) {
-                    c.removeRoom(roomid);
-                    $location.hash('');
-                }.bind(this));
+                    templateUrl: '/modal/room/delete-confirm.tmpl.html',
+                    controller: RemoveRoomController.id,
+                    controllerAs: 'ctrl',
+                    resolve: { room: room }
+                });
             };
 
             this.OpenRoomImageEditDialog = function (room) {
