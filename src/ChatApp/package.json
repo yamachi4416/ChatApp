@@ -10,7 +10,22 @@
     "grunt-contrib-cssmin": "^2.2.0",
     "grunt-contrib-less": "^1.4.1",
     "grunt-contrib-uglify": "^3.0.1",
-    "grunt-contrib-watch": "^1.0.0"
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-ts": "^6.0.0-beta.17",
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.7.0-dev.20171209",
+    "typings": "^2.1.1",
+    "webpack": "^3.10.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/angularjs": "^1.5.5-alpha",
+    "@types/jquery": "^2.0.48",
+    "angular": "^1.5.5",
+    "angular-bootstrap": "^0.12.2",
+    "angular-marked": "^1.2.2",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.0",
+    "jquery.cookie": "^1.4.1",
+    "marked": "^0.3.7"
+  }
 }

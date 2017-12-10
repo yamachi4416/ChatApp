@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "lib": [
+            "dom",
+            "es5",
+            "es2015.collection",
+            "es2015.promise",
+            "es2015.iterable"
+        ],
+        "outDir": "wwwroot/js",
+        "rootDir": "wwwroot/src/ts"
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

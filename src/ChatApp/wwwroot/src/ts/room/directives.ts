@@ -12,7 +12,7 @@
 
     var directives = chatapp.directives = {};
 
-    directives.ChatRoom = function ($timeout, $location, $rootScope, $q) {
+    directives["ChatRoom"] = function ($timeout, $location, $rootScope, $q) {
         var containar,
             content,
             postform,
@@ -45,22 +45,23 @@
             });
         }
 
+        var getOldMessagesEnable = true;
+
         function getOldMessages(e) {
-            if (!getOldMessages.enable) return;
+            if (!getOldMessagesEnable) return;
             if (containar().scrollTop() === 0) {
                 var def = _getOldMessages();
                 if (!def || def.rejected === true) return;
-                getOldMessages.enable = false;
+                getOldMessagesEnable = false;
                 var loading = angular.element(_loadingTemplate);
                 containar().prepend(loading);
                 return def.finally(function () {
                     loading.remove();
-                    getOldMessages.enable = true;
+                    getOldMessagesEnable = true;
                 });
             }
         }
 
-        getOldMessages.enable = true;
 
         function justMessageSize() {
             $timeout(function () {
@@ -146,7 +147,7 @@
         };
     };
 
-    directives.ChatSidebar = function () {
+    directives["ChatSidebar"] = function () {
         return {
             scope: {
             },
@@ -169,7 +170,7 @@
         };
     };
 
-    directives.chatMessageImage = function (noImage) {
+    directives["chatMessageImage"] = function (noImage) {
         var error_urls = {};
 
         function errorHandle(elem) {
@@ -198,7 +199,7 @@
         };
     };
 
-    directives.ChatImageCliper = function ($timeout, $document) {
+    directives["ChatImageCliper"] = function ($timeout, $document) {
         return {
             scope: {
                 cCtrl: '=',
@@ -207,7 +208,7 @@
             },
             restrict: 'A',
             link: function (scope, elem, attrs) {
-                var cliper = angular.element(elem).imageCliper(scope.cOption);
+                var cliper = angular.element(elem)["imageCliper"](scope.cOption);
                 var range = { min: 0, val: 50, max: 100 };
 
                 scope.cCtrl[scope.cAssign] = {
@@ -224,7 +225,7 @@
         };
     };
 
-    directives.chatAutoresize = function ($window, $timeout) {
+    directives["chatAutoresize"] = function ($window, $timeout) {
         function getMaxHeight(element, parent) {
             var maxHeight = element.css('max-height');
             if (maxHeight == 'none' || !maxHeight) {
@@ -310,7 +311,7 @@
         };
     };
 
-    directives.mediaClass = function ($window) {
+    directives["mediaClass"] = function ($window) {
         var xs = 480;
         var sm = 768;
         var md = 992;
@@ -327,7 +328,7 @@
 
                 var watcher = function () { return $window.innerWidth; };
 
-                var handler = function (newVal, oldVal) {
+                var handler = function (newVal, oldVal?) {
                     xsClass && element.removeClass(xsClass);
                     smClass && element.removeClass(smClass);
                     mdClass && element.removeClass(mdClass);
@@ -348,4 +349,4 @@
     };
 
     return chatapp;
-}(window.chatapp = window.chatapp || {})));
+}(window["chatapp"] = window["chatapp"] || {})));

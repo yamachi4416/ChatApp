@@ -10,31 +10,11 @@ module.exports = function (grunt) {
     let devPath = (path) => './wwwdev/' + path;
     let destPath = (path) => './wwwroot/' + path;
 
-    grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.initConfig({
-        browserify: {
-            dist: {
-                files: {
-                    'wwwroot/js/site.js': ['wwwdev/js/site.js'],
-                    'wwwroot/js/manage/index.js': ['wwwdev/js/manage/index.js'],
-                    'wwwroot/js/room/app.js': ['wwwdev/js/room/app.js']
-                }
-            }
-        },
-        uglify: {
-            wwwroot: {
-                files: {
-                    "wwwroot/js/site.min.js": ["wwwroot/js/site.js"],
-                    "wwwroot/js/manage/index.min.js": ["wwwroot/js/manage/index.js"],
-                    "wwwroot/js/room/app.min.js": ["wwwroot/js/room/app.js",]
-                }
-            }
-        },
         less: {
             wwwdev: {
                 files: [{
@@ -70,5 +50,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('build', ['less', 'cssmin', 'browserify', 'uglify']);
+    grunt.registerTask('build', ['less', 'cssmin']);
 };

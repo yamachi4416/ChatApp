@@ -26,10 +26,15 @@ bld/
 
 # Visual Studio 2015 cache/options directory
 .vs/
+.tscache
 # Uncomment if you have tasks that create the project's static files in wwwroot
 src/ChatApp/wwwroot/lib
 src/ChatApp/wwwroot/**/*.css
 src/ChatApp/wwwroot/**/*.js
+src/ChatApp/wwwroot/**/*.map
+src/ChatApp/wwwdev/js/**/*.map
+src/ChatApp/wwwdev/js/room/services/*
+src/ChatApp/wwwdev/js/room/services.js
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

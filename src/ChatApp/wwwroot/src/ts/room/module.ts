@@ -1,6 +1,6 @@
+import { Renderer } from "marked";
+
 angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
-    .config(['$locationProvider', function($locationProvider) {
-     }])
     .config(['markedProvider', function (markedProvider) {
         var options = {
             gfm: true,
@@ -9,7 +9,7 @@ angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
         };
 
         var reciever = {options: options};
-        var renderer = marked.Renderer.prototype;
+        var renderer = Renderer.prototype;
 
         markedProvider.setOptions(options);
         markedProvider.setRenderer({
@@ -23,8 +23,3 @@ angular.module('ChatApp', ['hc.marked', 'ui.bootstrap'])
             }
         });
      }]);
-
-require("../lib/imgCliper");
-require("./services");
-require("./directives");
-require("./controllers");

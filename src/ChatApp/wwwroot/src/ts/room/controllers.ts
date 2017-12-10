@@ -132,7 +132,7 @@ angular.module('ChatApp')
                     });
             }
 
-            function openModalUi(options, resolve, reject) {
+            function openModalUi(options, resolve?, reject?) {
                 var modalInstance = $uibModal.open(
                     angular.extend({
                     }, options));
@@ -145,7 +145,7 @@ angular.module('ChatApp')
                 return modalInstance;
             }
 
-            function openAdminModalUi() {
+            function openAdminModalUi(...options) {
                 if (!c.room.isAdmin) return;
 
                 return openModalUi.apply(null, arguments);
@@ -333,7 +333,7 @@ angular.module('ChatApp')
             };
         }
     ])
-    .controller('RoomCreateController', ['RoomService', '$uibModalInstance',
+    .controller('RoomCreateController', ['RoomHttpService', '$uibModalInstance',
         function (service, $uibModalInstance) {
             this.room = {};
 
