@@ -37,8 +37,10 @@ class RoomServiceModel extends RoomModel {
         this.hasOldMessages = false;
         return this.httpService.getOldMessages(this.id, messageId)
             .then((messages) => {
-                this.hasOldMessages = true;
-                this.addOldMessages(messages);
+                if (messages && messages.length) {
+                    this.hasOldMessages = true;
+                    this.addOldMessages(messages);
+                }
             });
     }
 

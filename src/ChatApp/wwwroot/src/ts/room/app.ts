@@ -1,7 +1,7 @@
 import "angular";
 import "angular-ui-bootstrap"
 import "angular-marked";
-import "../lib/imgCliper";
+import "../lib/imageCliper/ImageCliper.jquery";
 import "./module";
 import "./services";
 import "./directives";

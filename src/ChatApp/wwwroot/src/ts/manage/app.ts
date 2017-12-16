@@ -1,13 +1,13 @@
 import "jquery.cookie";
-import "../lib/imgCliper";
+import "../lib/imageCliper/ImageCliper.jquery"
 
 jQuery(function ($) {
     'use strict';
 
-    var $modal = $('#imageClipModal');
-    var $img = $modal.find('img');
+    const $modal = $('#imageClipModal');
+    const $img = $modal.find('img');
 
-    var cliper = $('#image-clip')["imageCliper"]({
+    const cliper = $('#image-clip').imageCliper({
         zoomStep: 10,
         imageType: 'image/png',
         parentSelector: '.modal'
