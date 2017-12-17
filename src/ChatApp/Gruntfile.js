@@ -1,28 +1,28 @@
-/*
-This file in the main entry point for defining grunt tasks and using grunt plugins.
-Click here to learn more. http://go.microsoft.com/fwlink/?LinkID=513275&clcid=0x409
-*/
-module.exports = function (grunt) {
+const grunt = require("grunt");
+
+module.exports = function () {
     "use strict";
-    const paths = require('path');
-    const fs = require('fs');
+    const fs = require("fs");
+    const path = require("path");
+    const glob = require("glob");
+    const child_process = require("child_process");
 
-    let devPath = (path) => './wwwdev/' + path;
-    let destPath = (path) => './wwwroot/' + path;
+    let devPath = (path) => "./wwwdev/" + path;
+    let destPath = (path) => "./wwwroot/" + path;
 
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks("grunt-contrib-less");
+    grunt.loadNpmTasks("grunt-contrib-cssmin");
+    grunt.loadNpmTasks("grunt-contrib-watch");
 
     grunt.initConfig({
         less: {
             wwwdev: {
                 files: [{
                     expand: true,
-                    cwd: devPath('less'),
-                    src: ['**/*.less', '!**/_*.less'],
-                    dest: destPath('css'),
-                    ext: '.css'
+                    cwd: devPath("less"),
+                    src: ["**/*.less", "!**/_*.less"],
+                    dest: destPath("css"),
+                    ext: ".css"
                 }],
                 options: {
                 }
@@ -32,17 +32,17 @@ module.exports = function (grunt) {
             target: {
                 files: [{
                     expand: true,
-                    cwd: destPath('css'),
-                    src: ['**/*.css', '!*.min.css'],
-                    dest: destPath('css'),
-                    ext: '.min.css'
+                    cwd: destPath("css"),
+                    src: ["**/*.css", "!*.min.css"],
+                    dest: destPath("css"),
+                    ext: ".min.css"
                 }]
             }
         },
         watch: {
             less: {
-                files: devPath('less/**/*.less'),
-                tasks: ['less'],
+                files: devPath("less/**/*.less"),
+                tasks: ["less"],
                 options: {
                     livereload: false
                 }
@@ -50,5 +50,20 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('build', ['less', 'cssmin']);
+    grunt.registerTask("build", ["less", "cssmin"]);
+    grunt.registerTask("typings", "typings", function () {
+        const done = this.async();
+        if (!fs.existsSync("./typings")) {
+            child_process.execSync("typings init");
+        }
+
+        glob.glob("./wwwroot/src/ts/**/*.d.ts", function (err, files) {
+            files.forEach((file) => {
+                let command = `typings install file:${file} --global`;
+                let result = child_process.execSync(command);
+                grunt.log.write(result);
+            });
+            done();
+        });
+    });
 };

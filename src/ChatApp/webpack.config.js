@@ -1,5 +1,5 @@
-const path = require('path');
-const webpack = require('webpack');
+const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
     entry: {
@@ -8,7 +8,7 @@ module.exports = {
         "room/app": "room/app.ts",
     },
     output: {
-        path: path.resolve(__dirname, "wwwroot/js"),  
+        path: path.resolve(__dirname, "wwwroot/js"),
         filename: "[name].js",
     },
     resolve: {
@@ -23,12 +23,12 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
-                    {loader: "ts-loader"}
+                    { loader: "ts-loader" }
                 ]
             }
         ]
     },
-    devtool: "source-map",
+    devtool: "inline-source-map",
     externals: {
         jquery: "jQuery",
     },
