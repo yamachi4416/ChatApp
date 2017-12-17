@@ -7,13 +7,14 @@
     "clean:js": "cleandir wwwroot/js",
     "clean:css": "cleandir wwwroot/css",
     "clean:lib": "cleandir wwwroot/lib",
+    "make": "npm-run-all build copy",
     "build": "npm-run-all build:*",
     "build:js": "cleandir wwwroot/js && grunt typings && webpack",
     "build:css": "cleandir wwwroot/css && grunt build",
     "copy": "npm-run-all clean:lib copy:*",
-    "copy:bootstrap": "cpx node_modules/bootstrap/dist/**/* ./wwwroot/lib/bootstrap/",
-    "copy:jquery": "cpx node_modules/jquery/dist/*.js ./wwwroot/lib/jquery/",
-    "copy:jquery-validation": "cpx node_modules/jquery-validation/dist/**/*.js ./wwwroot/lib/jquery-validation/",
+    "copy:bootstrap": "cpx node_modules/bootstrap/dist/**/* ./wwwroot/lib/bootstrap/dist",
+    "copy:jquery": "cpx node_modules/jquery/dist/*.js ./wwwroot/lib/jquery/dist/",
+    "copy:jquery-validation": "cpx node_modules/jquery-validation/dist/**/*.js ./wwwroot/lib/jquery-validation/dist",
     "copy:jquery-validation-unobtrusive": "cpx node_modules/jquery-validation-unobtrusive/*.js ./wwwroot/lib/jquery-validation-unobtrusive/"
   },
   "devDependencies": {
