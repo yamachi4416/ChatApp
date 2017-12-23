@@ -3,6 +3,7 @@ import { RoomMemberAddController } from "./controllers/admin/RoomMemberAddContro
 import { RoomMemberRemoveController } from "./controllers/admin/RoomMemberRemoveController"
 import { RoomEditController } from "./controllers/admin/RoomEditController"
 import { RoomAvatarEditController } from "./controllers/admin/RoomAvatarEditController"
+import { RoomDetailController } from "./controllers/RoomDetailController"
 
 angular.module('ChatApp')
     .controller(RemoveRoomController.id, RemoveRoomController.injector)
@@ -10,6 +11,7 @@ angular.module('ChatApp')
     .controller(RoomMemberRemoveController.id, RoomMemberRemoveController.injector)
     .controller(RoomEditController.id, RoomEditController.injector)
     .controller(RoomAvatarEditController.id, RoomAvatarEditController.injector)
+    .controller(RoomDetailController.id, RoomDetailController.injector)
     .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
         function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
@@ -174,7 +176,7 @@ angular.module('ChatApp')
             this.OpenRemoveMember = function () {
                 openAdminModalUi({
                     templateUrl: '/modal/member/remove.tmpl.html',
-                    controller: 'RoomMemberRemoveController',
+                    controller: RoomMemberRemoveController.id,
                     controllerAs: 'ctrl',
                     resolve: { room: c.room }
                 });
@@ -203,7 +205,7 @@ angular.module('ChatApp')
             this.OpenDetailRoom = function (room) {
                 openModalUi({
                     templateUrl: '/modal/room/detail.tmpl.html',
-                    controller: 'RoomDetailController',
+                    controller: RoomDetailController.id,
                     controllerAs: 'ctrl',
                     resolve: { room: room }
                 });
@@ -230,14 +232,6 @@ angular.module('ChatApp')
             };
 
             this.InitRooms();
-        }])
-    .controller('RoomDetailController', ['$uibModalInstance', 'room',
-        function ($uibModalInstance, room) {
-            this.room = room;
-
-            this.close = function () {
-                $uibModalInstance.dismiss();
-            };
         }])
     .controller('RoomCreateController', ['RoomHttpService', '$uibModalInstance',
         function (service, $uibModalInstance) {
