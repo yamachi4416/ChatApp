@@ -5,6 +5,8 @@ class RoomModel {
     messages?: Array<RoomMessageModel>;
     members?: Array<RoomMemberModel>;
     avatarId?: string;
+    createdDate?: Date;
+    updatedDate?: Date;
 
     constructor(room?: RoomModel) {
         angular.extend(this, room);

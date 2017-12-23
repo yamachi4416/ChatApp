@@ -194,20 +194,10 @@ angular.module('ChatApp')
             this.OpenEditRoom = function (room) {
                 openAdminModalUi({
                     templateUrl: '/modal/room/edit.tmpl.html',
-                    controller: 'RoomEditController',
+                    controller: RoomEditController.id,
                     controllerAs: 'ctrl',
-                    resolve: {
-                        room: room
-                    }
-                }, function (room) {
-                    if (room && room.id) {
-                        angular.extend(c.getRoom(room.id), {
-                            name: room.name,
-                            description: room.description,
-                            updatedDate: room.updatedDate
-                        });
-                    }
-                }.bind(this));
+                    resolve: { room: room }
+                });
             };
 
             this.OpenDetailRoom = function (room) {

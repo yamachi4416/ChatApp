@@ -25,7 +25,12 @@ export class RoomEditController {
     doRoom(room) {
         return this.adminService.editRoom(this.roomServiceModel, this.room)
             .then((room) => {
-                this.$uibModalInstance.close(room);
+                if (room && room.id) {
+                    this.roomServiceModel.name = room.name;
+                    this.roomServiceModel.description = room.description;
+                    this.roomServiceModel.updatedDate = room.updatedDate;
+                }
+                this.$uibModalInstance.close();
             }, (res) => {
                 console.log(res.data);
             });
