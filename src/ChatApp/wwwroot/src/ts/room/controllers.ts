@@ -4,6 +4,7 @@ import { RoomMemberRemoveController } from "./controllers/admin/RoomMemberRemove
 import { RoomEditController } from "./controllers/admin/RoomEditController"
 import { RoomAvatarEditController } from "./controllers/admin/RoomAvatarEditController"
 import { RoomDetailController } from "./controllers/RoomDetailController"
+import { RoomCreateController } from "./controllers/RoomCreateController"
 
 angular.module('ChatApp')
     .controller(RemoveRoomController.id, RemoveRoomController.injector)
@@ -12,6 +13,7 @@ angular.module('ChatApp')
     .controller(RoomEditController.id, RoomEditController.injector)
     .controller(RoomAvatarEditController.id, RoomAvatarEditController.injector)
     .controller(RoomDetailController.id, RoomDetailController.injector)
+    .controller(RoomCreateController.id, RoomCreateController.injector)
     .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
         function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
@@ -232,21 +234,4 @@ angular.module('ChatApp')
             };
 
             this.InitRooms();
-        }])
-    .controller('RoomCreateController', ['RoomHttpService', '$uibModalInstance',
-        function (service, $uibModalInstance) {
-            this.room = {};
-
-            this.close = function () {
-                $uibModalInstance.dismiss();
-            };
-
-            this.doRoom = function () {
-                return service.createRoom(this.room)
-                    .then(function (room) {
-                        $uibModalInstance.close(room);
-                    }, function (res) {
-                        console.log(res.data);
-                    });
-            };
         }]);
