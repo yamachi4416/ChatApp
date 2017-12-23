@@ -1,12 +1,3 @@
-declare interface ImageCliperState {
-    px: number
-    py: number
-    drag: boolean
-    dragStart: boolean
-    wrapper?: JQuery
-    touchStart?: TouchList
-}
-
 declare interface ImageCliperOptions {
     zoomStep?: number
     imageType?: string
@@ -26,4 +17,20 @@ declare interface ImageCliperClientRect {
     naturalWidth?: number
     minWidth?: number
     maxWidth?: number
+}
+
+declare interface JQueryImageCliper extends JQuery {
+    start(): JQueryImageCliper
+    openFileDialog(): JQueryDeferred<FileList>
+    loadFile(file: File): JQueryDeferred<ImageCliperClientRect>
+    toBlob(): JQueryDeferred<Blob>
+    postImage(url: string, name: string, options: JQueryAjaxSettings, blob: Blob): JQueryDeferred<any>
+    zoom(step?: number),
+    setSrc(src: string, def?: JQueryDeferred<{}>): JQueryDeferred<{}>
+    getSrc(): string
+    imageInfo(): ImageCliperClientRect
+}
+
+declare interface JQuery {
+    imageCliper: (options: ImageCliperOptions) => JQueryImageCliper
 }

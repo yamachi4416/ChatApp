@@ -2,12 +2,14 @@ import { RemoveRoomController } from "./controllers/admin/RemoveRoomController"
 import { RoomMemberAddController } from "./controllers/admin/RoomMemberAddController"
 import { RoomMemberRemoveController } from "./controllers/admin/RoomMemberRemoveController"
 import { RoomEditController } from "./controllers/admin/RoomEditController"
+import { RoomAvatarEditController } from "./controllers/admin/RoomAvatarEditController"
 
 angular.module('ChatApp')
     .controller(RemoveRoomController.id, RemoveRoomController.injector)
     .controller(RoomMemberAddController.id, RoomMemberAddController.injector)
     .controller(RoomMemberRemoveController.id, RoomMemberRemoveController.injector)
     .controller(RoomEditController.id, RoomEditController.injector)
+    .controller(RoomAvatarEditController.id, RoomAvatarEditController.injector)
     .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
         function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
@@ -163,11 +165,9 @@ angular.module('ChatApp')
             this.OpenAddMember = function () {
                 openAdminModalUi({
                     templateUrl: '/modal/member/add.tmpl.html',
-                    controller: 'RoomMemberAddController',
+                    controller: RoomMemberAddController.id,
                     controllerAs: 'ctrl',
-                    resolve: {
-                        room: c.room
-                    }
+                    resolve: { room: c.room }
                 });
             };
 
@@ -221,51 +221,11 @@ angular.module('ChatApp')
 
             this.OpenRoomImageEditDialog = function (room) {
                 openAdminModalUi({
-                    templateUrl: '/modal/room/edit-image.tmpl.html',
-                    controller: ['RoomAdminService', '$uibModalInstance',
-                        function (service, $uibModalInstance) {
-
-                            this.fileSelect = function () {
-                                var cliper = this.c.cliper;
-                                cliper.openFileDialog()
-                                    .then(function (files) {
-                                        cliper.loadFile(files[0]);
-                                    }.bind(this));
-                            };
-
-                            this.changeRange = function () {
-                                var info = this.c.cliper.imageInfo();
-                                var range = this.c.range;
-                                this.c.cliper.zoom(range.val - info.width);
-                            };
-
-                            this.close = function () {
-                                $uibModalInstance.dismiss();
-                            };
-
-                            this.disableUpload = function () {
-                                return !this.c.cliper.getSrc();
-                            };
-
-                            this.upload = function () {
-                                if (this.disableUpload())
-                                    return;
-
-                                var cliper = this.c.cliper;
-                                cliper.toBlob().then(function (blob) {
-                                    return service.uploadImage(room, blob)
-                                        .then(function (avatarId) {
-                                            room.avatarId = avatarId;
-                                        });
-                                }).fail(function () {
-                                    console.log(arguments);
-                                }).always(function () {
-                                    $uibModalInstance.dismiss();
-                                });
-                            };
-                        }],
                     size: 'sm',
-                    controllerAs: 'ctrl'
+                    templateUrl: '/modal/room/edit-image.tmpl.html',
+                    controller: RoomAvatarEditController.id,
+                    controllerAs: 'ctrl',
+                    resolve: { room: room }
                 });
             };
 

@@ -17,18 +17,16 @@ $.fn.imageCliper = function (options: ImageCliperOptions) {
 
     return $.extend(this, {
         getSrc: function () {
-            return cliper.src;
+            return cliper.getSrc();
         },
         setSrc: function(src, def?) {
             return cliper.setSrc(src, def);
         },
-        start: applyMethod('start'),
-        normalizeRect: function() {
-            return cliper.normalizeRect(this.getSrc(), $.Deferred());
+        imageInfo: function() {
+            return cliper.imageInfo();
         },
+        start: applyMethod('start'),
         zoom: applyMethod('zoom'),
-        zoomOut: applyMethod('zoomOut'),
-        zoomIn: applyMethod('zoomIn'),
         toBlob: function () {
             var d = $.Deferred();
             cliper.toBlob(function (blob) {
@@ -71,9 +69,6 @@ $.fn.imageCliper = function (options: ImageCliperOptions) {
                 }).click();
 
             return df.promise();
-        },
-        imageInfo: function () {
-            return cliper.imageInfo();
         }
     });
 };
