@@ -1,5 +1,7 @@
 class RoomModel {
     id?: string;
+    name?: string;
+    description?: string;
     messages?: Array<RoomMessageModel>;
     members?: Array<RoomMemberModel>;
     avatarId?: string;

@@ -1,6 +1,7 @@
 import { RoomModel, RoomMemberModel } from "./Models";
 import { RoomServiceModel } from "./RoomServiceModel";
 import { HttpServiceBase, IRoomPromise } from "./HttpServiceBase";
+import { IPromise } from "angular";
 
 class RoomAdminService extends HttpServiceBase {
     constructor($http, $q) {
@@ -8,7 +9,7 @@ class RoomAdminService extends HttpServiceBase {
         this.baseUrl = "../api/rooms/admin/";
     }
 
-    searchAddMembers(room: RoomServiceModel, search: string) {
+    searchAddMembers(room: RoomServiceModel, search: string): IPromise<RoomMemberModel[]> {
         return this.httpGet(`${room.id}/members/search/${search}`);
     }
 

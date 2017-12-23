@@ -1,7 +1,13 @@
 import { RemoveRoomController } from "./controllers/admin/RemoveRoomController"
+import { RoomMemberAddController } from "./controllers/admin/RoomMemberAddController"
+import { RoomMemberRemoveController } from "./controllers/admin/RoomMemberRemoveController"
+import { RoomEditController } from "./controllers/admin/RoomEditController"
 
 angular.module('ChatApp')
     .controller(RemoveRoomController.id, RemoveRoomController.injector)
+    .controller(RoomMemberAddController.id, RoomMemberAddController.injector)
+    .controller(RoomMemberRemoveController.id, RoomMemberRemoveController.injector)
+    .controller(RoomEditController.id, RoomEditController.injector)
     .controller('RoomController', ['RoomContext', '$timeout', '$location', '$rootScope', '$uibModal', '$window', '$document',
         function (RoomContext, $timeout, $location, $rootScope, $uibModal, $window, $document) {
             var c = RoomContext;
@@ -283,29 +289,6 @@ angular.module('ChatApp')
                 $uibModalInstance.dismiss();
             };
         }])
-    .controller('RoomEditController', ['RoomAdminService', '$uibModalInstance', 'room',
-        function (service, $uibModalInstance, room) {
-            var _room = room;
-            this.room = {
-                id: _room.id,
-                name: _room.name,
-                description: _room.description
-            };
-
-            this.close = function () {
-                $uibModalInstance.dismiss();
-            };
-
-            this.doRoom = function (room) {
-                return service.editRoom(_room, this.room)
-                    .then(function (room) {
-                        $uibModalInstance.close(room);
-                    }, function (res) {
-                        console.log(res.data);
-                    });
-            };
-        }
-    ])
     .controller('RoomCreateController', ['RoomHttpService', '$uibModalInstance',
         function (service, $uibModalInstance) {
             this.room = {};
@@ -322,46 +305,4 @@ angular.module('ChatApp')
                         console.log(res.data);
                     });
             };
-        }])
-    .controller('RoomMemberRemoveController', ['RoomAdminService', '$uibModalInstance', 'room',
-        function (service, $uibModalInstance, room) {
-            this.icon = 'trash';
-            this.members = (room.members || [])
-                .filter(function (member) {
-                    return !member.isAdmin;
-                });
-
-            this.close = function () {
-                $uibModalInstance.dismiss();
-            };
-
-            this.doMember = function (idx) {
-                var member = this.members[idx];
-                this.members.splice(idx, 1);
-                return service.removeMember(room, member);
-            };
-        }])
-    .controller('RoomMemberAddController', ['RoomAdminService', '$uibModalInstance', 'room',
-        function (service, $uibModalInstance, room) {
-            this.icon = 'plus';
-            this.members = [];
-            this.search = '';
-
-            this.close = function () {
-                $uibModalInstance.dismiss();
-            };
-
-            this.searchAddMembers = function () {
-                return service.searchAddMembers(room, this.search)
-                    .then(function (members) {
-                        this.members = members;
-                    }.bind(this));
-            };
-
-            this.doMember = function (idx) {
-                var member = this.members[idx];
-                this.members.splice(idx, 1);
-                return service.addMember(room, member);
-            };
-
         }]);
