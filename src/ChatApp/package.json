@@ -8,14 +8,18 @@
     "clean:css": "cleandir wwwroot/css",
     "clean:lib": "cleandir wwwroot/lib",
     "make": "npm-run-all build copy",
-    "build": "npm-run-all build:*",
+    "make:dev": "npm-run-all build:dev copy",
+    "build": "npm-run-all build:css build:release_js",
+    "build:dev": "npm-run-all build:css build:js",
     "build:js": "cleandir wwwroot/js && grunt typings && webpack",
     "build:css": "cleandir wwwroot/css && grunt build",
+    "build:release_js": "cleandir wwwroot/js && grunt typings && webpack --config webpack.production.js",
+    "build:typings": "grunt typings",
     "copy": "npm-run-all clean:lib copy:*",
-    "copy:bootstrap": "cpx 'node_modules/bootstrap/dist/**/*' ./wwwroot/lib/bootstrap/dist",
-    "copy:jquery": "cpx 'node_modules/jquery/dist/*.js' ./wwwroot/lib/jquery/dist/",
-    "copy:jquery-validation": "cpx 'node_modules/jquery-validation/dist/**/*.js' ./wwwroot/lib/jquery-validation/dist",
-    "copy:jquery-validation-unobtrusive": "cpx 'node_modules/jquery-validation-unobtrusive/*.js' ./wwwroot/lib/jquery-validation-unobtrusive/"
+    "copy:bootstrap": "cpx \"node_modules/bootstrap/dist/**/*\" ./wwwroot/lib/bootstrap/dist",
+    "copy:jquery": "cpx \"node_modules/jquery/dist/*.js\" ./wwwroot/lib/jquery/dist/",
+    "copy:jquery-validation": "cpx \"node_modules/jquery-validation/dist/**/*.js\" ./wwwroot/lib/jquery-validation/dist",
+    "copy:jquery-validation-unobtrusive": "cpx \"node_modules/jquery-validation-unobtrusive/*.js\" ./wwwroot/lib/jquery-validation-unobtrusive/"
   },
   "devDependencies": {
     "clean-dir": "^1.0.3",
@@ -30,7 +34,8 @@
     "ts-loader": "^3.2.0",
     "typescript": "^2.7.0-dev.20171209",
     "typings": "^2.1.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-merge": "^4.1.1"
   },
   "dependencies": {
     "@types/angular-ui-bootstrap": "^0.13.46",
