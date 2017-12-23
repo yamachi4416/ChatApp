@@ -19,7 +19,13 @@ $.fn.imageCliper = function (options: ImageCliperOptions) {
         getSrc: function () {
             return cliper.src;
         },
+        setSrc: function(src, def?) {
+            return cliper.setSrc(src, def);
+        },
         start: applyMethod('start'),
+        normalizeRect: function() {
+            return cliper.normalizeRect(this.getSrc(), $.Deferred());
+        },
         zoom: applyMethod('zoom'),
         zoomOut: applyMethod('zoomOut'),
         zoomIn: applyMethod('zoomIn'),

@@ -229,21 +229,11 @@ angular.module('ChatApp')
                     controller: ['RoomAdminService', '$uibModalInstance',
                         function (service, $uibModalInstance) {
 
-                            function updateRange(range, info) {
-                                $timeout(function () {
-                                    range.max = info.maxWidth;
-                                    range.min = info.minWidth;
-                                    $timeout(function () { range.val = info.width; });
-                                });
-                            }
-
                             this.fileSelect = function () {
                                 var cliper = this.c.cliper;
                                 cliper.openFileDialog()
                                     .then(function (files) {
-                                        cliper.loadFile(files[0]).then(function (info) {
-                                            updateRange(this.c.range, info);
-                                        }.bind(this));
+                                        cliper.loadFile(files[0]);
                                     }.bind(this));
                             };
 

@@ -53,6 +53,13 @@ class ImageCliper {
         return this.image.attr("src")
     }
 
+    setSrc(src: string, def?: JQueryDeferred<{}>) {
+        this.image.attr('src', src)
+        return this.normalizeRect(src, def || $.Deferred()).then((info) => {
+            this.clip.trigger('cliper.srcChanged', info);
+        });
+    }
+
     get isFocus(): boolean {
         return !this.options.focusOnly || this.clip.is(":focus")
     }
@@ -111,10 +118,10 @@ class ImageCliper {
 
     rectInfo(element: JQuery): ImageCliperClientRect {
         return {
-            width: parseFloat(element.css('width')),
-            height: parseFloat(element.css('height')),
-            top: parseFloat(element.css('top')),
-            left: parseFloat(element.css('left')),
+            width: parseFloat(element.css('width')) || 0,
+            height: parseFloat(element.css('height')) || 0,
+            top: parseFloat(element.css('top')) || 0,
+            left: parseFloat(element.css('left')) || 0,
         }
     }
 
@@ -254,6 +261,31 @@ class ImageCliper {
         }
     }
 
+    normalizeRect(src: string, df: JQueryDeferred<{}>) {
+        const image = new Image()
+        
+        image.onload = (e) => {
+            const $img = this.image
+                .attr('src', image.src)
+                .css({ width: image.width, height: image.height })
+                .one('load', () => {
+                    const c = this.rectInfo(this.clip);
+                    const i = this.rectInfo($img);
+                    $img.css({
+                        left: (c.width - i.width) / 2,
+                        top: (c.height - i.height) / 2,
+                        height: 'unset'
+                    });
+                    df.resolve(this.imageInfo());
+                });
+        }
+
+        image.onerror = (e) => df.reject(e)
+        image.src = src;
+
+        return df;
+    }
+
     loadFile(file: File) {
         const df = $.Deferred();
 
@@ -266,25 +298,7 @@ class ImageCliper {
         reader.onload = (e) => {
             const buff = reader.result
             const blob = new Blob([buff], { type: file.type })
-            const image = new Image()
-
-            image.onload = (e) => {
-                const $img = this.image
-                    .attr('src', image.src)
-                    .css({ width: image.width, height: 'unset' })
-                    .one('load', () => {
-                        const c = this.rectInfo(this.clip);
-                        const i = this.rectInfo($img);
-                        $img.css({
-                            left: (c.width - i.width) / 2,
-                            top: (c.height - i.height) / 2
-                        });
-                        df.resolve(this.imageInfo());
-                    });
-            }
-
-            image.onerror = (e) => df.reject(e)
-            image.src = URL.createObjectURL(blob);
+            this.setSrc(URL.createObjectURL(blob), df);
         }
 
         reader.onerror = (e) => df.reject(e)
@@ -310,6 +324,7 @@ class ImageCliper {
             .bind('touchmove', this.touchMove.bind(this))
             .bind('touchend touchcancel', this.dragStop.bind(this))
             .bind('wheel', this.wheelHandle.bind(this));
+        this.setSrc(this.image.attr('src'));
     }
 }
 

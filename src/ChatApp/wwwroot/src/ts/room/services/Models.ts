@@ -2,11 +2,16 @@ class RoomModel {
     id?: string;
     messages?: Array<RoomMessageModel>;
     members?: Array<RoomMemberModel>;
+    avatarId?: string;
 
     constructor(room?: RoomModel) {
         angular.extend(this, room);
         this.messages = this.messages || [];
         this.members = this.members || [];
+    }
+
+    avatarUrl() {
+        return `../ChatRoomAvatar/Get/${this.avatarId}`;
     }
 }
 

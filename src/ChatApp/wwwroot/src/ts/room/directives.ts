@@ -204,11 +204,14 @@
             scope: {
                 cCtrl: '=',
                 cAssign: '@',
-                cOption: '<'
+                cOption: '<',
+                cSrc: '@'
             },
             restrict: 'A',
             link: function (scope, elem, attrs) {
-                var cliper = angular.element(elem)["imageCliper"](scope.cOption);
+                var cliper = angular.element(elem).append(
+                    angular.element('<img>').attr('src', scope.cSrc)
+                )["imageCliper"](scope.cOption);
                 var range = { min: 0, val: 50, max: 100 };
 
                 scope.cCtrl[scope.cAssign] = {
@@ -216,9 +219,18 @@
                     range: range
                 };
 
+                cliper.on('cliper.srcChanged', updateRange);
                 cliper.on('cliper.zoomed', function (e, info) {
                     $timeout(function () { range.val = info.width });
                 });
+
+                function updateRange(e, info) {
+                    $timeout(function () {
+                        range.max = info.maxWidth;
+                        range.min = info.minWidth;
+                        $timeout(function () { range.val = info.width; });
+                    });
+                }
 
                 cliper.start();
             }
