@@ -7,6 +7,7 @@ class RoomModel {
     avatarId?: string;
     createdDate?: Date;
     updatedDate?: Date;
+    isAdmin?: boolean;
 
     constructor(room?: RoomModel) {
         angular.extend(this, room);

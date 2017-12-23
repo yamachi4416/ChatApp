@@ -1,6 +1,7 @@
 import { RoomModel, RoomMessageModel, RoomMemberModel } from "./Models";
 import { RoomHttpService } from "./RoomHttpService";
 import { extend } from "angular";
+import { IRoomPromise } from "./HttpServiceBase";
 
 class RoomServiceModel extends RoomModel {
     public message: RoomMessageModel;
@@ -20,7 +21,7 @@ class RoomServiceModel extends RoomModel {
         return this.httpService.all(this.getMembers(), this.fetchNewMessages());
     }
 
-    fetchNewMessages() {
+    fetchNewMessages(): IRoomPromise<any> {
         if (this.nowfetchNewMessage)
             return this.httpService.reject;
         this.nowfetchNewMessage = true;

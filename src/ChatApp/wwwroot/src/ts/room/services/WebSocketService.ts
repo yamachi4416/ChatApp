@@ -22,7 +22,6 @@ class WebSocketService {
     private readonly location: Location;
 
     public readonly handlers: Array<Array<WsHandler>>;
-    public readonly types: object = WSMessageTypes;
     public socket: WebSocket;
 
     constructor(
