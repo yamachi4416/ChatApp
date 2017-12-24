@@ -16,7 +16,7 @@ class RoomModel {
     }
 
     avatarUrl() {
-        return `../ChatRoomAvatar/Get/${this.avatarId}`;
+        return `../ChatRoomAvatar/Get/${this.avatarId || ''}`;
     }
 }
 
