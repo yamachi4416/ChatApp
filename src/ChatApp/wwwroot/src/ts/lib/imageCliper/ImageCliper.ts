@@ -52,10 +52,11 @@ class ImageCliper {
     }
 
     setSrc(src: string, def?: JQueryDeferred<{}>) {
-        this.image.attr('src', src)
+        this.image.css({ opacity: 0 });
         return this.normalizeRect(src, def || $.Deferred()).then((info) => {
+            this.image.attr('src', src);
             this.clip.trigger('cliper.srcChanged', info);
-        });
+        }).always(() => this.image.css({ opacity: 1 }));
     }
 
     imageInfo(): ImageCliperClientRect {
@@ -174,7 +175,9 @@ class ImageCliper {
             .bind('touchmove', this.touchMove.bind(this))
             .bind('touchend touchcancel', this.dragStop.bind(this))
             .bind('wheel', this.wheelHandle.bind(this));
-        this.setSrc(this.image.attr('src'));
+        if (this.image.attr('src')) {
+            this.setSrc(this.image.attr('src'));
+        }
     }
 
     private imageNode() {
