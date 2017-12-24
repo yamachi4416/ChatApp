@@ -36,7 +36,7 @@ export class ChatImageCliperDirective implements IDirective {
         transclude: ITranscludeFunction
     ): void {
         const cliper = angular.element(element).append(
-            angular.element('<img>').attr('src', scope.cSrc)
+            angular.element('<img>') as JQLite
         ).imageCliper(scope.cOption);
 
         const range = { min: 0, val: 50, max: 100 };
@@ -55,6 +55,7 @@ export class ChatImageCliperDirective implements IDirective {
         cliper.on('cliper.srcChanged', updateRange);
         cliper.on('cliper.zoomed', setRangeVal);
 
+        cliper.setSrc(scope.cSrc);
         cliper.start();
     }
 
