@@ -28,6 +28,7 @@ namespace ChatApp.Features.ChatRoomAvatar
         }
 
         [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 120 * 60)]
         public async Task<IActionResult> Get(Guid? id)
         {
             if (id == null)
