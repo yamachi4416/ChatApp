@@ -14,7 +14,7 @@ export class RoomAvatarEditController {
     ) {}
 
     fileSelect() {
-        this.c.cliper.openFileDialog()
+        return this.c.cliper.openFileDialog()
             .then((files) => this.c.cliper.loadFile(files[0]));
     }
 
@@ -24,7 +24,7 @@ export class RoomAvatarEditController {
     }
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     disableUpload() {
@@ -35,7 +35,7 @@ export class RoomAvatarEditController {
         if (this.disableUpload())
             return;
 
-        this.c.cliper.toBlob().then((blob) => {
+        return this.c.cliper.toBlob().then((blob) => {
             return this.adminService.uploadImage(this.room, blob)
                 .then((avatarId) => this.room.avatarId = avatarId);
         }).fail(function () {

@@ -134,6 +134,7 @@ class ImageCliper {
                     $img.css({
                         left: (c.width - i.width) / 2,
                         top: (c.height - i.height) / 2,
+                        width: i.width,
                         height: 'unset'
                     });
                     df.resolve(this.imageInfo());
