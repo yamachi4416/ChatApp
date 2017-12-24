@@ -7,7 +7,7 @@ module.exports = function () {
     const glob = require("glob");
     const child_process = require("child_process");
 
-    let devPath = (path) => "./wwwdev/" + path;
+    let devPath = (path) => "./wwwroot/src/" + path;
     let destPath = (path) => "./wwwroot/" + path;
 
     grunt.loadNpmTasks("grunt-contrib-less");
@@ -16,7 +16,7 @@ module.exports = function () {
 
     grunt.initConfig({
         less: {
-            wwwdev: {
+            default: {
                 files: [{
                     expand: true,
                     cwd: devPath("less"),
@@ -57,7 +57,7 @@ module.exports = function () {
             child_process.execSync("typings init");
         }
 
-        glob.glob("./wwwroot/src/ts/**/*.d.ts", function (err, files) {
+        glob.glob(devPath("/ts/**/*.d.ts"), function (err, files) {
             files.forEach((file) => {
                 let command = `typings install file:${file} --global`;
                 let result = child_process.execSync(command);
