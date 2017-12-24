@@ -1,6 +1,8 @@
 import { ChatSidebarDirective } from "./directives/ChatSidebarDirective";
 import { ChatMessageImageDirective } from "./directives/ChatMessageImageDirective";
 import { ChatAutoresizeDirective } from "./directives/ChatAutoresizeDirective";
+import { ChatImageCliperDirective } from "./directives/ChatImageCliperDirective";
+import { ChatMediaClassDirective } from "./directives/ChatMediaClassDirective";
 
 (function angular_directives(chatapp) {
     angular.module('ChatApp')
@@ -8,9 +10,9 @@ import { ChatAutoresizeDirective } from "./directives/ChatAutoresizeDirective";
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
         .directive('chatSidebar', ChatSidebarDirective.Factory)
         .directive('chatMessageImage', ChatMessageImageDirective.Factory)
-        .directive('chatImageCliper', ['$timeout', '$document', chatapp.directives.ChatImageCliper])
+        .directive('chatImageCliper', ChatImageCliperDirective.Factory)
         .directive('chatAutoresize', ChatAutoresizeDirective.Factory)
-        .directive('mediaClass', ['$window', chatapp.directives.mediaClass]);
+        .directive('mediaClass', ChatMediaClassDirective.Factory);
 }(function chatapp_directives(chatapp) {
     'use strict';
 
@@ -148,81 +150,6 @@ import { ChatAutoresizeDirective } from "./directives/ChatAutoresizeDirective";
             },
             restrict: 'A',
             link: link
-        };
-    };
-
-    directives["ChatImageCliper"] = function ($timeout, $document) {
-        return {
-            scope: {
-                cCtrl: '=',
-                cAssign: '@',
-                cOption: '<',
-                cSrc: '@'
-            },
-            restrict: 'A',
-            link: function (scope, elem, attrs) {
-                var cliper = angular.element(elem).append(
-                    angular.element('<img>').attr('src', scope.cSrc)
-                )["imageCliper"](scope.cOption);
-                var range = { min: 0, val: 50, max: 100 };
-
-                scope.cCtrl[scope.cAssign] = {
-                    cliper: cliper,
-                    range: range
-                };
-
-                cliper.on('cliper.srcChanged', updateRange);
-                cliper.on('cliper.zoomed', function (e, info) {
-                    $timeout(function () { range.val = info.width });
-                });
-
-                function updateRange(e, info) {
-                    $timeout(function () {
-                        range.max = info.maxWidth;
-                        range.min = info.minWidth;
-                        $timeout(function () { range.val = info.width; });
-                    });
-                }
-
-                cliper.start();
-            }
-        };
-    };
-
-    directives["mediaClass"] = function ($window) {
-        var xs = 480;
-        var sm = 768;
-        var md = 992;
-
-        return {
-            restrict: "A",
-            scope: {
-                media: '<mediaClass'
-            },
-            link: function (scope, element, attrs) {
-                var xsClass = scope.media.xs,
-                    smClass = scope.media.sm,
-                    mdClass = scope.media.md;
-
-                var watcher = function () { return $window.innerWidth; };
-
-                var handler = function (newVal, oldVal?) {
-                    xsClass && element.removeClass(xsClass);
-                    smClass && element.removeClass(smClass);
-                    mdClass && element.removeClass(mdClass);
-                    if (newVal <= xs) {
-                        xsClass && element.addClass(xsClass);
-                    } else if (newVal <= sm) {
-                        smClass && element.addClass(smClass);
-                    } else {
-                        mdClass && element.addClass(mdClass);
-                    }
-                };
-
-                scope.$watch(watcher, handler);
-
-                handler(watcher());
-            }
         };
     };
 

@@ -1,14 +1,11 @@
 import { RoomAdminService } from "../../services/RoomAdminService";
 import { IModalServiceInstance } from "angular-ui-bootstrap";
 import { RoomServiceModel } from "../../services/RoomServiceModel";
+import { CliperComponant } from "../../directives/ChatImageCliperDirective";
 
-interface CliperCompornant {
-    cliper: JQueryImageCliper,
-    range: { min:number, val:number, max:number }
-}
 
 export class RoomAvatarEditController {
-    public c: CliperCompornant;
+    public c: CliperComponant;
 
     constructor(
         private adminService: RoomAdminService,
