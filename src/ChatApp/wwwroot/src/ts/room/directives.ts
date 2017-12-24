@@ -1,11 +1,15 @@
+import { ChatSidebarDirective } from "./directives/ChatSidebarDirective";
+import { ChatMessageImageDirective } from "./directives/ChatMessageImageDirective";
+import { ChatAutoresizeDirective } from "./directives/ChatAutoresizeDirective";
+
 (function angular_directives(chatapp) {
     angular.module('ChatApp')
         .value('chatMessageNoImage', '../images/noimage.jpg')
         .directive('chatRoom', ['$timeout', '$location', '$rootScope', '$q', chatapp.directives.ChatRoom])
-        .directive('chatSidebar', [chatapp.directives.ChatSidebar])
-        .directive('chatMessageImage', ['chatMessageNoImage', chatapp.directives.chatMessageImage])
+        .directive('chatSidebar', ChatSidebarDirective.Factory)
+        .directive('chatMessageImage', ChatMessageImageDirective.Factory)
         .directive('chatImageCliper', ['$timeout', '$document', chatapp.directives.ChatImageCliper])
-        .directive('chatAutoresize', ['$window', '$timeout', chatapp.directives.chatAutoresize])
+        .directive('chatAutoresize', ChatAutoresizeDirective.Factory)
         .directive('mediaClass', ['$window', chatapp.directives.mediaClass]);
 }(function chatapp_directives(chatapp) {
     'use strict';
@@ -147,58 +151,6 @@
         };
     };
 
-    directives["ChatSidebar"] = function () {
-        return {
-            scope: {
-            },
-            restrict: 'A',
-            transclude: true,
-            replace: true,
-            controller: function () {
-                this.isShowSidebar = false;
-
-                this.toggleSidebar = function () {
-                    var ele = angular.element('#chat-sidebar');
-                    this.isShowSidebar = ele.is('.hidden-xs');
-                    ele.toggleClass('hidden-xs');
-                };
-            },
-            controllerAs: 'ctrl',
-            templateUrl: '/sidebar/main.tmpl.html',
-            link: function (scope, elem, attrs, ctrl) {
-            }
-        };
-    };
-
-    directives["chatMessageImage"] = function (noImage) {
-        var error_urls = {};
-
-        function errorHandle(elem) {
-            error_urls[elem.attr('src')] = true;
-            var a = angular.element('<a>').attr({
-                target: '_blank',
-                title: elem.attr('alt'),
-                href: elem.attr('src')
-            });
-            elem.attr('src', noImage).unbind('load').unwrap().wrap(a);
-        }
-
-        return {
-            restrict: 'A',
-            link: function (scope, elem, attrs, ctrl) {
-                if (error_urls[elem.attr('src')]) {
-                    errorHandle(elem);
-                } else {
-                    elem.on('load', function () {
-                        elem.unwrap();
-                    }).on('error', function () {
-                        errorHandle(elem);
-                    }).wrap(angular.element('<div>').addClass('chat-img-loading'));
-                }
-            }
-        };
-    };
-
     directives["ChatImageCliper"] = function ($timeout, $document) {
         return {
             scope: {
@@ -233,92 +185,6 @@
                 }
 
                 cliper.start();
-            }
-        };
-    };
-
-    directives["chatAutoresize"] = function ($window, $timeout) {
-        function getMaxHeight(element, parent) {
-            var maxHeight = element.css('max-height');
-            if (maxHeight == 'none' || !maxHeight) {
-                return null;
-            }
-
-            if (/^[0-9.]+%$/.test(maxHeight)) {
-                return parent.height() * parseFloat(maxHeight) / 100;
-            } else if (/^[0-9.]+$/.test(maxHeight)) {
-                return parseFloat(maxHeight);
-            }
-
-            return null;
-        }
-
-        function resize(element, parent, diff) {
-            var oldHeight = element.height();
-            element.height(0);
-            var newHeight = element[0].scrollHeight - diff;
-            var maxHeight = getMaxHeight(element, parent);
-
-            if (maxHeight && newHeight > maxHeight) {
-                element.height(maxHeight);
-            } else {
-                element.height(newHeight);
-            }
-
-            parent.scrollTop(parent.height());
-        }
-
-        function ScopeWatcher(scope, watcher, handler) {
-            var watch;
-            return {
-                start: function (isCall) {
-                    this.stop();
-                    isCall && handler();
-                    watch = scope.$watch(watcher, handler);
-                },
-                stop: function () {
-                    if (watch) {
-                        watch();
-                        watch = null;
-                    }
-                }
-            };
-        }
-
-        return {
-            restrict: "A",
-            require: "ngModel",
-            scope: {},
-            link: function (scope, element, attrs, ngModel) {
-                var heightDiff = parseInt(element.css('padding-bottom')) + parseInt(element.css('padding-top'));
-                var resizeHandler = resize.bind(null, element, angular.element($window), heightDiff);
-                var modelWatcher = ScopeWatcher(scope, function () { return ngModel.$viewValue; }, resizeHandler);
-                var initHeight = element.height();
-                var restoreHeight = function () {
-                    element.height(initHeight);
-                    angular.element($window).trigger('resize');
-                };
-
-                element.bind('focus', function () {
-                    modelWatcher.start(true);
-                }).bind('blur', function () {
-                    $timeout(function () {
-                        var focus = element.closest('form').find(':focus');
-                        if (!focus.length) {
-                            modelWatcher.stop();
-                            restoreHeight();
-                        } else {
-                            focus.one('blur', restoreHeight);
-                        }
-                    });
-                }).height(element.scrollHeight - heightDiff).css({
-                    opacity: 0
-                });
-
-                scope.$on('chatRoomMessageReady', function () {
-                    element.css({ opacity: 1 });
-                });
-                scope.$on('$destroy', modelWatcher.stop.bind(modelWatcher));
             }
         };
     };
