@@ -17,7 +17,7 @@ export class RoomMemberRemoveController {
     }
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     doMember(idx: number) {

@@ -14,7 +14,7 @@ export class RemoveRoomController {
     ) {}
 
     ok() {
-        this.adminService.removeRoom(this.room)
+        return this.adminService.removeRoom(this.room)
             .then((room) => {
                 this.roomContext.removeRoom(room.id);
                 this.$uibModalInstance.close();
@@ -23,7 +23,7 @@ export class RemoveRoomController {
     }
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     static get id(): string {

@@ -8,7 +8,7 @@ export class RoomDetailController {
     ) {}
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     static get id(): string {

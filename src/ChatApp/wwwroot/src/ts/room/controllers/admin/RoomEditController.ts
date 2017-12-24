@@ -19,7 +19,7 @@ export class RoomEditController {
     }
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     doRoom(room) {

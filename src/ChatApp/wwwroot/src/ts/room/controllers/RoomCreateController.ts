@@ -11,7 +11,7 @@ export class RoomCreateController {
     ) { }
 
     close() {
-        this.$uibModalInstance.dismiss();
+        return this.$uibModalInstance.dismiss();
     }
 
     doRoom() {
