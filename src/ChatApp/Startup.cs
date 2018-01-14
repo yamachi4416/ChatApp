@@ -18,6 +18,7 @@ using ChatApp.Config;
 using ChatApp.SharedResources;
 using ChatApp.IdentityLocaleError;
 using ChatApp.Features.Room;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ChatApp
 {
@@ -70,11 +71,10 @@ namespace ChatApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddCookieAuthentication(CookieAuthenticationDefaults.AuthenticationScheme, options => {
-                    options.LoginPath = "/Account/Login";
-                    options.LogoutPath = "/Account/LogOff";
-                })
-                .AddGoogleAuthentication(options => {
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddGoogle(options => {
                     options.ClientId = Configuration["Authentication:Google:ClientId"];
                     options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
                     options.AccessType = Configuration["Authentication:Google:AccessType"];
@@ -114,16 +114,16 @@ namespace ChatApp
 
             // EMailSender
             services.Configure<MailOptions>(Configuration.GetSection("MailOptions"));
-            services.AddTransient<IEmailSender, GMailSender>();
+            services.TryAddTransient<IEmailSender, GMailSender>();
 
             // SmsSender
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.TryAddTransient<ISmsSender, AuthMessageSender>();
 
             // Application services.
-            services.AddSingleton<IDateTimeService, DateTimeService>();
-            services.AddTransient<IControllerService, ControllerBaseService>();
-            services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
-            services.AddSingleton<IRoomWSSender, RoomWSSender>();
+            services.TryAddSingleton<IDateTimeService, DateTimeService>();
+            services.TryAddTransient<IControllerService, ControllerBaseService>();
+            services.TryAddSingleton<IRoomWebSocketService, RoomWebSocketService>();
+            services.TryAddSingleton<IRoomWSSender, RoomWSSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
