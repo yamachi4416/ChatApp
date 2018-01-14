@@ -17,7 +17,6 @@ using ChatApp.Services.RoomwebSocket;
 using ChatApp.Config;
 using ChatApp.SharedResources;
 using ChatApp.IdentityLocaleError;
-using ChatApp.Features.Room;
 
 namespace ChatApp
 {
@@ -114,16 +113,18 @@ namespace ChatApp
 
             // EMailSender
             services.Configure<MailOptions>(Configuration.GetSection("MailOptions"));
-            services.AddTransient<IEmailSender, GMailSender>();
 
-            // SmsSender
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            // Inject Singleton Service
+            foreach (var item in Configuration.GetSection("Injection:Singleton").GetChildren())
+            {
+                services.AddSingleton(Type.GetType(item.Key), Type.GetType(item.Value));
+            }
 
-            // Application services.
-            services.AddSingleton<IDateTimeService, DateTimeService>();
-            services.AddTransient<IControllerService, ControllerBaseService>();
-            services.AddSingleton<IRoomWebSocketService, RoomWebSocketService>();
-            services.AddSingleton<IRoomWSSender, RoomWSSender>();
+            // Inject Transient Service
+            foreach (var item in Configuration.GetSection("Injection:Transient").GetChildren())
+            {
+                services.AddTransient(Type.GetType(item.Key), Type.GetType(item.Value));
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

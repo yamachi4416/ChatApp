@@ -32,6 +32,8 @@ namespace ChatApp.Services
 
         public IStringLocalizerFactory LocalizeFactory => _localizeFactory;
 
+        public ControllerBaseService() {}
+
         public ControllerBaseService(
             ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
