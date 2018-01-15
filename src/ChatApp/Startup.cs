@@ -74,43 +74,49 @@ namespace ChatApp
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie()
-                .AddGoogle(options => {
+                .AddGoogle(options =>
+                {
                     options.ClientId = Configuration["Authentication:Google:ClientId"];
                     options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
                     options.AccessType = Configuration["Authentication:Google:AccessType"];
                     options.SaveTokens = true;
                 });
-            
+
             // Localization
             services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
 
             // Mvc
-            services.AddMvc(options => {
-                    options.Conventions.Add(new FeatureConvention());
-                }).AddRazorOptions(options => {
-                    // {0} - Action Name
-                    // {1} - Controller Name
-                    // {2} - Area Name
-                    // {3} - Feature Name
-                    // Replace normal view location entirely
-                    options.ViewLocationFormats.Clear();
+            services.AddMvc(options =>
+            {
+                options.Conventions.Add(new FeatureConvention());
+            }).AddRazorOptions(options =>
+            {
+                // {0} - Action Name
+                // {1} - Controller Name
+                // {2} - Area Name
+                // {3} - Feature Name
+                // Replace normal view location entirely
+                options.ViewLocationFormats.Clear();
 
-                    options.ViewLocationFormats.Add("/Features/{3}/{1}/Views/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/{3}/Views/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/{3}/{1}/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/{3}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/{3}/{1}/Views/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/{3}/Views/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/{3}/{1}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/{3}/{0}.cshtml");
 
-                    options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/Shared/{1}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/Shared/{1}/{0}.cshtml");
 
-                    options.ViewLocationExpanders.Add(new FeatureConvention());
-                }).AddDataAnnotationsLocalization(options => {
-                    options.DataAnnotationLocalizerProvider = (type, factory) => {
-                        return factory.Create(typeof(SharedResource));
-                    };
-                }).AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder, options => {
-                    options.ResourcesPath = "Resources";
-                });
+                options.ViewLocationExpanders.Add(new FeatureConvention());
+            }).AddDataAnnotationsLocalization(options =>
+            {
+                options.DataAnnotationLocalizerProvider = (type, factory) =>
+                {
+                    return factory.Create(typeof(SharedResource));
+                };
+            }).AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder, options =>
+            {
+                options.ResourcesPath = "Resources";
+            });
 
             // EMailSender
             services.Configure<MailOptions>(Configuration.GetSection("MailOptions"));
