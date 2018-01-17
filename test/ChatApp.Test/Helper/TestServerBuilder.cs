@@ -5,6 +5,7 @@ using ChatApp.Services;
 using ChatApp.Test.Mock;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatApp.Test.Helper
@@ -16,8 +17,12 @@ namespace ChatApp.Test.Helper
         public TestServerBuilder()
         {
             webHostBuilder = new WebHostBuilder()
+                .UseEnvironment("Test")
                 .UseContentRoot(GetProjectPath("src", typeof(Startup).GetTypeInfo().Assembly))
-                .UseEnvironment("Test");
+                .ConfigureAppConfiguration(config =>
+                {
+                    config.AddJsonFile(Path.GetFullPath("./appsettings.Test.json"), optional: false);
+                });
         }
 
         public TestServer CreateTestServer()
