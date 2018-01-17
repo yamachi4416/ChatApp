@@ -18,11 +18,7 @@ namespace ChatApp.Test.Helper
         {
             webHostBuilder = new WebHostBuilder()
                 .UseEnvironment("Test")
-                .UseContentRoot(GetProjectPath("src", typeof(Startup).GetTypeInfo().Assembly))
-                .ConfigureAppConfiguration(config =>
-                {
-                    config.AddJsonFile(Path.GetFullPath("./appsettings.Test.json"), optional: false);
-                });
+                .UseContentRoot(GetProjectPath("src", typeof(Startup).GetTypeInfo().Assembly));
         }
 
         public TestServer CreateTestServer()
