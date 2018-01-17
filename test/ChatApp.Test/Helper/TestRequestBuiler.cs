@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -94,9 +95,7 @@ namespace ChatApp.Test.Helper
 
             if (_queryStrings.Any())
             {
-                var queryString = string.Join("&",
-                    _queryStrings.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}"));
-                requestUrl += $"?{queryString}";
+                requestUrl = QueryHelpers.AddQueryString(requestUrl, _queryStrings);
             }
 
             var builder = _testServer.CreateRequest(requestUrl);

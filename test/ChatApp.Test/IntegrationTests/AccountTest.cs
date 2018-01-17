@@ -1,10 +1,9 @@
-using ChatApp.Data;
 using Xunit;
 using System;
-using ChatApp.Test.Helper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
+using ChatApp.Data;
+using ChatApp.Test.Helper;
 using ChatApp.Test.Attrubutes;
 
 namespace ChatApp.Test.IntegrationTests
@@ -12,7 +11,7 @@ namespace ChatApp.Test.IntegrationTests
     [IntegrationTest]
     public class AccountTest : IDisposable
     {
-        private readonly TestServiceHelper testHelper;
+       private readonly TestServiceHelper testHelper;
 
         public AccountTest()
         {

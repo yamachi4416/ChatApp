@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.TestHost;
 
 namespace ChatApp.Test.Helper
@@ -16,8 +16,6 @@ namespace ChatApp.Test.Helper
         private Stack<HttpResponseMessage> _responses = new Stack<HttpResponseMessage>();
 
         public HttpResponseMessage Response => _responses.Peek();
-
-        private readonly IList<Task<HttpResponseMessage>> _results = new List<Task<HttpResponseMessage>>();
 
         public TestWebBrowser(TestServer testServer)
         {
