@@ -16,7 +16,7 @@ namespace ChatApp.Services
 
         public string Password { get; set; }
 
-        public string FromUser => $"{UserName}<{Email}>";
+        public string FromUser => Email;
     }
 
     public class GMailSender : IEmailSender
