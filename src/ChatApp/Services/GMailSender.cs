@@ -1,6 +1,7 @@
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using System.Net.Mail;
 
 namespace ChatApp.Services
 {
@@ -16,7 +17,9 @@ namespace ChatApp.Services
 
         public string Password { get; set; }
 
-        public string FromUser => Email;
+        public MailAddress FromAddress => new MailAddress(Email, UserName);
+
+        public NetworkCredential Credentials => new NetworkCredential(Email, Password);
     }
 
     public class GMailSender : IEmailSender
@@ -31,19 +34,25 @@ namespace ChatApp.Services
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             using (var sc = new SmtpClient(Options.Host, Options.Port))
-            using (var msg = new MailMessage(Options.FromUser, email, subject, message))
+            using (var msg = new MailMessage(Options.FromAddress, new MailAddress(email)))
             {
                 //SMTPサーバーを設定する
                 sc.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                 //ユーザー名とパスワードを設定する
-                sc.Credentials = new System.Net.NetworkCredential(Options.Email, Options.Password);
+                sc.Credentials = Options.Credentials;
 
                 //SSLを使用する
                 sc.EnableSsl = true;
 
                 // HTML形式
                 msg.IsBodyHtml = true;
+
+                // 件名を設定
+                msg.Subject = subject;
+
+                // メッセージを設定
+                msg.Body = message;
 
                 //メッセージを送信する
                 await sc.SendMailAsync(msg);
