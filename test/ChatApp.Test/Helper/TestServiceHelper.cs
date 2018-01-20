@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using AngleSharp.Parser.Html;
+using AngleSharp.Dom.Html;
 
 namespace ChatApp.Test.Helper
 {
@@ -32,6 +34,8 @@ namespace ChatApp.Test.Helper
         public UserManager<ApplicationUser> UserManager => ControllerService.UserManager;
 
         public IRoomWSSender WsSender => ServiceProvider.GetService<IRoomWSSender>();
+
+        public EmailSenderMock MailSender => ServiceProvider.GetService<IEmailSender>() as EmailSenderMock; 
 
         public TestServiceHelper()
         {
@@ -89,6 +93,12 @@ namespace ChatApp.Test.Helper
         public TestWebBrowser CreateWebBrowser()
         {
             return new TestWebBrowser(Server);
+        }
+
+        public IHtmlDocument ParseHtml(string html)
+        {
+            var parser = new HtmlParser();
+            return parser.Parse(html);
         }
     }
 }

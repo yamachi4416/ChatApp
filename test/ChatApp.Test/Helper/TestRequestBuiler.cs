@@ -38,7 +38,10 @@ namespace ChatApp.Test.Helper
         {
             _testServer = testServer;
             _cookies = cookies;
-            _absoluteUrl = new Uri(_testServer.BaseAddress, new Uri(requestPath, UriKind.Relative));
+            
+            var requestUrl = new Uri(requestPath, UriKind.RelativeOrAbsolute);
+            _absoluteUrl = requestUrl.IsAbsoluteUri ?
+                requestUrl : new Uri(_testServer.BaseAddress, requestUrl);
         }
 
         public TestRequestBuilder SetJsonContent(object postObject)

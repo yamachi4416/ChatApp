@@ -1,21 +1,45 @@
+using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using ChatApp.Services;
 
 namespace ChatApp.Test.Mock
 {
+    public class MailMessageMock
+    {
+        public string Subject { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string Body { get; set; }
+        public AttachmentCollection Attachments { get; }
+    }
+
     public class EmailSenderMock : IEmailSender
     {
-        public static string _email;
+        private static IList<MailMessageMock> _mailBox = new List<MailMessageMock>();
 
-        public static string _subject;
+        private MailOptions Options { get; }
 
-        public static string _message;
+        public MailMessageMock GetLastMessage => _mailBox.LastOrDefault();
+
+        public EmailSenderMock(IOptions<MailOptions> options)
+        {
+            Options = options.Value;
+        }
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            _email = email;
-            _subject = subject;
-            _message = message;
+            var mailMessage = new MailMessageMock
+            {
+                From = Options.Email,
+                To = email,
+                Subject = subject,
+                Body = message
+            };
+
+            _mailBox.Add(mailMessage);
 
             return Task.FromResult(0);
         }
