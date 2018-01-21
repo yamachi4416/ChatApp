@@ -106,6 +106,44 @@ namespace ChatApp.Test.IntegrationTests
             Assert.True(await TryLogin(browser, user));
         }
 
+        [Fact(DisplayName = "不正なパスワードの場合はアカウントの登録ができないこと")]
+        public async void Account_Regiter_InvalidPassword_Failure()
+        {
+            var user = GetTestUser();
+            var browser = testHelper.CreateWebBrowser();
+
+            // アカウントの登録画面を開けること
+            await browser.GetAsync("/chat/Account/Register");
+            browser.Response.EnsureSuccessStatusCode();
+
+            // アカウントの登録が失敗すること
+            await browser.PostAsync("/chat/Account/Register", b =>
+            {
+                b.Form(form =>
+                {
+                    form.Add("LastName", user.LastName);
+                    form.Add("FirstName", user.FirstName);
+                    form.Add("Email", user.Email);
+                    form.Add("Password", "Password");
+                    form.Add("ConfirmPassword", "Password");
+                });
+            });
+            browser.Response.EnsureSuccessStatusCode();
+
+            var describer = testHelper.UserManager.ErrorDescriber;
+            var errors = testHelper.ParseHtml(await browser.Response.Content.ReadAsStringAsync())
+                .QuerySelectorAll(".validation-summary-errors li")
+                .Select(m => m.TextContent);
+
+            // パスワードには、少なくとも1つの英数字以外の文字が必要です。
+            Assert.Contains(describer.PasswordRequiresNonAlphanumeric().Description, errors);
+            // パスワードには少なくとも1桁の数字（'0'〜 '9'）が必要です。
+            Assert.Contains(describer.PasswordRequiresDigit().Description, errors);
+
+            // ログインできないこと
+            Assert.False(await TryLogin(browser, user));
+        }
+
         [Fact(DisplayName = "ログイン・ログアウトが正常にできること")]
         public async void Account_Login_Logoff_Success()
         {
