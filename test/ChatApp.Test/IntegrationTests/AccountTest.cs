@@ -5,16 +5,16 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using ChatApp.Data;
 using ChatApp.Test.Mocks;
 using ChatApp.Test.Helper;
 using ChatApp.Test.Attrubutes;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.Google;
 using ChatApp.Features.Account;
 using ChatApp.Features.Account.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Test.IntegrationTests
 {
@@ -211,8 +211,8 @@ namespace ChatApp.Test.IntegrationTests
             var signInManager = new Mock<SignInManagerMock>(service.UserManager);
             signInManager
                 .Setup(m => m.GetExternalLoginInfoAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ExternalLoginInfo(claims,
-                    GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName)));
+                .ReturnsAsync(new ExternalLoginInfo(claims,
+                    GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName));
 
             var urlHelper = new Mock<UrlHelperMock>();
             urlHelper.SetupGet(m => m._isLocalUrl).Returns(true);
@@ -243,8 +243,39 @@ namespace ChatApp.Test.IntegrationTests
                 where m.UserId == createdUser.Id
                    && m.ProviderDisplayName == GoogleDefaults.DisplayName
                 select m).FirstOrDefaultAsync();
-            
+
             Assert.NotNull(userLogin);
+        }
+
+        [Fact(DisplayName = "Googleで認証をして名前が未設定の場合は確認ページに遷移すること")]
+        public async void Account_Google_ExternalLoginCallback_Success()
+        {
+            var service = testHelper.ControllerService;
+
+            var user = GetTestUser();
+            var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Surname, user.LastName)
+            }));
+
+            var signInManager = new Mock<SignInManagerMock>(service.UserManager);
+            signInManager
+                .Setup(m => m.GetExternalLoginInfoAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ExternalLoginInfo(claims,
+                    GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName));
+            signInManager
+                .Setup(m => m.ExternalLoginSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
+
+            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
+
+            var result = await controller.ExternalLoginCallback() as ViewResult;
+            Assert.Equal(nameof(controller.ExternalLoginConfirmation), result.ViewName);
+
+            var model = result.Model as ExternalLoginConfirmationViewModel;
+            Assert.True(string.IsNullOrEmpty(model.FirstName));
+            Assert.Equal(user.LastName, model.LastName);
         }
 
         public void Dispose()
