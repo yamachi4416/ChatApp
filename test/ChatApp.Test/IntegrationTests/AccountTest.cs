@@ -1,11 +1,18 @@
 using Xunit;
+using Moq;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ChatApp.Data;
+using ChatApp.Test.Mocks;
 using ChatApp.Test.Helper;
 using ChatApp.Test.Attrubutes;
+using ChatApp.Features.Account;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace ChatApp.Test.IntegrationTests
 {
@@ -150,8 +157,10 @@ namespace ChatApp.Test.IntegrationTests
             browser.Response.EnsureSuccessStatusCode();
 
             var newPassword = $"{testHelper.DefaultPassword}A";
-            await browser.PostAsync(resetUrl, b => {
-                b.Form(form => {
+            await browser.PostAsync(resetUrl, b =>
+            {
+                b.Form(form =>
+                {
                     form.Add("Email", user.Email);
                     form.Add("Password", newPassword);
                     form.Add("ConfirmPassword", newPassword);
@@ -163,6 +172,25 @@ namespace ChatApp.Test.IntegrationTests
 
             // 新しいパスワードでログインできること
             Assert.True(await TryLogin(browser, user, newPassword));
+        }
+
+        [Fact(DisplayName = "GoogleでログインでGoogleの認証ページにリダイレクトされること")]
+        public async void Account_ExternalLogin_Redirect_Google_Success()
+        {
+            var service = testHelper.ControllerService;
+            var browser = testHelper.CreateWebBrowser();
+
+            await browser.GetAsync("/chat/Account/Login");
+            await browser.PostAsync("/chat/Account/ExternalLogin", b => {
+                b.Form(form => {
+                    form.Add("provider", "Google");
+                });
+            });
+        
+            var result = browser.Response;
+
+            Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
+            Assert.Equal("accounts.google.com", browser.Response.Headers.Location.Host);
         }
 
         public void Dispose()

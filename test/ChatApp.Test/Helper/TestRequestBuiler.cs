@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Net.Http.Headers;
@@ -40,8 +39,7 @@ namespace ChatApp.Test.Helper
             _cookies = cookies;
             
             var requestUrl = new Uri(requestPath, UriKind.RelativeOrAbsolute);
-            _absoluteUrl = requestUrl.IsAbsoluteUri ?
-                requestUrl : new Uri(_testServer.BaseAddress, requestUrl);
+            _absoluteUrl = requestUrl.IsAbsoluteUri ? requestUrl : new Uri(_testServer.BaseAddress, requestUrl);
         }
 
         public TestRequestBuilder SetJsonContent(object postObject)
@@ -159,10 +157,11 @@ namespace ChatApp.Test.Helper
         {
             if (response.Headers.Contains(HeaderNames.SetCookie))
             {
-                var cookies = response.Headers.GetValues(HeaderNames.SetCookie);
-                foreach (var cookie in cookies)
+                var cookieHeaders = SetCookieHeaderValue.ParseList(response.Headers.GetValues(HeaderNames.SetCookie).ToList());
+                foreach (var header in cookieHeaders)
                 {
-                    _cookies.SetCookies(absoluteUrl, cookie);
+                    var uri = new Uri(_testServer.BaseAddress, header.Path.ToString());
+                    _cookies.Add(uri, new Cookie(header.Name.ToString(), header.Value.ToString()));
                 }
             }
         }

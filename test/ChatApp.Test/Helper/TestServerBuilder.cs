@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using ChatApp.Services;
-using ChatApp.Test.Mock;
+using ChatApp.Test.Mocks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;

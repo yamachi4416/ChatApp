@@ -24,8 +24,7 @@ namespace ChatApp.Features.Account
         public AccountController(
             IControllerService service,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender,
-            ILoggerFactory loggerFactory
+            IEmailSender emailSender
             ) : base(service)
         {
             _signInManager = signInManager;

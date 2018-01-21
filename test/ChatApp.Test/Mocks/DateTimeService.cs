@@ -1,7 +1,7 @@
 using System;
 using ChatApp.Services;
 
-namespace ChatApp.Test.Mock
+namespace ChatApp.Test.Mocks
 {
     public class DateTimeServiceMock : IDateTimeService
     {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using ChatApp.Services;
 
-namespace ChatApp.Test.Mock
+namespace ChatApp.Test.Mocks
 {
     public class MailMessageMock
     {
