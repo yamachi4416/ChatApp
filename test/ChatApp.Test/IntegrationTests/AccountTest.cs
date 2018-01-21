@@ -198,7 +198,7 @@ namespace ChatApp.Test.IntegrationTests
         }
 
         [Fact(DisplayName = "Googleで認証をするとユーザがログインできるようになること")]
-        public async void Account_ExternalLoginConfirmation_Success()
+        public async void Account_Google_ExternalLoginConfirmation_Success()
         {
             var service = testHelper.ControllerService;
 
