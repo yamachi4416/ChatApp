@@ -222,8 +222,10 @@ namespace ChatApp.Test.IntegrationTests
             var urlHelper = new Mock<UrlHelperMock>();
             urlHelper.SetupGet(m => m._isLocalUrl).Returns(true);
 
-            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
-            controller.Url = urlHelper.Object;
+            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender)
+            {
+                Url = urlHelper.Object
+            };
 
             var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
 
@@ -270,13 +272,44 @@ namespace ChatApp.Test.IntegrationTests
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
             var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
+            var result = await controller.ExternalLoginCallback(returnUrl: "/chat") as ViewResult;
 
-            var result = await controller.ExternalLoginCallback() as ViewResult;
             Assert.Equal(nameof(controller.ExternalLoginConfirmation), result.ViewName);
+            Assert.Equal(GoogleDefaults.DisplayName, result.ViewData["LoginProvider"] as string);
+            Assert.Equal("/chat", result.ViewData["ReturnUrl"] as string);
 
             var model = result.Model as ExternalLoginConfirmationViewModel;
             Assert.True(string.IsNullOrEmpty(model.FirstName));
             Assert.Equal(user.LastName, model.LastName);
+        }
+
+        [Fact(DisplayName = "Googleでログインがすでに設定されている場合はログインできること")]
+        public async void Account_Google_ExternalLoginCallback_ExistsLogin_Success()
+        {
+            var service = testHelper.ControllerService;
+
+            var user = GetTestUser();
+            var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, user.Email)
+            }));
+
+            var signInManager = new Mock<SignInManagerMock>(service.UserManager);
+            signInManager
+                .Setup(m => m.GetExternalLoginInfoAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ExternalLoginInfo(claims,
+                    GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName));
+            signInManager
+                .Setup(m => m.ExternalLoginSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender)
+            {
+                Url = Mock.Of<UrlHelperMock>(m => m._isLocalUrl == true)
+            };
+
+            var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
+            Assert.Equal("/chat", result.Url);
         }
 
         public void Dispose()
