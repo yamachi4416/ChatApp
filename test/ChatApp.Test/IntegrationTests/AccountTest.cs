@@ -198,14 +198,16 @@ namespace ChatApp.Test.IntegrationTests
         }
 
         [Fact(DisplayName = "Googleで認証をするとユーザがログインできるようになること")]
-        public async void Account_Google_ExternalLoginConfirmation_Success()
+        public async void Account_Google_ExternalLoginCallback_UserLogin_Success()
         {
             var service = testHelper.ControllerService;
 
             var user = GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Surname, user.LastName),
+                new Claim(ClaimTypes.GivenName, user.FirstName)
             }));
 
             var signInManager = new Mock<SignInManagerMock>(service.UserManager);
@@ -213,6 +215,9 @@ namespace ChatApp.Test.IntegrationTests
                 .Setup(m => m.GetExternalLoginInfoAsync(It.IsAny<string>()))
                 .ReturnsAsync(new ExternalLoginInfo(claims,
                     GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName));
+            signInManager
+                .Setup(m => m.ExternalLoginSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
             var urlHelper = new Mock<UrlHelperMock>();
             urlHelper.SetupGet(m => m._isLocalUrl).Returns(true);
@@ -220,17 +225,13 @@ namespace ChatApp.Test.IntegrationTests
             var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
             controller.Url = urlHelper.Object;
 
-            var result = await controller.ExternalLoginConfirmation(new ExternalLoginConfirmationViewModel
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            }, "/chat") as RedirectResult;
+            var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
 
             Assert.Equal("/chat", result.Url);
 
             var createdUser = await (
                 from m in testHelper.DbContext.Users
-                where m.Email == user.Email
+                where m.UserName == user.Email
                 select m).FirstOrDefaultAsync();
 
             Assert.NotNull(createdUser);
@@ -248,7 +249,7 @@ namespace ChatApp.Test.IntegrationTests
         }
 
         [Fact(DisplayName = "Googleで認証をして名前が未設定の場合は確認ページに遷移すること")]
-        public async void Account_Google_ExternalLoginCallback_Success()
+        public async void Account_Google_ExternalLoginCallback_RedirectTo_ConfirmPage_Success()
         {
             var service = testHelper.ControllerService;
 
