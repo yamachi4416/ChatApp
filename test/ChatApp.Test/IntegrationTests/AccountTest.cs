@@ -3,16 +3,18 @@ using Moq;
 using System;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ChatApp.Data;
 using ChatApp.Test.Mocks;
 using ChatApp.Test.Helper;
 using ChatApp.Test.Attrubutes;
-using ChatApp.Features.Account;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using ChatApp.Features.Account;
+using ChatApp.Features.Account.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Test.IntegrationTests
 {
@@ -181,16 +183,68 @@ namespace ChatApp.Test.IntegrationTests
             var browser = testHelper.CreateWebBrowser();
 
             await browser.GetAsync("/chat/Account/Login");
-            await browser.PostAsync("/chat/Account/ExternalLogin", b => {
-                b.Form(form => {
+            await browser.PostAsync("/chat/Account/ExternalLogin", b =>
+            {
+                b.Form(form =>
+                {
                     form.Add("provider", "Google");
                 });
             });
-        
+
             var result = browser.Response;
 
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
             Assert.Equal("accounts.google.com", browser.Response.Headers.Location.Host);
+        }
+
+        [Fact(DisplayName = "Googleで認証をするとユーザがログインできるようになること")]
+        public async void Account_ExternalLoginConfirmation_Success()
+        {
+            var service = testHelper.ControllerService;
+
+            var user = GetTestUser();
+            var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, user.Email)
+            }));
+
+            var signInManager = new Mock<SignInManagerMock>(service.UserManager);
+            signInManager
+                .Setup(m => m.GetExternalLoginInfoAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ExternalLoginInfo(claims,
+                    GoogleDefaults.DisplayName, GoogleDefaults.AuthenticationScheme, GoogleDefaults.DisplayName)));
+
+            var urlHelper = new Mock<UrlHelperMock>();
+            urlHelper.SetupGet(m => m._isLocalUrl).Returns(true);
+
+            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
+            controller.Url = urlHelper.Object;
+
+            var result = await controller.ExternalLoginConfirmation(new ExternalLoginConfirmationViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            }, "/chat") as RedirectResult;
+
+            Assert.Equal("/chat", result.Url);
+
+            var createdUser = await (
+                from m in testHelper.DbContext.Users
+                where m.Email == user.Email
+                select m).FirstOrDefaultAsync();
+
+            Assert.NotNull(createdUser);
+            Assert.Equal(user.FirstName, createdUser.FirstName);
+            Assert.Equal(user.LastName, createdUser.LastName);
+            Assert.True(createdUser.EmailConfirmed);
+
+            var userLogin = await (
+                from m in testHelper.DbContext.UserLogins
+                where m.UserId == createdUser.Id
+                   && m.ProviderDisplayName == GoogleDefaults.DisplayName
+                select m).FirstOrDefaultAsync();
+            
+            Assert.NotNull(userLogin);
         }
 
         public void Dispose()
