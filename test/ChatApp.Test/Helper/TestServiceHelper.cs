@@ -17,7 +17,7 @@ using AngleSharp.Dom.Html;
 
 namespace ChatApp.Test.Helper
 {
-    public class TestServiceHelper
+    public class TestServiceHelper : IDisposable
     {
         public readonly string DefaultPassword = "P@ssw0rd";
 
@@ -97,6 +97,12 @@ namespace ChatApp.Test.Helper
         {
             var parser = new HtmlParser();
             return parser.Parse(html);
+        }
+
+        public void Dispose()
+        {
+            DbContext.Dispose();
+            Server.Dispose();
         }
     }
 }

@@ -352,7 +352,7 @@ namespace ChatApp.Test.IntegrationTests
 
         public void Dispose()
         {
-            testHelper.Server.Dispose();
+            testHelper.Dispose();
         }
     }
 }
