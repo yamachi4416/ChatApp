@@ -12,6 +12,8 @@ namespace ChatApp.Test.Helper
 {
     public class TestWebBrowser
     {
+        public readonly string LoginPath = "/chat/Account/Login";
+
         private readonly CookieContainer _cookies;
 
         private readonly TestServer _testServer;
@@ -87,9 +89,14 @@ namespace ChatApp.Test.Helper
             return await GetAsync(redirectUrl.ToString());
         }
 
-        public async Task<bool> TryLogin(ApplicationUser user, string password = null)
+        public async Task<HttpResponseMessage> GetLoginAsync()
         {
-            await PostAsync("/chat/Account/Login", b =>
+            return await GetAsync(LoginPath);
+        }
+
+        public async Task<bool> TryLoginAsync(ApplicationUser user, string password = null)
+        {
+            await PostAsync(LoginPath, b =>
             {
                 b.Form(form =>
                 {

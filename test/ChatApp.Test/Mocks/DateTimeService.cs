@@ -5,7 +5,7 @@ namespace ChatApp.Test.Mocks
 {
     public class DateTimeServiceMock : IDateTimeService
     {
-        public static DateTimeOffset _Now;
+        public DateTimeOffset _Now = default(DateTimeOffset);
         public DateTimeOffset Now => _Now;
     }
 }

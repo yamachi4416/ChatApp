@@ -1,60 +1,37 @@
 using Xunit;
 using Moq;
-using System;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using ChatApp.Data;
 using ChatApp.Test.Mocks;
 using ChatApp.Test.Helper;
-using ChatApp.Test.Attrubutes;
 using ChatApp.Features.Account;
 using ChatApp.Features.Account.Models;
 
 namespace ChatApp.Test.IntegrationTests
 {
-    [IntegrationTest]
-    public class AccountTest : IDisposable
+    public class AccountTest : TestClassBase
     {
-        private readonly TestServiceHelper testHelper;
-
-        public AccountTest()
+        public AccountTest(TestFixture fixture) : base(fixture)
         {
-            testHelper = new TestServiceHelper()
-                .MigrateDatabase();
-        }
-
-        private ApplicationUser GetTestUser()
-        {
-            return new ApplicationUser
-            {
-                UserName = "testUser-01@example.com",
-                Email = "testUser-01@example.com",
-                FirstName = "テスト",
-                LastName = "一郎"
-            };
-        }
-
-        private async Task<ApplicationUser> CreateUserAsync()
-        {
-            return await testHelper.CreateUserAsync(GetTestUser());
         }
 
         private async Task<bool> TryLogin(TestWebBrowser browser, ApplicationUser user, string password = null)
         {
-            return await browser.TryLogin(user, password ?? testHelper.DefaultPassword);
+            return await browser.TryLoginAsync(user, password ?? fixture.DefaultPassword);
         }
 
         [Fact(DisplayName = "アカウントを作成してメールの確認で有効化されること")]
         public async void Account_Regiter_Email_Confirmation_Success()
         {
             var user = GetTestUser();
-            var browser = testHelper.CreateWebBrowser();
+            var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
             await browser.GetAsync("/chat/Account/Register");
@@ -68,8 +45,8 @@ namespace ChatApp.Test.IntegrationTests
                     form.Add("LastName", user.LastName);
                     form.Add("FirstName", user.FirstName);
                     form.Add("Email", user.Email);
-                    form.Add("Password", testHelper.DefaultPassword);
-                    form.Add("ConfirmPassword", testHelper.DefaultPassword);
+                    form.Add("Password", fixture.DefaultPassword);
+                    form.Add("ConfirmPassword", fixture.DefaultPassword);
                 });
             });
 
@@ -80,11 +57,11 @@ namespace ChatApp.Test.IntegrationTests
             Assert.False(await TryLogin(browser, user));
 
             // ユーザにメールが送信されていること
-            var mail = testHelper.MailSender.GetLastMessage;
+            var mail = fixture.MailSender.GetLastMessage;
             Assert.Equal(user.Email, mail.To);
 
             // 確認メールのリンクのからメールの確認ができること
-            var confirmUrl = testHelper.ParseHtml(mail.Body)
+            var confirmUrl = fixture.ParseHtml(mail.Body)
                 .GetElementsByTagName("a")
                 .Select(a => a.GetAttribute("href"))
                 .FirstOrDefault();
@@ -100,7 +77,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void Account_Regiter_InvalidPassword_Failure()
         {
             var user = GetTestUser();
-            var browser = testHelper.CreateWebBrowser();
+            var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
             await browser.GetAsync("/chat/Account/Register");
@@ -120,8 +97,8 @@ namespace ChatApp.Test.IntegrationTests
             });
             browser.Response.EnsureSuccessStatusCode();
 
-            var describer = testHelper.UserManager.ErrorDescriber;
-            var errors = testHelper.ParseHtml(await browser.Response.Content.ReadAsStringAsync())
+            var describer = fixture.UserManager.ErrorDescriber;
+            var errors = fixture.ParseHtml(await browser.Response.Content.ReadAsStringAsync())
                 .QuerySelectorAll(".validation-summary-errors li")
                 .Select(m => m.TextContent);
 
@@ -138,10 +115,10 @@ namespace ChatApp.Test.IntegrationTests
         public async void Account_Login_Logoff_Success()
         {
             var user = await CreateUserAsync();
-            var browser = testHelper.CreateWebBrowser();
+            var browser = fixture.CreateWebBrowser();
 
             // 登録済みのユーザでログインできること
-            await browser.GetAsync("/chat/Account/Login");
+            await browser.GetLoginAsync();
             browser.Response.EnsureSuccessStatusCode();
             Assert.True(await TryLogin(browser, user));
 
@@ -159,7 +136,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void Account_Change_Password_Success()
         {
             var user = await CreateUserAsync();
-            var browser = testHelper.CreateWebBrowser();
+            var browser = fixture.CreateWebBrowser();
 
             await browser.GetAsync("/chat/Account/ForgotPassword");
             browser.Response.EnsureSuccessStatusCode();
@@ -174,11 +151,11 @@ namespace ChatApp.Test.IntegrationTests
             browser.Response.EnsureSuccessStatusCode();
 
             // ユーザにメールが送信されていること
-            var mail = testHelper.MailSender.GetLastMessage;
+            var mail = fixture.MailSender.GetLastMessage;
             Assert.Equal(user.Email, mail.To);
 
             // 変更メールのリンクのからメールの変更ができること
-            var resetUrl = testHelper.ParseHtml(mail.Body)
+            var resetUrl = fixture.ParseHtml(mail.Body)
                 .GetElementsByTagName("a")
                 .Select(a => a.GetAttribute("href"))
                 .FirstOrDefault();
@@ -186,7 +163,7 @@ namespace ChatApp.Test.IntegrationTests
             await browser.GetAsync(resetUrl);
             browser.Response.EnsureSuccessStatusCode();
 
-            var newPassword = $"{testHelper.DefaultPassword}A";
+            var newPassword = $"{fixture.DefaultPassword}A";
             await browser.PostAsync(resetUrl, b =>
             {
                 b.Form(form =>
@@ -207,10 +184,9 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "GoogleでログインでGoogleの認証ページにリダイレクトされること")]
         public async void Account_ExternalLogin_Redirect_Google_Success()
         {
-            var service = testHelper.ControllerService;
-            var browser = testHelper.CreateWebBrowser();
+            var browser = fixture.CreateWebBrowser();
 
-            await browser.GetAsync("/chat/Account/Login");
+            await browser.GetLoginAsync();
             await browser.PostAsync("/chat/Account/ExternalLogin", b =>
             {
                 b.Form(form =>
@@ -228,7 +204,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "Googleで認証をするとユーザがログインできるようになること")]
         public async void Account_Google_ExternalLoginCallback_UserLogin_Success()
         {
-            var service = testHelper.ControllerService;
+            var service = fixture.ControllerService;
 
             var user = GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -250,7 +226,7 @@ namespace ChatApp.Test.IntegrationTests
             var urlHelper = new Mock<UrlHelperMock>();
             urlHelper.SetupGet(m => m._isLocalUrl).Returns(true);
 
-            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender)
+            var controller = new AccountController(service, signInManager.Object, fixture.MailSender)
             {
                 Url = urlHelper.Object
             };
@@ -260,7 +236,7 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal("/chat", result.Url);
 
             var createdUser = await (
-                from m in testHelper.DbContext.Users
+                from m in fixture.DbContext.Users
                 where m.UserName == user.Email
                 select m).FirstOrDefaultAsync();
 
@@ -270,7 +246,7 @@ namespace ChatApp.Test.IntegrationTests
             Assert.True(createdUser.EmailConfirmed);
 
             var userLogin = await (
-                from m in testHelper.DbContext.UserLogins
+                from m in fixture.DbContext.UserLogins
                 where m.UserId == createdUser.Id
                    && m.ProviderDisplayName == GoogleDefaults.DisplayName
                 select m).FirstOrDefaultAsync();
@@ -281,7 +257,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "Googleで認証をして名前が未設定の場合は確認ページに遷移すること")]
         public async void Account_Google_ExternalLoginCallback_RedirectTo_ConfirmPage_Success()
         {
-            var service = testHelper.ControllerService;
+            var service = fixture.ControllerService;
 
             var user = GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -299,7 +275,7 @@ namespace ChatApp.Test.IntegrationTests
                 .Setup(m => m.ExternalLoginSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
-            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender);
+            var controller = new AccountController(service, signInManager.Object, fixture.MailSender);
             var result = await controller.ExternalLoginCallback(returnUrl: "/chat") as ViewResult;
 
             Assert.Equal(nameof(controller.ExternalLoginConfirmation), result.ViewName);
@@ -314,7 +290,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "Googleでログインがすでに設定されている場合はログインできること")]
         public async void Account_Google_ExternalLoginCallback_ExistsLogin_Success()
         {
-            var service = testHelper.ControllerService;
+            var service = fixture.ControllerService;
 
             var user = GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -331,18 +307,13 @@ namespace ChatApp.Test.IntegrationTests
                 .Setup(m => m.ExternalLoginSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
-            var controller = new AccountController(service, signInManager.Object, testHelper.MailSender)
+            var controller = new AccountController(service, signInManager.Object, fixture.MailSender)
             {
                 Url = Mock.Of<UrlHelperMock>(m => m._isLocalUrl == true)
             };
 
             var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
             Assert.Equal("/chat", result.Url);
-        }
-
-        public void Dispose()
-        {
-            testHelper.Dispose();
         }
     }
 }

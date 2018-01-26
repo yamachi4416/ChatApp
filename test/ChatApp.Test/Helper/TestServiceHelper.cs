@@ -24,15 +24,13 @@ namespace ChatApp.Test.Helper
 
         public readonly TestServer Server;
 
-        public IServiceProvider ServiceProvider => Server.Host.Services;
-
-        public T GetService<T>() => ServiceProvider.GetService<T>();
+        public T GetService<T>() => Server.Host.Services.GetService<T>();
 
         public IControllerService ControllerService => GetService<IControllerService>();
 
-        public ApplicationDbContext DbContext => ControllerService.DbContext;
+        public ApplicationDbContext DbContext => GetService<ApplicationDbContext>();
 
-        public UserManager<ApplicationUser> UserManager => ControllerService.UserManager;
+        public UserManager<ApplicationUser> UserManager => GetService<UserManager<ApplicationUser>>();
 
         public IRoomWSSender WsSender => GetService<IRoomWSSender>();
 
@@ -40,18 +38,12 @@ namespace ChatApp.Test.Helper
 
         public TestServiceHelper()
         {
-            var serverBuilder = new TestServerBuilder();
-            Server = serverBuilder.CreateTestServer();
-        }
-
-        public TestServiceHelper(TestServer testServer)
-        {
-            Server = testServer;
+            Server = new TestServerBuilder().CreateTestServer();
         }
 
         public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user, string password = null)
         {
-            var result = await ControllerService.UserManager.CreateAsync(user, password ?? DefaultPassword);
+            var result = await UserManager.CreateAsync(user, password ?? DefaultPassword);
             if (!result.Succeeded)
             {
                 throw new ArgumentException(string.Join("\n", result.Errors.Select(e => e.Description)));
@@ -71,36 +63,31 @@ namespace ChatApp.Test.Helper
             return this;
         }
 
-        public ControllerContext LoginClaimControllerContext(ApplicationUser user)
+        public TestServiceHelper CleanupDatabase()
         {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id)
-                    }))
-                }
-            };
+            DbContext.Database.CreateExecutionStrategy().Execute(DbContext, scope => {
+                var querys = string.Join(";", DbContext.Model.GetEntityTypes()
+                    .Select(m => $"TRUNCATE TABLE \"{m.Npgsql().TableName}\" CASCADE"));
+                scope.Database.ExecuteSqlCommand(querys);
+            });
+
+            return this;
         }
 
         public DateTimeOffset CurrentDateTime
         {
-            get => DateTimeServiceMock._Now;
-            set => DateTimeServiceMock._Now = value;
+            get => GetService<IDateTimeService>().Now;
+            set => (GetService<IDateTimeService>() as DateTimeServiceMock)._Now = value;
         }
 
-        public TestWebBrowser CreateWebBrowser()
-        {
-            return new TestWebBrowser(Server);
-        }
+
+        public TestWebBrowser CreateWebBrowser() => new TestWebBrowser(Server);
 
         public async Task<TestWebBrowser> CreateWebBrowserWithLoginAsyc(ApplicationUser user, string password = null)
         {
             var browser = CreateWebBrowser();
-            await browser.GetAsync("/chat/Account/Login");
-            Assert.True(await browser.TryLogin(user, password ?? DefaultPassword));
+            await browser.GetLoginAsync();
+            await browser.TryLoginAsync(user, password ?? DefaultPassword);
             return browser;
         }
 
@@ -112,9 +99,8 @@ namespace ChatApp.Test.Helper
 
         public void Dispose()
         {
-            DbContext.Dispose();
             Server.Dispose();
-            DateTimeServiceMock._Now = default(DateTimeOffset);
+            CurrentDateTime = default(DateTimeOffset);
         }
     }
 }
