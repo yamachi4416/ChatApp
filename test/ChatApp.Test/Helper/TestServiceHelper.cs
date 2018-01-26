@@ -1,3 +1,4 @@
+using Xunit;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -25,15 +26,17 @@ namespace ChatApp.Test.Helper
 
         public IServiceProvider ServiceProvider => Server.Host.Services;
 
-        public IControllerService ControllerService => ServiceProvider.GetService<IControllerService>();
+        public T GetService<T>() => ServiceProvider.GetService<T>();
+
+        public IControllerService ControllerService => GetService<IControllerService>();
 
         public ApplicationDbContext DbContext => ControllerService.DbContext;
 
         public UserManager<ApplicationUser> UserManager => ControllerService.UserManager;
 
-        public IRoomWSSender WsSender => ServiceProvider.GetService<IRoomWSSender>();
+        public IRoomWSSender WsSender => GetService<IRoomWSSender>();
 
-        public EmailSenderMock MailSender => ServiceProvider.GetService<IEmailSender>() as EmailSenderMock; 
+        public EmailSenderMock MailSender => GetService<IEmailSender>() as EmailSenderMock; 
 
         public TestServiceHelper()
         {
@@ -93,6 +96,14 @@ namespace ChatApp.Test.Helper
             return new TestWebBrowser(Server);
         }
 
+        public async Task<TestWebBrowser> CreateWebBrowserWithLoginAsyc(ApplicationUser user, string password = null)
+        {
+            var browser = CreateWebBrowser();
+            await browser.GetAsync("/chat/Account/Login");
+            Assert.True(await browser.TryLogin(user, password ?? DefaultPassword));
+            return browser;
+        }
+
         public IHtmlDocument ParseHtml(string html)
         {
             var parser = new HtmlParser();
@@ -103,6 +114,7 @@ namespace ChatApp.Test.Helper
         {
             DbContext.Dispose();
             Server.Dispose();
+            DateTimeServiceMock._Now = default(DateTimeOffset);
         }
     }
 }

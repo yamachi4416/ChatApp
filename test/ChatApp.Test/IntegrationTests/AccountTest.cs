@@ -47,17 +47,7 @@ namespace ChatApp.Test.IntegrationTests
 
         private async Task<bool> TryLogin(TestWebBrowser browser, ApplicationUser user, string password = null)
         {
-            await browser.PostAsync("/chat/Account/Login", b =>
-            {
-                b.Form(form =>
-                {
-                    form.Add("Email", user.Email);
-                    form.Add("Password", password ?? testHelper.DefaultPassword);
-                });
-            });
-
-            return browser.Response.StatusCode == HttpStatusCode.Redirect
-                && browser.Response.Headers.Location.OriginalString == "/chat";
+            return await browser.TryLogin(user, password ?? testHelper.DefaultPassword);
         }
 
         [Fact(DisplayName = "アカウントを作成してメールの確認で有効化されること")]

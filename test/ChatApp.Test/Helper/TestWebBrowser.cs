@@ -4,6 +4,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.TestHost;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using ChatApp.Data;
 
 namespace ChatApp.Test.Helper
 {
@@ -37,6 +40,25 @@ namespace ChatApp.Test.Helper
             return response;
         }
 
+        public async Task<HttpResponseMessage> PostJsonAsync(string requestPath, object postObject, Action<TestRequestBuilder> setup = null)
+        {
+            var response = await PostAsync(requestPath, b => {
+                b.SetJsonContent(postObject);
+                if (setup != null)
+                {
+                    setup(b);
+                }
+            });
+
+            return response;
+        }
+
+        public async Task<T> PostJsonDeserializeResultAsync<T>(string requestPath, object postObject, Action<TestRequestBuilder> setup = null)
+        {
+            await PostJsonAsync(requestPath, postObject, setup);
+            return await GetDeserializeJsonResponseAsync<T>();
+        }
+
         public async Task<HttpResponseMessage> GetAsync(string requestPath, Action<TestRequestBuilder> setup = null)
         {
             var builder = new TestRequestBuilder(requestPath, _testServer, _cookies);
@@ -63,6 +85,31 @@ namespace ChatApp.Test.Helper
                 redirectUrl = new Uri(redirectUrl.PathAndQuery, UriKind.Relative);
             }
             return await GetAsync(redirectUrl.ToString());
+        }
+
+        public async Task<bool> TryLogin(ApplicationUser user, string password = null)
+        {
+            await PostAsync("/chat/Account/Login", b =>
+            {
+                b.Form(form =>
+                {
+                    form.Add("Email", user.Email);
+                    form.Add("Password", password);
+                });
+            });
+
+            return Response.StatusCode == HttpStatusCode.Redirect
+                && Response.Headers.Location.OriginalString == "/chat";
+        }
+
+        public async Task<T> GetDeserializeJsonResponseAsync<T>()
+        {
+            var obj = JsonConvert.DeserializeObject<T>(await Response.Content.ReadAsStringAsync(), new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            return obj;
         }
     }
 }

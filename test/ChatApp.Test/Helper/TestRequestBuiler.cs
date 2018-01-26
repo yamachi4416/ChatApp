@@ -48,7 +48,7 @@ namespace ChatApp.Test.Helper
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
-            _content = new StringContent(json, Encoding.UTF8, "applicaiton/json");
+            _content = new StringContent(json, Encoding.UTF8, "application/json");
             return this;
         }
 
