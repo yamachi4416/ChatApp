@@ -11,7 +11,7 @@ namespace ChatApp.Test.IntegrationTests
 {
     public class RoomApiTest : TestClassBase
     {
-        public RoomApiTest(TestFixture fixture) : base(fixture)
+        public RoomApiTest(TestFixture fixture) : base(fixture, "/api/rooms")
         {
         }
 
@@ -31,7 +31,7 @@ namespace ChatApp.Test.IntegrationTests
             };
 
             var actual = await browser.PostJsonDeserializeResultAsync<RoomViewModel>(
-                "/chat/api/rooms/rooms/create", postModel);
+                SitePath["/rooms/create"], postModel);
 
             Assert.Equal(postModel.Name, actual.Name);
             Assert.Equal(postModel.Description, actual.Description);

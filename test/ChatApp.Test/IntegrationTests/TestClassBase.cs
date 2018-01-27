@@ -30,8 +30,11 @@ namespace ChatApp.Test.IntegrationTests
     {
         protected readonly TestFixture fixture;
 
-        public TestClassBase(TestFixture fixture)
+        protected readonly TestSitePathHelper SitePath;
+
+        public TestClassBase(TestFixture fixture, string basePath)
         {
+            SitePath = new TestSitePathHelper(basePath);
             this.fixture = fixture;
             fixture.CleanupDatabase();
         }
@@ -74,7 +77,7 @@ namespace ChatApp.Test.IntegrationTests
 
         public void Dispose()
         {
-
+            fixture.CurrentDateTime = default(DateTimeOffset);
         }
     }
 }

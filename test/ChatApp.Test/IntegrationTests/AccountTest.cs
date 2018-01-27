@@ -18,7 +18,7 @@ namespace ChatApp.Test.IntegrationTests
 {
     public class AccountTest : TestClassBase
     {
-        public AccountTest(TestFixture fixture) : base(fixture)
+        public AccountTest(TestFixture fixture) : base(fixture, "/Account")
         {
         }
 
@@ -34,11 +34,11 @@ namespace ChatApp.Test.IntegrationTests
             var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
-            await browser.GetAsync("/chat/Account/Register");
+            await browser.GetAsync(SitePath["/Register"]);
             browser.Response.EnsureSuccessStatusCode();
 
             // アカウントの登録ができること
-            await browser.PostAsync("/chat/Account/Register", b =>
+            await browser.PostAsync(SitePath["/Register"], b =>
             {
                 b.Form(form =>
                 {
@@ -51,7 +51,7 @@ namespace ChatApp.Test.IntegrationTests
             });
 
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
-            Assert.Equal("/chat", browser.Response.Headers.Location.OriginalString);
+            Assert.Equal(SitePath.Root, browser.Response.Headers.Location.OriginalString);
 
             // メールの確認前はログインできないこと
             Assert.False(await TryLogin(browser, user));
@@ -80,11 +80,11 @@ namespace ChatApp.Test.IntegrationTests
             var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
-            await browser.GetAsync("/chat/Account/Register");
+            await browser.GetAsync(SitePath["/Register"]);
             browser.Response.EnsureSuccessStatusCode();
 
             // アカウントの登録が失敗すること
-            await browser.PostAsync("/chat/Account/Register", b =>
+            await browser.PostAsync(SitePath["/Register"], b =>
             {
                 b.Form(form =>
                 {
@@ -124,9 +124,9 @@ namespace ChatApp.Test.IntegrationTests
 
             // ログアウトができること
             await browser.FollowRedirect();
-            await browser.PostAsync("/chat/Account/LogOff");
+            await browser.PostAsync(SitePath["/LogOff"]);
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
-            Assert.Equal("/chat", browser.Response.Headers.Location.OriginalString);
+            Assert.Equal(SitePath.Root, browser.Response.Headers.Location.OriginalString);
 
             // ログアウト後はログインできないこと
             Assert.False(await TryLogin(browser, user));
@@ -138,10 +138,10 @@ namespace ChatApp.Test.IntegrationTests
             var user = await CreateUserAsync();
             var browser = fixture.CreateWebBrowser();
 
-            await browser.GetAsync("/chat/Account/ForgotPassword");
+            await browser.GetAsync(SitePath["/ForgotPassword"]);
             browser.Response.EnsureSuccessStatusCode();
 
-            await browser.PostAsync("/chat/Account/ForgotPassword", b =>
+            await browser.PostAsync(SitePath["/ForgotPassword"], b =>
             {
                 b.Form(form =>
                 {
@@ -174,7 +174,7 @@ namespace ChatApp.Test.IntegrationTests
                 });
             });
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
-            Assert.Equal("/chat/Account/ResetPasswordConfirmation", browser.Response.Headers.Location.OriginalString);
+            Assert.Equal(SitePath["/ResetPasswordConfirmation"], browser.Response.Headers.Location.OriginalString);
             await browser.FollowRedirect();
 
             // 新しいパスワードでログインできること
@@ -187,7 +187,7 @@ namespace ChatApp.Test.IntegrationTests
             var browser = fixture.CreateWebBrowser();
 
             await browser.GetLoginAsync();
-            await browser.PostAsync("/chat/Account/ExternalLogin", b =>
+            await browser.PostAsync(SitePath["/ExternalLogin"], b =>
             {
                 b.Form(form =>
                 {
@@ -231,9 +231,9 @@ namespace ChatApp.Test.IntegrationTests
                 Url = urlHelper.Object
             };
 
-            var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
+            var result = await controller.ExternalLoginCallback(SitePath.Root) as RedirectResult;
 
-            Assert.Equal("/chat", result.Url);
+            Assert.Equal(SitePath.Root, result.Url);
 
             var createdUser = await (
                 from m in fixture.DbContext.Users
@@ -276,11 +276,11 @@ namespace ChatApp.Test.IntegrationTests
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
             var controller = new AccountController(service, signInManager.Object, fixture.MailSender);
-            var result = await controller.ExternalLoginCallback(returnUrl: "/chat") as ViewResult;
+            var result = await controller.ExternalLoginCallback(returnUrl: SitePath.Root) as ViewResult;
 
             Assert.Equal(nameof(controller.ExternalLoginConfirmation), result.ViewName);
             Assert.Equal(GoogleDefaults.DisplayName, result.ViewData["LoginProvider"] as string);
-            Assert.Equal("/chat", result.ViewData["ReturnUrl"] as string);
+            Assert.Equal(SitePath.Root, result.ViewData["ReturnUrl"] as string);
 
             var model = result.Model as ExternalLoginConfirmationViewModel;
             Assert.True(string.IsNullOrEmpty(model.FirstName));
@@ -312,8 +312,8 @@ namespace ChatApp.Test.IntegrationTests
                 Url = Mock.Of<UrlHelperMock>(m => m._isLocalUrl == true)
             };
 
-            var result = await controller.ExternalLoginCallback("/chat") as RedirectResult;
-            Assert.Equal("/chat", result.Url);
+            var result = await controller.ExternalLoginCallback(SitePath.Root) as RedirectResult;
+            Assert.Equal(SitePath.Root, result.Url);
         }
     }
 }
