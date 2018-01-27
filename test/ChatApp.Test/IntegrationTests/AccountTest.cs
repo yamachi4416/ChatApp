@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
 using ChatApp.Test.Mocks;
-using ChatApp.Test.Helper;
+using ChatApp.Test.Helpers;
 using ChatApp.Features.Account;
 using ChatApp.Features.Account.Models;
 

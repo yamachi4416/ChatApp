@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatApp.Data;
-using ChatApp.Test.Helper;
+using ChatApp.Test.Helpers;
 
 namespace ChatApp.Test.IntegrationTests
 {
+
     [CollectionDefinition(TestFixture.CollectionName)]
     public class TestFixture : TestServiceHelper, ICollectionFixture<TestFixture>
     {

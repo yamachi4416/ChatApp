@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ChatApp.Test.Helper
+namespace ChatApp.Test.Helpers
 {
     public class TestServerBuilder
     {

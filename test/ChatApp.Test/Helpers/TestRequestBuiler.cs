@@ -11,7 +11,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace ChatApp.Test.Helper
+namespace ChatApp.Test.Helpers
 {
     public class TestRequestBuilder
     {

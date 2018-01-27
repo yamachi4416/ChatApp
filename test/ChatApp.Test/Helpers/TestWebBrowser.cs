@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ChatApp.Data;
 
-namespace ChatApp.Test.Helper
+namespace ChatApp.Test.Helpers
 {
     public class TestWebBrowser
     {

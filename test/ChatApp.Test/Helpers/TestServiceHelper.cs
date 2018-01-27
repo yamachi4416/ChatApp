@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AngleSharp.Parser.Html;
 using AngleSharp.Dom.Html;
 
-namespace ChatApp.Test.Helper
+namespace ChatApp.Test.Helpers
 {
     public class TestServiceHelper : IDisposable
     {
