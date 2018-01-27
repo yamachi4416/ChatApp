@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ChatApp.Data;
+using ChatApp.Models;
 
 namespace ChatApp.Test.Helpers
 {
@@ -58,7 +59,7 @@ namespace ChatApp.Test.Helpers
         public async Task<T> PostJsonDeserializeResultAsync<T>(string requestPath, object postObject, Action<TestRequestBuilder> setup = null)
         {
             await PostJsonAsync(requestPath, postObject, setup);
-            return await GetDeserializeJsonResponseAsync<T>();
+            return await DeserializeJsonResultAsync<T>();
         }
 
         public async Task<HttpResponseMessage> GetAsync(string requestPath, Action<TestRequestBuilder> setup = null)
@@ -109,7 +110,7 @@ namespace ChatApp.Test.Helpers
                 && Response.Headers.Location.OriginalString == "/chat";
         }
 
-        public async Task<T> GetDeserializeJsonResponseAsync<T>()
+        public async Task<T> DeserializeJsonResultAsync<T>()
         {
             var obj = JsonConvert.DeserializeObject<T>(await Response.Content.ReadAsStringAsync(), new JsonSerializerSettings
             {
@@ -117,6 +118,11 @@ namespace ChatApp.Test.Helpers
             });
 
             return obj;
+        }
+
+        public async Task<IDictionary<string, IEnumerable<ValidationErrorViewModel>>> DeserializeApiErrorJsonResultAsync()
+        {
+            return await DeserializeJsonResultAsync<IDictionary<string, IEnumerable<ValidationErrorViewModel>>>();
         }
     }
 }
