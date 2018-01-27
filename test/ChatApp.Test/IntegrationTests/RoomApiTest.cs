@@ -31,7 +31,7 @@ namespace ChatApp.Test.IntegrationTests
             };
 
             var actual = await browser.PostJsonDeserializeResultAsync<RoomViewModel>(
-                SitePath["/rooms/create"], postModel);
+                sitePath["/rooms/create"], postModel);
 
             Assert.Equal(postModel.Name, actual.Name);
             Assert.Equal(postModel.Description, actual.Description);

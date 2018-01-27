@@ -26,13 +26,13 @@ namespace ChatApp.Test.IntegrationTests
     {
         protected readonly TestFixture fixture;
 
-        protected readonly TestSitePathHelper SitePath;
+        protected readonly TestSitePathHelper sitePath;
 
         protected readonly TestDataCreateHelper dataCreator;
 
         public TestClassBase(TestFixture fixture, string basePath)
         {
-            SitePath = new TestSitePathHelper(basePath);
+            sitePath = new TestSitePathHelper(basePath);
             dataCreator = new TestDataCreateHelper(fixture);
             this.fixture = fixture;
             fixture.CleanupDatabase();
