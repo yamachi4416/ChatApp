@@ -18,7 +18,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "ユーザがルームを作成できること")]
         public async void RoomApi_CreateRoom_Success()
         {
-            var user = await CreateUserAsync();
+            var user = await dataCreator.CreateUserAsync();
 
             var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
 

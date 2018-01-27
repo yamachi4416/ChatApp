@@ -30,7 +30,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "アカウントを作成してメールの確認で有効化されること")]
         public async void Account_Regiter_Email_Confirmation_Success()
         {
-            var user = GetTestUser();
+            var user = dataCreator.GetTestUser();
             var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
@@ -76,7 +76,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "不正なパスワードの場合はアカウントの登録ができないこと")]
         public async void Account_Regiter_InvalidPassword_Failure()
         {
-            var user = GetTestUser();
+            var user = dataCreator.GetTestUser();
             var browser = fixture.CreateWebBrowser();
 
             // アカウントの登録画面を開けること
@@ -114,7 +114,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "ログイン・ログアウトが正常にできること")]
         public async void Account_Login_Logoff_Success()
         {
-            var user = await CreateUserAsync();
+            var user = await dataCreator.CreateUserAsync();
             var browser = fixture.CreateWebBrowser();
 
             // 登録済みのユーザでログインできること
@@ -135,7 +135,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "パスワードの変更をすることができること")]
         public async void Account_Change_Password_Success()
         {
-            var user = await CreateUserAsync();
+            var user = await dataCreator.CreateUserAsync();
             var browser = fixture.CreateWebBrowser();
 
             await browser.GetAsync(SitePath["/ForgotPassword"]);
@@ -206,7 +206,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var service = fixture.ControllerService;
 
-            var user = GetTestUser();
+            var user = dataCreator.GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Email, user.Email),
@@ -259,7 +259,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var service = fixture.ControllerService;
 
-            var user = GetTestUser();
+            var user = dataCreator.GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Email, user.Email),
@@ -292,7 +292,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var service = fixture.ControllerService;
 
-            var user = GetTestUser();
+            var user = dataCreator.GetTestUser();
             var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Email, user.Email)
