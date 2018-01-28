@@ -14,9 +14,9 @@ namespace ChatApp.Test.Helpers
             this.testHelper = testHelper;
         }
 
-        public IEnumerable<ApplicationUser> GetTestUsers()
+        public IEnumerable<ApplicationUser> GetTestUsers(int startIdx = 1, int count = 100)
         {
-            for (int i = 1; ; i++)
+            for (int i = startIdx; i < startIdx + count ; i++)
             {
                 var email = string.Format("testUser-{0,000}@example.com", i);
                 var user = new ApplicationUser
@@ -50,9 +50,10 @@ namespace ChatApp.Test.Helpers
             return ret;
         }
 
-        public IEnumerable<ChatRoom> GetChatRooms(ApplicationUser user)
+        public IEnumerable<ChatRoom> GetChatRooms(
+            ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = 1; ; i++)
+            for (int i = startIdx; i < startIdx + count ; i++)
             {
                 var chatRooom = new ChatRoom
                 {
@@ -68,9 +69,10 @@ namespace ChatApp.Test.Helpers
             }
         }
 
-        public IEnumerable<ChatRoomMember> GetChatRoomMembers(ChatRoom chatRoom, ApplicationUser user)
+        public IEnumerable<ChatRoomMember> GetChatRoomMembers(
+            ChatRoom chatRoom, ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = 1; ; i++)
+            for (int i = startIdx; i < startIdx + count ; i++)
             {
                 var member = new ChatRoomMember
                 {
