@@ -78,7 +78,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRoom = dataCreator.GetChatRooms(user).First();
-            var chatMember = dataCreator.GetChatRoomMembers(chatRoom, user).First();
+            var chatMember = dataCreator.GetChatRoomMember(chatRoom, user);
 
             fixture.DbContext.AddRange(chatRoom, chatMember);
             await fixture.DbContext.SaveChangesAsync();
@@ -113,7 +113,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRoom = dataCreator.GetChatRooms(user).First();
-            var chatMember = dataCreator.GetChatRoomMembers(chatRoom, user).First();
+            var chatMember = dataCreator.GetChatRoomMember(chatRoom, user);
 
             fixture.DbContext.AddRange(chatRoom, chatMember);
             await fixture.DbContext.SaveChangesAsync();
@@ -138,11 +138,9 @@ namespace ChatApp.Test.IntegrationTests
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRooms = dataCreator.GetChatRooms(user).Take(3).ToList();
-            var chatMembers = dataCreator.GetChatRoomMembers(null, user).Take(2).ToList();
+            var chatMembers = dataCreator.GetChatRoomMembers(chatRooms.Take(2), user).ToList();
 
-            chatMembers[0].ChatRoom = chatRooms[0];
             chatMembers[0].IsAdmin = false;
-            chatMembers[1].ChatRoom = chatRooms[1];
             chatMembers[1].IsAdmin = true;
 
             fixture.DbContext.AddRange(chatRooms);
@@ -174,7 +172,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
-            var chatMember = dataCreator.GetChatRoomMembers(chatRooms[0], user).Take(1).ToList();
+            var chatMember = dataCreator.GetChatRoomMember(chatRooms[0], user);
 
             fixture.DbContext.AddRange(chatRooms);
             fixture.DbContext.AddRange(chatMember);
@@ -222,7 +220,7 @@ namespace ChatApp.Test.IntegrationTests
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
-            var chatMember = dataCreator.GetChatRoomMembers(chatRooms[0], user).Take(1).ToList();
+            var chatMember = dataCreator.GetChatRoomMembers(chatRooms[0], user);
 
             fixture.DbContext.AddRange(chatRooms);
             fixture.DbContext.AddRange(chatMember);

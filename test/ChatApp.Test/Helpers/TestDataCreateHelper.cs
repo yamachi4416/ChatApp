@@ -16,7 +16,7 @@ namespace ChatApp.Test.Helpers
 
         public IEnumerable<ApplicationUser> GetTestUsers(int startIdx = 1, int count = 100)
         {
-            for (int i = startIdx; i < startIdx + count ; i++)
+            for (int i = startIdx; i < startIdx + count; i++)
             {
                 var email = string.Format("testUser-{0,000}@example.com", i);
                 var user = new ApplicationUser
@@ -53,7 +53,7 @@ namespace ChatApp.Test.Helpers
         public IEnumerable<ChatRoom> GetChatRooms(
             ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = startIdx; i < startIdx + count ; i++)
+            for (int i = startIdx; i < startIdx + count; i++)
             {
                 var chatRooom = new ChatRoom
                 {
@@ -69,43 +69,59 @@ namespace ChatApp.Test.Helpers
             }
         }
 
+        public ChatRoomMember GetChatRoomMember(ChatRoom chatRoom, ApplicationUser user)
+        {
+            var member = new ChatRoomMember
+            {
+                ChatRoom = chatRoom,
+                UserId = user.Id,
+                CreatedById = user.Id,
+                CreatedDate = testHelper.CurrentDateTime,
+                UpdatedById = user.Id,
+                UpdatedDate = testHelper.CurrentDateTime,
+            };
+
+            return member;
+        }
+
         public IEnumerable<ChatRoomMember> GetChatRoomMembers(
             ChatRoom chatRoom, ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = startIdx; i < startIdx + count ; i++)
-            {
-                var member = new ChatRoomMember
-                {
-                    ChatRoom = chatRoom,
-                    UserId = user.Id,
-                    CreatedById = user.Id,
-                    CreatedDate = testHelper.CurrentDateTime,
-                    UpdatedById = user.Id,
-                    UpdatedDate = testHelper.CurrentDateTime,
-                };
+            return Enumerable.Range(startIdx, count)
+                .Select(_ => GetChatRoomMember(chatRoom, user));
+        }
 
-                yield return member;
-            }
+        public IEnumerable<ChatRoomMember> GetChatRoomMembers(
+            ChatRoom chatRoom, IEnumerable<ApplicationUser> users)
+        {
+            return users.Select(user => GetChatRoomMember(chatRoom, user));
+        }
+
+        public IEnumerable<ChatRoomMember> GetChatRoomMembers(
+            IEnumerable<ChatRoom> chatRooms, ApplicationUser user)
+        {
+            return chatRooms.Select(r => GetChatRoomMember(r, user));
+        }
+
+        public ChatMessage GetChatMessage(ChatRoom room, ApplicationUser user, string message)
+        {
+            return new ChatMessage
+            {
+                ChatRoomId = room.Id.Value,
+                UserId = user?.Id,
+                Message = string.Format(message),
+                CreatedById = user?.Id,
+                CreatedDate = testHelper.CurrentDateTime,
+                UpdatedById = user?.Id,
+                UpdatedDate = testHelper.CurrentDateTime,
+            };
         }
 
         public IEnumerable<ChatMessage> GetChatMessages(
             ChatRoom room, ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = startIdx; i < startIdx + count ; i++)
-            {
-                var message = new ChatMessage
-                {
-                    ChatRoomId = room.Id.Value,
-                    UserId = user?.Id,
-                    Message = string.Format("チャットメッセージ。{0, 0000}", i),
-                    CreatedById = user?.Id,
-                    CreatedDate = testHelper.CurrentDateTime,
-                    UpdatedById = user?.Id,
-                    UpdatedDate = testHelper.CurrentDateTime,
-                };
-
-                yield return message;
-            }
+            return Enumerable.Range(startIdx, count)
+                .Select(i => GetChatMessage(room, user, string.Format("チャットメッセージ。{0, 0000}", i)));
         }
     }
 }
