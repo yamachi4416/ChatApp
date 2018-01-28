@@ -168,5 +168,53 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(eRoom.Description, aRoom.Description);
             Assert.Equal(true, aRoom.IsAdmin);
         }
+
+        [Fact(DisplayName = "ルームの新しいメッセージを取得できること")]
+        public async void RoomApi_GetRoomNewMessages_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
+            var chatMember = dataCreator.GetChatRoomMembers(chatRooms[0], user).Take(1).ToList();
+
+            fixture.DbContext.AddRange(chatRooms);
+            fixture.DbContext.AddRange(chatMember);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            var result = await browser.GetJsonDeserializeResultAsync<IEnumerable<RoomMessageViewModel>>(
+                   sitePath[$"/messages/{chatRooms[0].Id}/new"]);
+
+            Assert.Empty(result);
+
+            var messages = dataCreator.GetChatMessages(chatRooms[0], user).Take(40).ToList();
+            foreach (var m in messages.Skip(10).Take(8))
+            {
+                m.ChatRoomId = chatRooms[1].Id.Value;
+            }
+
+            fixture.DbContext.AddRange(messages);
+            await fixture.DbContext.SaveChangesAsync();
+
+            result = await browser.GetJsonDeserializeResultAsync<IEnumerable<RoomMessageViewModel>>(
+                    sitePath[$"/messages/{chatRooms[0].Id}/new"]);
+
+            var expected = messages
+                .Where(m => m.ChatRoomId == chatRooms[0].Id)
+                .OrderBy(m => m.Id)
+                .Select(m => m.Id)
+                .TakeLast(30);
+
+            Assert.Equal(30, result.Count());
+            Assert.Equal(expected, result.Select(m => m.Id));
+
+            var newMessage = dataCreator.GetChatMessages(chatRooms[0], user).First();
+            fixture.DbContext.Add(newMessage);
+            await fixture.DbContext.SaveChangesAsync();
+
+            result = await browser.GetJsonDeserializeResultAsync<IEnumerable<RoomMessageViewModel>>(
+                    sitePath[$"/messages/{chatRooms[0].Id}/new/{result.Last().Id}"]);
+
+            Assert.Equal(newMessage.Id, result.Single().Id);
+        }
     }
 }

@@ -87,5 +87,25 @@ namespace ChatApp.Test.Helpers
                 yield return member;
             }
         }
+
+        public IEnumerable<ChatMessage> GetChatMessages(
+            ChatRoom room, ApplicationUser user, int startIdx = 1, int count = 100)
+        {
+            for (int i = startIdx; i < startIdx + count ; i++)
+            {
+                var message = new ChatMessage
+                {
+                    ChatRoomId = room.Id.Value,
+                    UserId = user?.Id,
+                    Message = string.Format("チャットメッセージ。{0, 0000}", i),
+                    CreatedById = user?.Id,
+                    CreatedDate = testHelper.CurrentDateTime,
+                    UpdatedById = user?.Id,
+                    UpdatedDate = testHelper.CurrentDateTime,
+                };
+
+                yield return message;
+            }
+        }
     }
 }
