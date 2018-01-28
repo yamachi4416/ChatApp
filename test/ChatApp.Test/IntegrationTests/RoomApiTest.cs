@@ -2,6 +2,7 @@ using Xunit;
 using System;
 using System.Net;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Features.Room.Models;
 
@@ -130,6 +131,42 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(1, result.Count);
             Assert.Contains(nameof(postMessage.Message).ToLowerInvariant(), result.Keys);
             Assert.Empty(await fixture.DbContext.ChatMessages.ToListAsync());
+        }
+
+        [Fact(DisplayName = "メンバーになっているルーム情報を取得できること")]
+        public async void RoomApi_GetJoinRooms_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var chatRooms = dataCreator.GetChatRooms(user).Take(3).ToList();
+            var chatMembers = dataCreator.GetChatRoomMembers(null, user).Take(2).ToList();
+
+            chatMembers[0].ChatRoom = chatRooms[0];
+            chatMembers[0].IsAdmin = false;
+            chatMembers[1].ChatRoom = chatRooms[1];
+            chatMembers[1].IsAdmin = true;
+
+            fixture.DbContext.AddRange(chatRooms);
+            fixture.DbContext.AddRange(chatMembers);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            var result = (await browser
+                .GetJsonDeserializeResultAsync<IEnumerable<RoomViewModel>>(sitePath["/joins"]))
+                .ToList();
+
+            Assert.Equal(2, result.Count());
+
+            var eRoom = chatRooms[0];
+            var aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
+            Assert.Equal(eRoom.Name, aRoom.Name);
+            Assert.Equal(eRoom.Description, aRoom.Description);
+            Assert.Equal(false, aRoom.IsAdmin);
+
+            eRoom = chatRooms[1];
+            aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
+            Assert.Equal(eRoom.Name, aRoom.Name);
+            Assert.Equal(eRoom.Description, aRoom.Description);
+            Assert.Equal(true, aRoom.IsAdmin);
         }
     }
 }

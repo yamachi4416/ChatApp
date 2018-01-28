@@ -62,6 +62,12 @@ namespace ChatApp.Test.Helpers
             return await DeserializeJsonResultAsync<T>();
         }
 
+        public async Task<T> GetJsonDeserializeResultAsync<T>(string requestPath, Action<TestRequestBuilder> setup = null)
+        {
+            await GetAsync(requestPath, setup);
+            return await DeserializeJsonResultAsync<T>();
+        }
+
         public async Task<HttpResponseMessage> GetAsync(string requestPath, Action<TestRequestBuilder> setup = null)
         {
             var builder = new TestRequestBuilder(requestPath, _testServer, _cookies);
