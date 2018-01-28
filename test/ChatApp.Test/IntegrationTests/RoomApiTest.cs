@@ -71,5 +71,40 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Empty(await fixture.DbContext.ChatRooms.ToListAsync());
         }
+
+        [Fact(DisplayName = "ルームのメンバーはルームにメッセージを投稿できること")]
+        public async void RoomApi_MessageCreate_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var chatRoom = dataCreator.GetChatRooms(user).First();
+            var chatMember = dataCreator.GetChatRoomMembers(chatRoom, user).First();
+
+            fixture.DbContext.AddRange(chatRoom, chatMember);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+
+            var postMessage = new PostMessageModel
+            {
+                Message = "こんにちは。"
+            };
+
+            fixture.CurrentDateTime = DateTimeOffset.Parse("2018/01/01");
+            var result = await browser
+                .PostJsonDeserializeResultAsync<RoomMessageViewModel>(
+                    sitePath[$"/messages/{chatRoom.Id}/create"], postMessage);
+
+            Assert.True(result.Id.HasValue);
+            Assert.Equal(postMessage.Message, result.Message);
+            Assert.Equal(user.Id, result.UserId);
+            Assert.Equal(user.FirstName, result.UserFirstName);
+            Assert.Equal(user.LastName, result.UserLastName);
+            Assert.Equal(fixture.CurrentDateTime, result.CreatedDate);
+            Assert.Equal(fixture.CurrentDateTime, result.UpdatedDate);
+
+            Assert.NotNull(await fixture.DbContext.ChatMessages
+                .Where(m => m.ChatRoomId == chatRoom.Id && m.UserId == user.Id)
+                .FirstOrDefaultAsync());
+        }
     }
 }

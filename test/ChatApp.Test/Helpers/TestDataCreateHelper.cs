@@ -49,5 +49,41 @@ namespace ChatApp.Test.Helpers
             }
             return ret;
         }
+
+        public IEnumerable<ChatRoom> GetChatRooms(ApplicationUser user)
+        {
+            for (int i = 1; ; i++)
+            {
+                var chatRooom = new ChatRoom
+                {
+                    Name = string.Format("チャットルーム{0,000}", i),
+                    Description = string.Format("チャットルーム説明{0,000}", i),
+                    CreatedById = user.Id,
+                    CreatedDate = testHelper.CurrentDateTime,
+                    UpdatedById = user.Id,
+                    UpdatedDate = testHelper.CurrentDateTime,
+                };
+
+                yield return chatRooom;
+            }
+        }
+
+        public IEnumerable<ChatRoomMember> GetChatRoomMembers(ChatRoom chatRoom, ApplicationUser user)
+        {
+            for (int i = 1; ; i++)
+            {
+                var member = new ChatRoomMember
+                {
+                    ChatRoom = chatRoom,
+                    UserId = user.Id,
+                    CreatedById = user.Id,
+                    CreatedDate = testHelper.CurrentDateTime,
+                    UpdatedById = user.Id,
+                    UpdatedDate = testHelper.CurrentDateTime,
+                };
+
+                yield return member;
+            }
+        }
     }
 }
