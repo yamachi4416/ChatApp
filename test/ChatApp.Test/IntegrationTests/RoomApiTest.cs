@@ -253,5 +253,27 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Equal(messages[0].Id, result.Single().Id);
         }
+
+        [Fact(DisplayName = "ルームのメンバーを取得できること")]
+        public async void RoomApi_GetRoomMembers_Success()
+        {
+            var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(3));
+
+            var chatRooms = dataCreator.GetChatRooms(users[0]).Take(2).ToList();
+            var chatMembers = dataCreator.GetChatRoomMembers(chatRooms[0], users).ToList();
+
+            fixture.DbContext.AddRange(chatRooms);
+            fixture.DbContext.AddRange(chatMembers);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(users[0]);
+            var result = await browser.GetJsonDeserializeResultAsync<IEnumerable<RoomMemberViewModel>>(
+                sitePath[$"/members/{chatRooms[0].Id}"]);
+
+            Assert.Equal(3, result.Count());
+            Assert.Equal(
+                users.Select(m => (m.LastName, m.FirstName)).ToHashSet(),
+                result.Select(m => (m.LastName, m.FirstName)).ToHashSet());
+        }
     }
 }
