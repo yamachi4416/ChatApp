@@ -106,5 +106,30 @@ namespace ChatApp.Test.IntegrationTests
                 .Where(m => m.ChatRoomId == chatRoom.Id && m.UserId == user.Id)
                 .FirstOrDefaultAsync());
         }
+
+        [Fact(DisplayName = "メッセージが空の場合バリデーションエラーになること")]
+        public async void RoomApi_MessageCreate_Validation_Failure()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var chatRoom = dataCreator.GetChatRooms(user).First();
+            var chatMember = dataCreator.GetChatRoomMembers(chatRoom, user).First();
+
+            fixture.DbContext.AddRange(chatRoom, chatMember);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+
+            var postMessage = new PostMessageModel
+            {
+                Message = ""
+            };
+
+            await browser.PostJsonAsync(sitePath[$"/messages/{chatRoom.Id}/create"], postMessage);
+            var result = await browser.DeserializeApiErrorJsonResultAsync();
+
+            Assert.Equal(1, result.Count);
+            Assert.Contains(nameof(postMessage.Message).ToLowerInvariant(), result.Keys);
+            Assert.Empty(await fixture.DbContext.ChatMessages.ToListAsync());
+        }
     }
 }
