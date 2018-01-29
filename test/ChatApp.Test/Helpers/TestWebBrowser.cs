@@ -81,7 +81,7 @@ namespace ChatApp.Test.Helpers
             return response;
         }
 
-        public async Task<HttpResponseMessage> FollowRedirect()
+        public async Task<HttpResponseMessage> FollowRedirectAsync()
         {
             var response = Response;
             if (response.StatusCode != HttpStatusCode.Moved && response.StatusCode != HttpStatusCode.Redirect)

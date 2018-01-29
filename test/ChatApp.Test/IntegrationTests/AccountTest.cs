@@ -123,7 +123,7 @@ namespace ChatApp.Test.IntegrationTests
             Assert.True(await TryLogin(browser, user));
 
             // ログアウトができること
-            await browser.FollowRedirect();
+            await browser.FollowRedirectAsync();
             await browser.PostAsync(sitePath["/LogOff"]);
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
             Assert.Equal(sitePath.Root, browser.Response.Headers.Location.OriginalString);
@@ -175,7 +175,7 @@ namespace ChatApp.Test.IntegrationTests
             });
             Assert.Equal(HttpStatusCode.Redirect, browser.Response.StatusCode);
             Assert.Equal(sitePath["/ResetPasswordConfirmation"], browser.Response.Headers.Location.OriginalString);
-            await browser.FollowRedirect();
+            await browser.FollowRedirectAsync();
 
             // 新しいパスワードでログインできること
             Assert.True(await TryLogin(browser, user, newPassword));
