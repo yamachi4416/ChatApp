@@ -50,23 +50,32 @@ namespace ChatApp.Test.Helpers
             return ret;
         }
 
+        public ChatRoom GetChatRoom(
+            ApplicationUser user, string name, string description)
+        {
+            return new ChatRoom
+            {
+                Name = name,
+                Description = description,
+                CreatedById = user.Id,
+                CreatedDate = testHelper.CurrentDateTime,
+                UpdatedById = user.Id,
+                UpdatedDate = testHelper.CurrentDateTime,
+            };
+        }
+
+        public ChatRoom GetChatRoom(ApplicationUser user)
+        {
+            return GetChatRooms(user).Take(1).Single();
+        }
+
         public IEnumerable<ChatRoom> GetChatRooms(
             ApplicationUser user, int startIdx = 1, int count = 100)
         {
-            for (int i = startIdx; i < startIdx + count; i++)
-            {
-                var chatRooom = new ChatRoom
-                {
-                    Name = string.Format("チャットルーム{0,000}", i),
-                    Description = string.Format("チャットルーム説明{0,000}", i),
-                    CreatedById = user.Id,
-                    CreatedDate = testHelper.CurrentDateTime,
-                    UpdatedById = user.Id,
-                    UpdatedDate = testHelper.CurrentDateTime,
-                };
-
-                yield return chatRooom;
-            }
+            return Enumerable.Range(startIdx, count)
+                .Select(i => GetChatRoom(user,
+                    string.Format("チャットルーム{0,000}", i),
+                    string.Format("チャットルーム説明{0,000}", i)));
         }
 
         public ChatRoomMember GetChatRoomMember(ChatRoom chatRoom, ApplicationUser user)
