@@ -32,7 +32,7 @@ namespace ChatApp.Features.Room
         {
             var users = await QueryNotRoomMembers(id)
                 .Where(m => m.Email.Contains(search))
-                .Take(100)
+                .Take(30)
                 .ToListAsync();
 
             return users;
