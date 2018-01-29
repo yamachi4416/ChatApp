@@ -28,22 +28,16 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApiAdmin_AddMember_Success()
         {
             var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(2));
-            var user = users[0];
             var addUser = users[1];
-            var member = await CreateAdminMemberWithRoom(user);
-            var chatRoom = member.ChatRoom;
+            var chatRoom = (await CreateAdminMemberWithRoom(users[0])).ChatRoom;
 
-            var postModel = new RoomMemberViewModel
-            {
-                Id = addUser.Id
-            };
-
-            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            var requestUrl = sitePath[$"/{chatRoom.Id}/members/add"];
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(users[0]);
             await browser.FollowRedirectAsync();
 
             var result = await browser
                 .PostJsonDeserializeResultAsync<RoomMemberViewModel>(
-                    sitePath[$"/{chatRoom.Id}/members/add"], postModel);
+                    requestUrl, new RoomMemberViewModel { Id = addUser.Id });
 
             Assert.Equal(addUser.Id, result.Id);
             Assert.Equal(addUser.Email, result.Email);
@@ -51,16 +45,18 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(addUser.LastName, result.LastName);
             Assert.False(result.IsAdmin);
             Assert.Equal(1, await fixture.DbContext.ChatRoomMembers
-                .Where(m => m.UserId == addUser.Id && m.ChatRoomId == chatRoom.Id).CountAsync());
+                .Where(m => m.UserId == addUser.Id)
+                .CountAsync());
 
             result = await browser
                 .PostJsonDeserializeResultAsync<RoomMemberViewModel>(
-                    sitePath[$"/{chatRoom.Id}/members/add"], postModel);
+                    requestUrl, new RoomMemberViewModel { Id = addUser.Id });
 
             Assert.Null(result);
             browser.Response.EnsureSuccessStatusCode();
             Assert.Equal(1, await fixture.DbContext.ChatRoomMembers
-                .Where(m => m.UserId == addUser.Id && m.ChatRoomId == chatRoom.Id).CountAsync());
+                .Where(m => m.UserId == addUser.Id)
+                .CountAsync());
         }
 
         [Fact(DisplayName = "ルームの管理者はルームにメンバーを削除できること")]
@@ -111,7 +107,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Null(result);
             browser.Response.EnsureSuccessStatusCode();
             Assert.NotEmpty(await fixture.DbContext.ChatRoomMembers
-                .Where(m => m.UserId == adminMember.UserId).ToListAsync());
+                .Where(m => m.UserId == adminMember.UserId)
+                .ToListAsync());
         }
     }
 }
