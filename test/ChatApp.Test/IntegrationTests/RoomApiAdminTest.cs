@@ -56,6 +56,7 @@ namespace ChatApp.Test.IntegrationTests
             browser.Response.EnsureSuccessStatusCode();
             Assert.Equal(1, await fixture.DbContext.ChatRoomMembers
                 .Where(m => m.UserId == addUser.Id)
+                .AsNoTracking()
                 .CountAsync());
         }
 
@@ -89,6 +90,7 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(member1.UserId, result.Id);
             Assert.Empty(await fixture.DbContext.ChatRoomMembers
                 .Where(m => m.UserId == member1.UserId)
+                .AsNoTracking()
                 .ToListAsync());
 
             // ほかのルームのメンバーは削除できないこと
@@ -98,7 +100,9 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Null(result);
             browser.Response.EnsureSuccessStatusCode();
             Assert.NotEmpty(await fixture.DbContext.ChatRoomMembers
-                .Where(m => m.UserId == member2.UserId).ToListAsync());
+                .Where(m => m.UserId == member2.UserId)
+                .AsNoTracking()
+                .ToListAsync());
 
             // 管理者は削除できないこと
             result = await browser.PostJsonDeserializeResultAsync<RoomMemberViewModel>(
@@ -108,6 +112,7 @@ namespace ChatApp.Test.IntegrationTests
             browser.Response.EnsureSuccessStatusCode();
             Assert.NotEmpty(await fixture.DbContext.ChatRoomMembers
                 .Where(m => m.UserId == adminMember.UserId)
+                .AsNoTracking()
                 .ToListAsync());
         }
 

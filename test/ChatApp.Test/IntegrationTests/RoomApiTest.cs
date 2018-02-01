@@ -39,11 +39,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.NotNull(actual.Id);
             Assert.True(actual.IsAdmin);
 
-            var member = await (
-                from m in fixture.DbContext.ChatRoomMembers.AsNoTracking()
-                where m.ChatRoomId == actual.Id.Value && m.UserId == user.Id
-                select m
-            ).SingleOrDefaultAsync();
+            var member = await fixture.DbContext.ChatRoomMembers.AsNoTracking()
+                .SingleOrDefaultAsync(m => m.ChatRoomId == actual.Id.Value && m.UserId == user.Id);
 
             Assert.NotNull(member);
             Assert.True(member.IsAdmin);
@@ -103,9 +100,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(fixture.CurrentDateTime, result.CreatedDate);
             Assert.Equal(fixture.CurrentDateTime, result.UpdatedDate);
 
-            Assert.NotNull(await fixture.DbContext.ChatMessages
-                .Where(m => m.ChatRoomId == chatRoom.Id && m.UserId == user.Id)
-                .FirstOrDefaultAsync());
+            Assert.NotNull(await fixture.DbContext.ChatMessages.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ChatRoomId == chatRoom.Id && m.UserId == user.Id));
         }
 
         [Fact(DisplayName = "メッセージが空の場合バリデーションエラーになること")]
@@ -130,7 +126,7 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Equal(1, result.Count);
             Assert.Contains(nameof(postMessage.Message).ToLowerInvariant(), result.Keys);
-            Assert.Empty(await fixture.DbContext.ChatMessages.ToListAsync());
+            Assert.Empty(await fixture.DbContext.ChatMessages.AsNoTracking().ToListAsync());
         }
 
         [Fact(DisplayName = "メンバーになっているルーム情報を取得できること")]
@@ -154,17 +150,21 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Equal(2, result.Count());
 
-            var eRoom = chatRooms[0];
-            var aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
-            Assert.Equal(eRoom.Name, aRoom.Name);
-            Assert.Equal(eRoom.Description, aRoom.Description);
-            Assert.Equal(false, aRoom.IsAdmin);
+            {
+                var eRoom = chatRooms[0];
+                var aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
+                Assert.Equal(eRoom.Name, aRoom.Name);
+                Assert.Equal(eRoom.Description, aRoom.Description);
+                Assert.Equal(false, aRoom.IsAdmin);
+            }
 
-            eRoom = chatRooms[1];
-            aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
-            Assert.Equal(eRoom.Name, aRoom.Name);
-            Assert.Equal(eRoom.Description, aRoom.Description);
-            Assert.Equal(true, aRoom.IsAdmin);
+            {
+                var eRoom = chatRooms[1];
+                var aRoom = result.Where(m => m.Id == eRoom.Id).SingleOrDefault();
+                Assert.Equal(eRoom.Name, aRoom.Name);
+                Assert.Equal(eRoom.Description, aRoom.Description);
+                Assert.Equal(true, aRoom.IsAdmin);
+            }
         }
 
         [Fact(DisplayName = "ルームの新しいメッセージを取得できること")]
