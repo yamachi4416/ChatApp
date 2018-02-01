@@ -61,7 +61,7 @@ namespace ChatApp.Test.IntegrationTests
         }
 
         [Fact(DisplayName = "ルームの管理者はルームにメンバーを削除できること")]
-        public async void RoomApiAdmin_RemoveRoom_Success()
+        public async void RoomApiAdmin_RemoveMember_Success()
         {
             var user = await dataCreator.CreateUserAsync();
             var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
