@@ -110,5 +110,64 @@ namespace ChatApp.Test.IntegrationTests
                 .Where(m => m.UserId == adminMember.UserId)
                 .ToListAsync());
         }
+
+        [Fact(DisplayName = "ルームの管理者はルーム情報を編集できること")]
+        public async void RoomApiAdmin_EditRoom_Success()
+        {
+            var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(2));
+            var chatRoom = (await CreateAdminMemberWithRoom(users[0])).ChatRoom;
+
+            {
+                chatRoom.UpdatedById = users[1].Id;
+                await fixture.DbContext.SaveChangesAsync();
+                var updated = await fixture.DbContext.ChatRooms.AsNoTracking()
+                    .SingleOrDefaultAsync(m => m.Id == chatRoom.Id);
+                Assert.Equal(users[1].Id, updated.UpdatedById);
+            }
+
+            fixture.CurrentDateTime = DateTimeOffset.Parse("2018/01/01");
+            var requestPath = sitePath[$"/{chatRoom.Id}/rooms/edit"];
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(users[0]);
+            await browser.FollowRedirectAsync();
+
+            {// ルーム名が未入力の場合はバリデーションエラーになる
+                var postModel = new RoomViewModel
+                {
+                    Name = "",
+                    Description = ""
+                };
+
+                await browser.PostJsonAsync(requestPath, postModel);
+                var erros = await browser.DeserializeApiErrorJsonResultAsync();
+                Assert.Contains(nameof(postModel.Name).ToLowerInvariant(), erros.Keys);
+            }
+
+            {// ルームを更新できる
+                var postModel = new RoomViewModel
+                {
+                    Name = chatRoom.Name + "Change",
+                    Description = chatRoom.Description + "Change"
+                };
+                await browser.PostJsonAsync(requestPath, postModel);
+                var result = await browser.DeserializeJsonResultAsync<RoomViewModel>();
+
+                // レスポンスの確認
+                Assert.Equal(chatRoom.Id, result.Id);
+                Assert.Equal(postModel.Name, result.Name);
+                Assert.Null(result.CreatedDate);
+                Assert.NotEqual(chatRoom.UpdatedDate, result.UpdatedDate);
+                Assert.Equal(fixture.CurrentDateTime, result.UpdatedDate);
+
+                // DBの確認
+                var updated = await fixture.DbContext.ChatRooms.AsNoTracking()
+                    .SingleOrDefaultAsync(m => m.Id == chatRoom.Id);
+                Assert.Equal(postModel.Name, updated.Name);
+                Assert.Equal(postModel.Description, updated.Description);
+                Assert.Equal(users[0].Id, updated.CreatedById);
+                Assert.Equal(users[0].Id, updated.UpdatedById);
+                Assert.Equal(chatRoom.CreatedDate, updated.CreatedDate);
+                Assert.Equal(fixture.CurrentDateTime, updated.UpdatedDate);
+            }
+        }
     }
 }
