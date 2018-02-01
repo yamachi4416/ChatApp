@@ -74,7 +74,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApi_MessageCreate_Success()
         {
             var user = await dataCreator.CreateUserAsync();
-            var chatRoom = dataCreator.GetChatRooms(user).First();
+            var chatRoom = dataCreator.GetChatRoom(user);
             var chatMember = dataCreator.GetChatRoomMember(chatRoom, user);
 
             fixture.DbContext.AddRange(chatRoom, chatMember);
@@ -133,7 +133,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApi_GetJoinRooms_Success()
         {
             var user = await dataCreator.CreateUserAsync();
-            var chatRooms = dataCreator.GetChatRooms(user).Take(3).ToList();
+            var chatRooms = dataCreator.GetChatRooms(user, count: 3).ToList();
             var chatMembers = dataCreator.GetChatRoomMembers(chatRooms.Take(2), user).ToList();
 
             chatMembers[0].IsAdmin = false;
@@ -171,7 +171,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApi_GetRoomNewMessages_Success()
         {
             var user = await dataCreator.CreateUserAsync();
-            var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
+            var chatRooms = dataCreator.GetChatRooms(user, count: 2).ToList();
             var chatMember = dataCreator.GetChatRoomMember(chatRooms[0], user);
 
             fixture.DbContext.AddRange(chatRooms);
@@ -219,7 +219,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApi_GetRoomOldMessages_Success()
         {
             var user = await dataCreator.CreateUserAsync();
-            var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
+            var chatRooms = dataCreator.GetChatRooms(user, count: 2).ToList();
             var chatMember = dataCreator.GetChatRoomMembers(chatRooms[0], user);
 
             fixture.DbContext.AddRange(chatRooms);
@@ -257,9 +257,9 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "ルームのメンバーを取得できること")]
         public async void RoomApi_GetRoomMembers_Success()
         {
-            var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(3));
+            var users = await dataCreator.CreateUsersAsync(count: 3);
 
-            var chatRooms = dataCreator.GetChatRooms(users[0]).Take(2).ToList();
+            var chatRooms = dataCreator.GetChatRooms(users[0], count: 2).ToList();
             var chatMembers = dataCreator.GetChatRoomMembers(chatRooms[0], users).ToList();
 
             fixture.DbContext.AddRange(chatRooms);

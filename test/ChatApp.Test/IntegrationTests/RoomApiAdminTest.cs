@@ -27,7 +27,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "ルームの管理者はルームにメンバーを追加できること")]
         public async void RoomApiAdmin_AddMember_Success()
         {
-            var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(2));
+            var users = await dataCreator.CreateUsersAsync(count: 2);
             var addUser = users[1];
             var chatRoom = (await CreateAdminMemberWithRoom(users[0])).ChatRoom;
 
@@ -64,7 +64,7 @@ namespace ChatApp.Test.IntegrationTests
         public async void RoomApiAdmin_RemoveMember_Success()
         {
             var user = await dataCreator.CreateUserAsync();
-            var chatRooms = dataCreator.GetChatRooms(user).Take(2).ToList();
+            var chatRooms = dataCreator.GetChatRooms(user: user, count: 2).ToList();
 
             var users = dataCreator.GetTestUsers().Skip(1).Take(2).ToList();
             await fixture.DbContext.AddRangeAsync(users);
@@ -119,7 +119,7 @@ namespace ChatApp.Test.IntegrationTests
         [Fact(DisplayName = "ルームの管理者はルーム情報を編集できること")]
         public async void RoomApiAdmin_EditRoom_Success()
         {
-            var users = await dataCreator.CreateUsersAsync(dataCreator.GetTestUsers().Take(2));
+            var users = await dataCreator.CreateUsersAsync(count: 2);
             var chatRoom = (await CreateAdminMemberWithRoom(users[0])).ChatRoom;
 
             {
