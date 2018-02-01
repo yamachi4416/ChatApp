@@ -163,7 +163,7 @@ namespace ChatApp.Test.IntegrationTests
                 Assert.NotEqual(chatRoom.UpdatedDate, result.UpdatedDate);
                 Assert.Equal(fixture.CurrentDateTime, result.UpdatedDate);
 
-                // DBの確認
+                // データベースの確認
                 var updated = await fixture.DbContext.ChatRooms.AsNoTracking()
                     .SingleOrDefaultAsync(m => m.Id == chatRoom.Id);
                 Assert.Equal(postModel.Name, updated.Name);
@@ -172,6 +172,39 @@ namespace ChatApp.Test.IntegrationTests
                 Assert.Equal(users[0].Id, updated.UpdatedById);
                 Assert.Equal(chatRoom.CreatedDate, updated.CreatedDate);
                 Assert.Equal(fixture.CurrentDateTime, updated.UpdatedDate);
+            }
+        }
+
+        [Fact(DisplayName = "ルームの管理者はルームを削除できること")]
+        public async void RoomApiAdmin_RemoveRoom_Success()
+        {
+            var users = await dataCreator.CreateUsersAsync(count: 2);
+            var chatRooms = dataCreator.GetChatRooms(user: users[0], count: 2).ToList();
+            var chatMembers = dataCreator.GetChatRoomMembers(chatRooms, users).ToList();
+
+            chatMembers[0].IsAdmin = true;
+            fixture.DbContext.AddRange(chatRooms);
+            fixture.DbContext.AddRange(chatMembers);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var requestPath = sitePath[$"/{chatRooms[0].Id}/rooms/remove"];
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(users[0]);
+
+            await browser.FollowRedirectAsync();
+            await browser.PostAsync(requestPath);
+
+            var result = await browser.DeserializeJsonResultAsync<RoomViewModel>();
+            Assert.Equal(chatRooms[0].Id, result.Id);
+
+            // データベースの確認
+            {
+                var rooms = await fixture.DbContext.ChatRooms.AsNoTracking().ToListAsync();
+                Assert.Equal(1, rooms.Count());
+                Assert.Equal(chatRooms[1].Id, rooms.Single().Id);
+
+                var members = await fixture.DbContext.ChatRoomMembers.AsNoTracking().ToListAsync();
+                Assert.Equal(2, members.Count());
+                Assert.True(members.All(m => m.ChatRoomId == chatRooms[1].Id));
             }
         }
     }

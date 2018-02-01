@@ -50,6 +50,11 @@ namespace ChatApp.Test.Helpers
             return ret;
         }
 
+        public async Task<IList<ApplicationUser>> CreateUsersAsync(int count)
+        {
+            return await CreateUsersAsync(GetTestUsers().Take(count));
+        }
+
         public ChatRoom GetChatRoom(
             ApplicationUser user, string name, string description)
         {
@@ -110,6 +115,12 @@ namespace ChatApp.Test.Helpers
             IEnumerable<ChatRoom> chatRooms, ApplicationUser user)
         {
             return chatRooms.Select(r => GetChatRoomMember(r, user));
+        }
+
+        public IEnumerable<ChatRoomMember> GetChatRoomMembers(
+            IEnumerable<ChatRoom> chatRooms, IEnumerable<ApplicationUser> users)
+        {
+            return chatRooms.SelectMany(r => GetChatRoomMembers(r, users));
         }
 
         public ChatMessage GetChatMessage(ChatRoom room, ApplicationUser user, string message)
