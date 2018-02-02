@@ -15,9 +15,9 @@ while read oldrev newrev refname
 do
   zero="0000000000000000000000000000000000000000"
   if [ "$newrev" = "$zero" ]; then
-	  newrev_type=delete
+    newrev_type=delete
   else
-	  newrev_type=$(git cat-file -t $newrev)
+    newrev_type=$(git cat-file -t $newrev)
   fi
   case "$refname","$newrev_type" in
     refs/heads/*,commit)
