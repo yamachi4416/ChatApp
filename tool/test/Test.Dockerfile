@@ -26,5 +26,7 @@ ADD . /app
 RUN dotnet restore
 
 ENTRYPOINT \
-  service postgresql start ; \
-  dotnet test --no-restore -v m test/ChatApp.Test
+  set -eu ; \
+  service postgresql start 1>/dev/null ; \
+  dotnet build test/ChatApp.Test ; \
+  dotnet test --no-restore --no-build -v m test/ChatApp.Test
