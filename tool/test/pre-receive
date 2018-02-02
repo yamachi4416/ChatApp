@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -eu
+
+running_test() {
+  tempdir=$(mktemp -d)
+  trap "[ -e $tempdir ] && rm -rf $tempdir" EXIT
+  git archive --format=tar --prefix=chatapp/ "$1" | ( cd "$tempdir" && tar xf - )
+  cd "$tempdir/chatapp"
+  docker build --rm -f tool/test/Test.Dockerfile -t chatapp_test . 1>/dev/null
+  docker run --rm -t chatapp_test
+}
+
+while read oldrev newrev refname
+do
+  zero="0000000000000000000000000000000000000000"
+  if [ "$newrev" = "$zero" ]; then
+	  newrev_type=delete
+  else
+	  newrev_type=$(git cat-file -t $newrev)
+  fi
+  case "$refname","$newrev_type" in
+    refs/heads/*,commit)
+      if ! running_test "$newrev" ; then
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+exit 0
