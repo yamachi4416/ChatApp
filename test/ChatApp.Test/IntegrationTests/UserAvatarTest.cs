@@ -48,6 +48,32 @@ namespace ChatApp.Test.IntegrationTests
             }
         }
 
+        [Fact(DisplayName = "アバター画像のIDを指定してユーザの画像を取得できること")]
+        public async void UserAvatar_GetAvatar_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var avatar = new UserAvatar
+            {
+                UserId = user.Id,
+                ContentType = "image/png",
+                Content = GetImageBytes(200, 200, ImageFormat.Png)
+            };
+            fixture.DbContext.Add(avatar);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+
+            {// アバター画像のIDを指定してアバター画像を取得
+                var resopnse = await browser.GetAsync(sitePath[$"/get/{avatar.Id}"]);
+                resopnse.EnsureSuccessStatusCode();
+                Assert.Equal(avatar.ContentType, resopnse.Content.Headers.ContentType.MediaType.ToLowerInvariant());
+
+                var respAvatar = await resopnse.Content.ReadAsByteArrayAsync();
+                Assert.Equal(avatar.Content, respAvatar);
+            }
+
+        }
+
         [Fact(DisplayName = "ユーザがアバター画像をアップロードできること")]
         public async void UserAvatar_Upload_Success()
         {
