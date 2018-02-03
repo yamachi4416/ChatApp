@@ -1,7 +1,9 @@
 using Xunit;
 using System;
+using System.Web;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
 using ChatApp.Features.Room.Models;
@@ -205,6 +207,53 @@ namespace ChatApp.Test.IntegrationTests
                 var members = await fixture.DbContext.ChatRoomMembers.AsNoTracking().ToListAsync();
                 Assert.Equal(2, members.Count());
                 Assert.True(members.All(m => m.ChatRoomId == chatRooms[1].Id));
+            }
+        }
+
+        [Fact(DisplayName = "ルームの管理者はメンバーに追加するユーザを検索できること")]
+        public async void RoomApiAdmin_SearchMembers_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var chatRoom = (await CreateAdminMemberWithRoom(user)).ChatRoom;
+
+            var searchs = new string[] { "AAA", "%_%" };
+            var users = searchs
+                .SelectMany(s => Enumerable.Range(1, 10).Select(i => $"testUser{i}{s}@example.com"))
+                .Select(email => dataCreator.GetTestUser(u => u.Email = email))
+                .ToList();
+            fixture.DbContext.AddRange(users);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var requesturl = sitePath[$"/{chatRoom.Id}/members/search"];
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            await browser.FollowRedirectAsync();
+
+            Task<IEnumerable<RoomMemberViewModel>> searchtMemberAsync(string search) =>
+                browser.GetJsonDeserializeResultAsync<IEnumerable<RoomMemberViewModel>>(
+                    $"{requesturl}/{HttpUtility.UrlDecode(search)}");
+
+            {// ユーザを検索できること
+                var result = await searchtMemberAsync(searchs[0]);
+                Assert.Equal(10, result.Count());
+                Assert.True(result.All(m => m.Email.IndexOf(searchs[0]) != -1));
+            }
+
+            {// SQLのLikeのキーワード（%,_）を含んでいても検索できること
+                var result = await searchtMemberAsync(searchs[1]);
+                Assert.Equal(10, result.Count());
+                Assert.True(result.All(m => m.Email.IndexOf(searchs[1]) != -1));
+            }
+
+            {// すでにメンバーになっているユーザは検索されないこと
+                var members = dataCreator.GetChatRoomMembers(chatRoom: chatRoom, users: users.Take(5));
+                fixture.DbContext.AddRange(members);
+                await fixture.DbContext.SaveChangesAsync();
+
+                var result = await searchtMemberAsync(searchs[0]);
+                Assert.Equal(5, result.Count());
+                Assert.Equal(
+                    users.Skip(5).Take(5).Select(m => m.Id).ToHashSet(),
+                    result.Select(m => m.Id).ToHashSet());
             }
         }
     }
