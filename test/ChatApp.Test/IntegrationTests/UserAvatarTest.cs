@@ -33,10 +33,19 @@ namespace ChatApp.Test.IntegrationTests
             var user = await dataCreator.CreateUserAsync();
             var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
 
-            var resopnse = await browser.GetAsync(sitePath[$"/get/{Guid.NewGuid()}"]);
-            resopnse.EnsureSuccessStatusCode();
+            {// ユーザIDを指定しない場合
+                var resopnse = await browser.GetAsync(sitePath[$"/get"]);
+                resopnse.EnsureSuccessStatusCode();
 
-            Assert.Equal("image/png", resopnse.Content.Headers.ContentType.MediaType.ToLowerInvariant());
+                Assert.Equal("image/png", resopnse.Content.Headers.ContentType.MediaType.ToLowerInvariant());
+            }
+
+            {// 存在しないユーザのIDを指定した場合
+                var resopnse = await browser.GetAsync(sitePath[$"/get/{Guid.NewGuid()}"]);
+                resopnse.EnsureSuccessStatusCode();
+
+                Assert.Equal("image/png", resopnse.Content.Headers.ContentType.MediaType.ToLowerInvariant());
+            }
         }
 
         [Fact(DisplayName = "ユーザがアバター画像をアップロードできること")]
