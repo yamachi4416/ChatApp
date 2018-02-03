@@ -54,9 +54,22 @@ namespace ChatApp.Test.Helpers
 
         public TestRequestBuilder Form(Action<IDictionary<string, string>> formSetup)
         {
+            _content = FormContent(formSetup);
+            return this;
+        }
+
+        public FormUrlEncodedContent FormContent(Action<IDictionary<string, string>> formSetup)
+        {
             var formValues = new Dictionary<string, string>();
             formSetup(formValues);
-            _content = new FormUrlEncodedContent(formValues);
+            return new FormUrlEncodedContent(formValues);
+        }
+
+        public TestRequestBuilder Multipart(Action<MultipartFormDataContent> formSetup)
+        {
+            var content = new MultipartFormDataContent();
+            formSetup(content);
+            _content = content;
             return this;
         }
 

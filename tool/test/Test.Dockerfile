@@ -3,7 +3,7 @@
 FROM ubuntu
 
 RUN apt-get update \
- && apt-get install -y language-pack-ja apt-transport-https curl sudo
+ && apt-get install -y language-pack-ja apt-transport-https curl sudo libgdiplus
 
 RUN update-locale LC_ALL=ja_JP.UTF-8
 
@@ -14,6 +14,7 @@ RUN ( curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > m
 
 RUN apt-get update && apt-get install -y postgresql nodejs npm dotnet-sdk-2.0.2
 RUN ln -s /usr/bin/nodejs /usr/local/bin/node
+RUN ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
 
 RUN service postgresql start \
  && sudo -u postgres psql -c 'CREATE USER "ChatApp" WITH PASSWORD '\''Password'\'' CREATEDB' \
