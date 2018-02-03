@@ -19,13 +19,13 @@ namespace ChatApp.Test.Helpers
         {
             for (int i = startIdx; i < startIdx + count; i++)
             {
-                var email = string.Format("testUser-{0,000}@example.com", i);
+                var email = string.Format("testUser-{0:000}@example.com", i);
                 var user = new ApplicationUser
                 {
                     UserName = email,
                     Email = email,
-                    FirstName = string.Format("名{0,000}", i),
-                    LastName = string.Format("姓{0,000}", i),
+                    FirstName = string.Format("名{0:000}", i),
+                    LastName = string.Format("姓{0:000}", i),
                 };
                 yield return user;
             }
