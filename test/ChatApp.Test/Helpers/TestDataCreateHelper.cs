@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,9 +31,14 @@ namespace ChatApp.Test.Helpers
             }
         }
 
-        public ApplicationUser GetTestUser()
+        public ApplicationUser GetTestUser(Action<ApplicationUser> setup = null)
         {
-            return GetTestUsers().First();
+            var user = GetTestUsers().First();
+            if (setup != null)
+            {
+                setup(user);
+            }
+            return user;
         }
 
         public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user = null)
