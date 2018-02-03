@@ -235,7 +235,8 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Equal(sitePath.Root, result.Url);
 
-            var createdUser = await fixture.DbContext.Users.AsNoTracking()
+            var createdUser = await fixture.DbContext.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.UserName == user.Email);
 
             Assert.NotNull(createdUser);
@@ -243,7 +244,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(user.LastName, createdUser.LastName);
             Assert.True(createdUser.EmailConfirmed);
 
-            var userLogin = await fixture.DbContext.UserLogins.AsNoTracking()
+            var userLogin = await fixture.DbContext.UserLogins
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m =>
                     m.UserId == createdUser.Id &&
                     m.ProviderDisplayName == GoogleDefaults.DisplayName);

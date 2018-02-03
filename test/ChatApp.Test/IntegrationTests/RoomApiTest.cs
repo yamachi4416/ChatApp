@@ -39,7 +39,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.NotNull(actual.Id);
             Assert.True(actual.IsAdmin);
 
-            var member = await fixture.DbContext.ChatRoomMembers.AsNoTracking()
+            var member = await fixture.DbContext.ChatRoomMembers
+                .AsNoTracking()
                 .SingleOrDefaultAsync(m => m.ChatRoomId == actual.Id.Value && m.UserId == user.Id);
 
             Assert.NotNull(member);
@@ -67,7 +68,9 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(1, errors.Count);
             Assert.Contains(nameof(postModel.Name).ToLowerInvariant(), errors.Keys);
 
-            Assert.Empty(await fixture.DbContext.ChatRooms.ToListAsync());
+            Assert.Empty(await fixture.DbContext.ChatRooms
+                .AsNoTracking()
+                .ToListAsync());
         }
 
         [Fact(DisplayName = "ルームのメンバーはルームにメッセージを投稿できること")]
@@ -100,7 +103,8 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(fixture.CurrentDateTime, result.CreatedDate);
             Assert.Equal(fixture.CurrentDateTime, result.UpdatedDate);
 
-            Assert.NotNull(await fixture.DbContext.ChatMessages.AsNoTracking()
+            Assert.NotNull(await fixture.DbContext.ChatMessages
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ChatRoomId == chatRoom.Id && m.UserId == user.Id));
         }
 
@@ -126,7 +130,9 @@ namespace ChatApp.Test.IntegrationTests
 
             Assert.Equal(1, result.Count);
             Assert.Contains(nameof(postMessage.Message).ToLowerInvariant(), result.Keys);
-            Assert.Empty(await fixture.DbContext.ChatMessages.AsNoTracking().ToListAsync());
+            Assert.Empty(await fixture.DbContext.ChatMessages
+                .AsNoTracking()
+                .ToListAsync());
         }
 
         [Fact(DisplayName = "メンバーになっているルーム情報を取得できること")]
