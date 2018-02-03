@@ -17,11 +17,15 @@ namespace ChatApp.Test.IntegrationTests
         {
         }
 
-        private byte[] GetImageBytes(int width, int height, ImageFormat format)
+        private byte[] GetImageBytes(int width, int height, ImageFormat format, Action<Bitmap> setup = null)
         {
             using (var img = new Bitmap(width: width, height: height))
             using (var stream = new MemoryStream())
             {
+                if (setup != null)
+                {
+                    setup(img);
+                }
                 img.Save(stream, format);
                 return stream.ToArray();
             }
@@ -108,6 +112,58 @@ namespace ChatApp.Test.IntegrationTests
                 .SingleAsync(m => m.Id == user.Id);
 
             Assert.Equal(result.Id, updatedUser.UserAvatarId);
+        }
+
+        [Fact(DisplayName = "ユーザが不正な画像をアップロードした場合バリデーションエラーになること")]
+        public async void UserAvatar_Upload_Validation_Failure()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            await browser.FollowRedirectAsync();
+
+            {// ファイルを指定しない場合
+                await browser.PostAsync(sitePath["/upload"]);
+                var result = await browser.DeserializeApiErrorJsonResultAsync();
+                Assert.NotEmpty(result);
+            }
+
+            {// ファイルサイズが大きすぎる場合
+                const int width = 350, height = 350;
+                var img = GetImageBytes(width, height, ImageFormat.Png, i =>
+                {
+                    // PNG形式のため多くの色情報を設定する
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            int rgb = (x + y) * 10000 + (x * 100) + y;
+                            i.SetPixel(x, y, Color.FromArgb(rgb >> 16, rgb >> 8 & 255, rgb & 255));
+                        }
+                    }
+                });
+
+                await browser.PostAsync(sitePath["/upload"], b =>
+                {
+                    b.Multipart(form =>
+                    {
+                        var file = new ByteArrayContent(img);
+                        file.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                        form.Add(file, nameof(UploadAvatarModel.ImageFile), "upload.png");
+                    });
+                });
+
+                // レスポンスの確認
+                var result = await browser.DeserializeApiErrorJsonResultAsync();
+                Assert.NotEmpty(result);
+                Assert.Contains(nameof(UserAvatar.Content), result.Keys);
+
+                // データベースの確認
+                var avatar = await fixture.DbContext.UserAvatars
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(m => m.UserId == user.Id);
+
+                Assert.Null(avatar);
+            }
         }
     }
 }
