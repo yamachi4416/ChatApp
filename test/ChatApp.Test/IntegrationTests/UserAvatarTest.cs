@@ -114,6 +114,64 @@ namespace ChatApp.Test.IntegrationTests
             Assert.Equal(result.Id, updatedUser.UserAvatarId);
         }
 
+        [Fact(DisplayName = "ユーザがアバター画像をアップロードして更新できること")]
+        public async void UserAvatar_Upload_Update_Success()
+        {
+            var user = await dataCreator.CreateUserAsync();
+            var existsAvatar = new UserAvatar
+            {
+                UserId = user.Id,
+                Content = GetImageBytes(200, 200, ImageFormat.Png),
+                ContentType = "image/png"
+            };
+
+            await fixture.DbContext.AddAsync(existsAvatar);
+            await fixture.DbContext.SaveChangesAsync();
+
+            var uploadImage = GetImageBytes(200, 200, ImageFormat.Png, i =>
+            {
+                i.SetPixel(1, 1, Color.FromArgb(100, 0, 0));
+            });
+
+            var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
+            await browser.FollowRedirectAsync();
+            await browser.PostAsync(sitePath["/upload"], b =>
+            {
+                b.Multipart(form =>
+                {
+                    var file = new ByteArrayContent(uploadImage);
+                    file.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                    form.Add(file, nameof(UploadAvatarModel.ImageFile), "upload.png");
+                });
+            });
+
+            var result = await browser.DeserializeJsonResultAsync<UserAvatar>();
+
+            // 事前確認
+            Assert.NotNull(existsAvatar.Id);
+            Assert.NotEqual(uploadImage, existsAvatar.Content);
+            Assert.NotEqual(existsAvatar.Id, result.Id);
+
+            // ユーザの更新前のアバターが削除されていること
+            Assert.Null(await fixture.DbContext.UserAvatars
+                .AsNoTracking()
+                .SingleOrDefaultAsync(m => m.Id == existsAvatar.Id));
+
+            // アップロードした画像でユーザのアバターが作成されていること
+            var newAvatar = await fixture.DbContext.UserAvatars
+                .AsNoTracking()
+                .SingleAsync(m => m.Id == result.Id);
+            Assert.Equal(user.Id, newAvatar.UserId);
+            Assert.Equal(uploadImage, newAvatar.Content);
+            Assert.Equal("image/png", newAvatar.ContentType);
+
+            // ユーザに更新後のアバターのIDが設定されていること
+            var updatedUser = await fixture.DbContext.Users
+                .AsNoTracking()
+                .SingleAsync(m => m.Id == user.Id);
+            Assert.Equal(result.Id, updatedUser.UserAvatarId);
+        }
+
         [Fact(DisplayName = "ユーザが不正な画像をアップロードした場合バリデーションエラーになること")]
         public async void UserAvatar_Upload_Validation_Failure()
         {
