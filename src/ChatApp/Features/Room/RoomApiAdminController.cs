@@ -193,7 +193,7 @@ namespace ChatApp.Features.Room
                 );
 
                 _db.ChatRooms.Remove(exists);
-                
+
                 await _db.SaveChangesAsync();
 
                 await sendTask;

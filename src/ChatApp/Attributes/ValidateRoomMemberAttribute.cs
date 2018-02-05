@@ -24,7 +24,7 @@ namespace ChatApp.Attributes
                 serviceProvider.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext,
                 serviceProvider.GetService(
                     typeof(UserManager<ApplicationUser>)) as UserManager<ApplicationUser>);
-            
+
             attr.IsAdmin = IsAdmin;
 
             return attr;
@@ -48,13 +48,13 @@ namespace ChatApp.Attributes
             {
                 return false;
             }
-            
+
             Guid? roomId = (Guid?)filterContext.ActionArguments["id"];
             if (roomId == null)
             {
                 return false;
             }
-            
+
             var userId = _userManager.GetUserId(filterContext.HttpContext.User);
 
             var query = (
@@ -92,5 +92,4 @@ namespace ChatApp.Attributes
             }
         }
     }
-
 }

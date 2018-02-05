@@ -4,6 +4,5 @@ namespace ChatApp.Models
     {
         public string ErrorMessage { get; set; }
         public string Key { get; set; }
-        
     }
 }

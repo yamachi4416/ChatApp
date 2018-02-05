@@ -77,7 +77,7 @@ namespace ChatApp.Services.RoomwebSocket
 
         public async Task SendAsync<E>(E value, string userId)
         {
-            await SendAsync(value, new HashSet<string>{ userId });
+            await SendAsync(value, new HashSet<string> { userId });
         }
 
         public ISet<string> RegistedSet(IEnumerable<string> userIds)
@@ -173,7 +173,8 @@ namespace ChatApp.Services.RoomwebSocket
             var buffer = new byte[4096];
 
             WebSocketReceiveResult received = null;
-            do {
+            do
+            {
                 var arrayBuffer = new ArraySegment<byte>(buffer);
                 received = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 callback(received, arrayBuffer);

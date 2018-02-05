@@ -20,7 +20,7 @@ namespace ChatApp.Services.RoomwebSocket
         protected readonly ApplicationDbContext _db;
 
         protected readonly IRoomWebSocketService _ws;
-        
+
         public RoomWSSender(ApplicationDbContext db, IRoomWebSocketService ws)
         {
             this._db = db;
@@ -38,7 +38,7 @@ namespace ChatApp.Services.RoomwebSocket
                 messageBody: messageBody,
                 roomId: roomId
             );
-            
+
             await _ws.SendAsync(message, userId);
         }
 

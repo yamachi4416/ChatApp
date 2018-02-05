@@ -21,7 +21,7 @@ namespace ChatApp.IdentityLocaleError
 
         public override IdentityError PasswordRequiresNonAlphanumeric()
             => GetError(nameof(PasswordRequiresNonAlphanumeric), "Passwords must have at least one non alphanumeric character.");
-        
+
         public override IdentityError PasswordRequiresDigit()
             => GetError(nameof(PasswordRequiresDigit), "Passwords must have at least one digit ('0'-'9').");
 

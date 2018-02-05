@@ -30,7 +30,7 @@ namespace ChatApp.Features.UserAvatar
             {
                 return DefaultAvatar();
             }
-            
+
             var att = await _db.UserAvatars.Select(a => a)
                 .Where(a => a.Id == id)
                 .SingleOrDefaultAsync();

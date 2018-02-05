@@ -21,6 +21,6 @@ namespace ChatApp.Features.Account
 
             return View(model);
         }
-        
+
     }
 }

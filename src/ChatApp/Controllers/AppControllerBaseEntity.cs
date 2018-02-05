@@ -50,7 +50,7 @@ namespace ChatApp.Controllers
         {
             var typeT = typeof(T);
             var typeF = typeof(F);
-            foreach (var propertyName in keys.Split(new char[]{','}))
+            foreach (var propertyName in keys.Split(new char[] { ',' }))
             {
                 typeT.GetProperty(propertyName)
                     .SetValue(to, typeF.GetProperty(propertyName).GetValue(from));

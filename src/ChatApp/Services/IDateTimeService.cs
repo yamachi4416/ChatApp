@@ -9,6 +9,6 @@ namespace ChatApp.Services
 
     public class DateTimeService : IDateTimeService
     {
-        public DateTimeOffset Now { get { return DateTimeOffset.UtcNow;  } }
+        public DateTimeOffset Now { get { return DateTimeOffset.UtcNow; } }
     }
 }
