@@ -1,8 +1,8 @@
-using ChatApp.Data;
-using Microsoft.AspNetCore.Identity;
 using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Localization;
+using ChatApp.Data;
 
 namespace ChatApp.Services
 {

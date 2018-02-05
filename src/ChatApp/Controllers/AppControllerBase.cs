@@ -1,15 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ChatApp.Data;
-using Microsoft.AspNetCore.Identity;
-using ChatApp.Services;
 using System.Collections.Generic;
-using ChatApp.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
+using ChatApp.Data;
+using ChatApp.Models;
+using ChatApp.Services;
 using ChatApp.SharedResources;
 
 namespace ChatApp.Controllers

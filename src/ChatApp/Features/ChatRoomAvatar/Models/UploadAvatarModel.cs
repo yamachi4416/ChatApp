@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using ChatApp.SharedResources;
 using Microsoft.AspNetCore.Http;
+using ChatApp.SharedResources;
 
 namespace ChatApp.Features.ChatRoomAvatar.Models
 {

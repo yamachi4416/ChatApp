@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using ChatApp.Controllers;
-using ChatApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ChatApp.Data;
+using ChatApp.Controllers;
 
 namespace ChatApp.Attributes
 {

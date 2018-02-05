@@ -2,14 +2,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatApp.Features.Room.Models;
-using ChatApp.Services;
-using ChatApp.Services.RoomwebSocket;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApp.Data;
 using ChatApp.Attributes;
+using ChatApp.Features.Room.Models;
+using ChatApp.Services;
+using ChatApp.Services.RoomwebSocket;
 
 namespace ChatApp.Features.Room
 {

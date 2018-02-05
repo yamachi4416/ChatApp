@@ -1,6 +1,6 @@
-using ChatApp.SharedResources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
+using ChatApp.SharedResources;
 
 namespace ChatApp.IdentityLocaleError
 {

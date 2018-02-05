@@ -1,10 +1,5 @@
-using ChatApp.Data;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using ChatApp.Data;
 
 namespace ChatApp.Controllers
 {

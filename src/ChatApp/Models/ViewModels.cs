@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ChatApp.Models
 {
     public class ValidationErrorViewModel

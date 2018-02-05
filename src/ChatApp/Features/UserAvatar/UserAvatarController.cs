@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ChatApp.Controllers;
-using ChatApp.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using ChatApp.Services;
+using ChatApp.Controllers;
 using ChatApp.Features.UserAvatar.Models;
 
 namespace ChatApp.Features.UserAvatar

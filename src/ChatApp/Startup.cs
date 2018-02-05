@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,6 @@ using ChatApp.Services.RoomwebSocket;
 using ChatApp.Config;
 using ChatApp.SharedResources;
 using ChatApp.IdentityLocaleError;
-using ChatApp.Features.Room;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ChatApp
 {
