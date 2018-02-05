@@ -51,9 +51,18 @@ class WebSocketService {
 
         const socket = this.createWebSocket();
 
-        socket.onopen = (e) => console.log(`socket open.\n${e}`);
-        socket.onclose = (e) => console.log(`socket close.\n${e}`);
-        socket.onerror = (e) => console.log(`socket error.\n${e}`);
+        socket.onopen = (e) => {
+            console.log(`socket open.\n${e}`);
+            console.log(e);
+        };
+        socket.onclose = (e) => {
+            console.log(`socket close.\n${e}`);
+            console.log(e);
+        };
+        socket.onerror = (e) => {
+            console.log("socket error.");
+            console.log(e);
+        };
         socket.onmessage = (e) => {
             var rawMessage = e.data;
             var objMessage = JSON.parse(rawMessage);

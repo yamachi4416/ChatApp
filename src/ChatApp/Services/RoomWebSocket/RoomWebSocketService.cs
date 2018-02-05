@@ -139,8 +139,6 @@ namespace ChatApp.Services.RoomwebSocket
 
         public string UserId { get; }
 
-        public bool IsOpen => _socket?.State == WebSocketState.Open;
-
         private readonly RoomWebSocketContainer _container;
 
         private readonly WebSocket _socket;
@@ -174,16 +172,14 @@ namespace ChatApp.Services.RoomwebSocket
         {
             var buffer = new byte[4096];
 
-            while (IsOpen)
-            {
+            WebSocketReceiveResult received = null;
+            do {
                 var arrayBuffer = new ArraySegment<byte>(buffer);
+                received = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                callback(received, arrayBuffer);
+            } while (received.MessageType != WebSocketMessageType.Close);
 
-                var ret = await _socket.ReceiveAsync(
-                    buffer: arrayBuffer,
-                    cancellationToken: CancellationToken.None);
-
-                callback(ret, arrayBuffer);
-            }
+            await _socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
         }
 
         public void Dispose()
