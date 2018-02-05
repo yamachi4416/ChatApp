@@ -168,7 +168,7 @@ namespace ChatApp.Services.RoomwebSocket
             }
         }
 
-        public async Task Wait(Action<WebSocketReceiveResult, ArraySegment<byte>> callback)
+        public async Task Wait(Action<WebSocketReceiveResult, ArraySegment<byte>> callback = null)
         {
             var buffer = new byte[4096];
 
@@ -176,8 +176,11 @@ namespace ChatApp.Services.RoomwebSocket
             do
             {
                 var arrayBuffer = new ArraySegment<byte>(buffer);
-                received = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                callback(received, arrayBuffer);
+                received = await _socket.ReceiveAsync(arrayBuffer, CancellationToken.None);
+                if (callback != null)
+                {
+                    callback(received, arrayBuffer);
+                }
             } while (received.MessageType != WebSocketMessageType.Close);
 
             await _socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
