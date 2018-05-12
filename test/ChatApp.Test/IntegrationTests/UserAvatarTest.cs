@@ -1,8 +1,5 @@
 using Xunit;
 using System;
-using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +12,6 @@ namespace ChatApp.Test.IntegrationTests
     {
         public UserAvatarTest(TestFixture fixture) : base(fixture, "/UserAvatar")
         {
-        }
-
-        private byte[] GetImageBytes(int width, int height, ImageFormat format, Action<Bitmap> setup = null)
-        {
-            using (var img = new Bitmap(width: width, height: height))
-            using (var stream = new MemoryStream())
-            {
-                if (setup != null)
-                {
-                    setup(img);
-                }
-                img.Save(stream, format);
-                return stream.ToArray();
-            }
         }
 
         [Fact(DisplayName = "ユーザの画像がない場合デフォルトの画像を返すこと")]
@@ -60,7 +43,7 @@ namespace ChatApp.Test.IntegrationTests
             {
                 UserId = user.Id,
                 ContentType = "image/png",
-                Content = GetImageBytes(200, 200, ImageFormat.Png)
+                Content = new byte[] { 1 }
             };
             fixture.DbContext.Add(avatar);
             await fixture.DbContext.SaveChangesAsync();
@@ -85,7 +68,7 @@ namespace ChatApp.Test.IntegrationTests
             var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
             await browser.FollowRedirectAsync();
 
-            var img = GetImageBytes(200, 200, ImageFormat.Png);
+            var img = new byte[] { 1, 2, 3 };
             await browser.PostAsync(sitePath["/upload"], b =>
             {
                 b.Multipart(form =>
@@ -121,17 +104,14 @@ namespace ChatApp.Test.IntegrationTests
             var existsAvatar = new UserAvatar
             {
                 UserId = user.Id,
-                Content = GetImageBytes(200, 200, ImageFormat.Png),
+                Content = new byte[] { 1, 2, 3 },
                 ContentType = "image/png"
             };
 
             await fixture.DbContext.AddAsync(existsAvatar);
             await fixture.DbContext.SaveChangesAsync();
 
-            var uploadImage = GetImageBytes(200, 200, ImageFormat.Png, i =>
-            {
-                i.SetPixel(1, 1, Color.FromArgb(100, 0, 0));
-            });
+            var uploadImage = new byte[] { 255, 255, 255 };
 
             var browser = await fixture.CreateWebBrowserWithLoginAsyc(user);
             await browser.FollowRedirectAsync();
@@ -186,19 +166,7 @@ namespace ChatApp.Test.IntegrationTests
             }
 
             {// ファイルサイズが大きすぎる場合
-                const int width = 350, height = 350;
-                var img = GetImageBytes(width, height, ImageFormat.Png, i =>
-                {
-                    // PNG形式のため多くの色情報を設定する
-                    for (int x = 0; x < width; x++)
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            int rgb = (x + y) * 10000 + (x * 100) + y;
-                            i.SetPixel(x, y, Color.FromArgb(rgb >> 16, rgb >> 8 & 255, rgb & 255));
-                        }
-                    }
-                });
+                var img = new byte[300001];
 
                 await browser.PostAsync(sitePath["/upload"], b =>
                 {
