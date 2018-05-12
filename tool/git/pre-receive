@@ -4,11 +4,13 @@ set -eu
 
 running_test() {
   tempdir=$(mktemp -d)
-  trap "[ -e $tempdir ] && rm -rf $tempdir" EXIT
-  git archive --format=tar --prefix=chatapp/ "$1" | ( cd "$tempdir" && tar xf - )
-  cd "$tempdir/chatapp"
+  trap "docker image rm chatapp_test_test ; [ -e $tempdir ] && rm -rf $tempdir" EXIT
+  git archive --format=tar --prefix=chatapp_test/ "$1" | ( cd "$tempdir" && tar xf - )
+  cd "$tempdir/chatapp_test"
   [ -f "./.env" ] || touch ./.env
-  docker-compose --file docker-compose.yml run test "dotnet test ./test/ChatApp.Test"
+  docker-compose --file docker-compose.yml down
+  docker-compose --file docker-compose.yml build test
+  docker-compose --file docker-compose.yml run --rm test "dotnet test ./test/ChatApp.Test"
 }
 
 while read oldrev newrev refname
