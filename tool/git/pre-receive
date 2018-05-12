@@ -7,6 +7,7 @@ running_test() {
   trap "[ -e $tempdir ] && rm -rf $tempdir" EXIT
   git archive --format=tar --prefix=chatapp/ "$1" | ( cd "$tempdir" && tar xf - )
   cd "$tempdir/chatapp"
+  [ -f "./.env" ] || touch ./.env
   docker-compose --file docker-compose.yml run test "dotnet test ./test/ChatApp.Test"
 }
 

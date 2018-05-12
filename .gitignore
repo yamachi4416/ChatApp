@@ -306,3 +306,4 @@ appsettings.Production.json
 package-lock.json
 
 Logs/
+.env
