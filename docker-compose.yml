@@ -1,0 +1,36 @@
+version: '3.4'
+services:
+  postgres:
+    image: postgres
+    networks:
+      - postgres
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+
+  sdk:
+    build:
+      target: sdk
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+
+  test:
+    build:
+      target: sdk
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - "ConnectionStrings__DefaultConnection=Host=postgres; User Id=postgres; Port=5432; Database=Chatapp_Test;"
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
