@@ -2,7 +2,7 @@ import { ImageCliper } from "./ImageCliper"
 
 $.fn.imageCliper = function (options: ImageCliperOptions) {
     const cliper = new ImageCliper(options, this);
-    const dnoop = function (args?) {
+    const dnoop = function (_args?) {
         const df = $.Deferred();
         return df.resolve.call(df, arguments).promise();
     };
@@ -63,7 +63,7 @@ $.fn.imageCliper = function (options: ImageCliperOptions) {
 
             $('<input type="file" accept="image/*">')
                 .on('change', function () {
-                    if (this.files) {
+                    if (this instanceof HTMLInputElement && this.files) {
                         df.resolve(this.files);
                     }
                 }).click();

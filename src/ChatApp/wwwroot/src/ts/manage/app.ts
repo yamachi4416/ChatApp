@@ -45,10 +45,12 @@ jQuery(function ($) {
         });
     });
 
-    $('#zoomRange').on('input', function (e) {
-        var w = parseFloat($img.css('width'));
-        var r = parseInt(this.value);
-        cliper.zoom(r - w);
+    $('#zoomRange').on('input', function () {
+        if (this instanceof HTMLInputElement) {
+            var w = parseFloat($img.css('width'));
+            var r = parseInt(this.value);
+            cliper.zoom(r - w);
+        }
     });
 
     $modal.on('show.bs.modal', function() {

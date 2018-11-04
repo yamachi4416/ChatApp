@@ -1,5 +1,4 @@
 import { IDirective } from "angular";
-import { IDirectiveLinkFn } from "angular";
 import { IScope } from "angular";
 import { IAugmentedJQuery } from "angular";
 import { IAttributes } from "angular";
@@ -29,7 +28,7 @@ export class ChatMessageImageDirective implements IDirective {
             instanceElement
                 .on('load', () => instanceElement.unwrap())
                 .on('error', () => this.errorHandle(instanceElement))
-                .wrap(angular.element('<div>').addClass('chat-img-loading'));
+                .wrap($('<div>').addClass('chat-img-loading'));
         }
     }
 
@@ -39,7 +38,7 @@ export class ChatMessageImageDirective implements IDirective {
             this.errorImageUrls.set(src, true);
         }
 
-        const anchor = angular.element('<a>').attr({
+        const anchor = $('<a>').attr({
             target: '_blank',
             title: elem.attr('alt'),
             href: elem.attr('src')
