@@ -99,8 +99,8 @@ namespace ChatApp.Test.Helpers
 
         public void Dispose()
         {
-            Server.Dispose();
             CurrentDateTime = default(DateTimeOffset);
+            Server.Dispose();
         }
     }
 }
