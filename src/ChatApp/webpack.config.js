@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
+    mode: "development",
     entry: {
         "site": "site.ts",
         "manage/app": "manage/app.ts",
@@ -30,7 +31,6 @@ module.exports = {
     },
     devtool: "inline-source-map",
     externals: {
-        jquery: "jQuery",
     },
     plugins: [
     ]

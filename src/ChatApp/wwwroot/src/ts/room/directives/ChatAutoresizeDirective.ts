@@ -35,8 +35,7 @@ export class ChatAutoresizeDirective implements IDirective {
         private $window: IWindowService
     ) { }
 
-    private resize(element: IAugmentedJQuery, parent: IAugmentedJQuery, diff): void {
-        const oldHeight = element.height();
+    private resize(element: JQuery<any>, parent: JQuery<any>, diff): void {
         element.height(0);
         const newHeight = element[0].scrollHeight - diff;
         const maxHeight = this.getMaxHeight(element, parent);
@@ -50,7 +49,7 @@ export class ChatAutoresizeDirective implements IDirective {
         parent.scrollTop(parent.height());
     }
 
-    private getMaxHeight(element: IAugmentedJQuery, parent: IAugmentedJQuery): number {
+    private getMaxHeight(element: JQuery<any>, parent: JQuery<any>): number {
         const maxHeight = element.css('max-height');
         if (maxHeight == 'none' || !maxHeight) {
             return null;

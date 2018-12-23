@@ -1,8 +1,4 @@
-import { IDirective, IDirectiveFactory, IDirectiveLinkFn } from "angular";
-import { IScope } from "angular";
-import { IAttributes } from "angular";
-import { IAugmentedJQuery } from "angular";
-import { ITranscludeFunction } from "angular";
+import { IDirective, IDirectiveFactory } from "angular";
 
 export interface ChatSidebarScope {
 

@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
         "target": "ES5",
-        "module": "commonjs",
+        "module": "es2015",
         "sourceMap": true,
         "lib": [
             "dom",
             "es6"
         ],
         "outDir": "wwwroot/js",
-        "rootDir": "wwwroot/src/ts"
+        "rootDir": "wwwroot/src/ts",
+        "moduleResolution": "node"
     },
     "exclude": [
         "node_modules"

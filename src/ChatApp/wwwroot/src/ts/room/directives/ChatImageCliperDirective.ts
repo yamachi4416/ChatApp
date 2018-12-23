@@ -1,6 +1,5 @@
 import { IDirective, IScope, IAugmentedJQuery, IAttributes, ITranscludeFunction } from "angular";
-import { ITimeoutService } from "angular";
-import { IDirectiveFactory } from "angular";
+import { ITimeoutService, IDirectiveFactory } from "angular";
 
 export interface CliperComponant {
     cliper: JQueryImageCliper,
@@ -36,7 +35,7 @@ export class ChatImageCliperDirective implements IDirective {
         transclude: ITranscludeFunction
     ): void {
         const cliper = angular.element(element).append(
-            angular.element('<img>') as JQLite
+            angular.element('<img>') as JQuery
         ).imageCliper(scope.cOption);
 
         const range = { min: 0, val: 50, max: 100 };

@@ -86,7 +86,7 @@ export class ChatRoomContainerOperator {
             if (promise && !promise.rejected) {
                 const loading = angular.element(this.scope.loadingTemplate);
                 this.getOldMessagesEnable = false;
-                this.container.prepend(loading as JQLite);
+                this.container.prepend(loading as JQuery);
                 return promise.finally(() => {
                     loading.remove();
                     this.getOldMessagesEnable = true;

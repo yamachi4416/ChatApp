@@ -1,4 +1,3 @@
-import "angular";
 import "angular-ui-bootstrap"
 import "angular-marked";
 import "../lib/imageCliper/ImageCliper.jquery";
