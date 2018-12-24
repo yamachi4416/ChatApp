@@ -41,6 +41,12 @@ namespace ChatApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             // Add framework services.
             services.AddAntiforgery(options =>
                 {
@@ -138,6 +144,9 @@ namespace ChatApp
             ILoggerFactory loggerFactory,
             IAntiforgery antiforgery)
         {
+            app.UseForwardedHeaders();
+            app.UsePathBase(Configuration["PathBase"]);
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -151,13 +160,6 @@ namespace ChatApp
                 app.UseExceptionHandler("/Home/Error");
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
             }
-
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-
-            app.UsePathBase(Configuration["PathBase"]);
 
             app.UseStaticFiles();
 
